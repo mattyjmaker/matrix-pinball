@@ -1,6 +1,6 @@
 # Copyright 2021 Paradigm Tilt
 
-extends LoggingNode
+extends GMCCoreScriptNode
 
 signal marker(event_name: String)
 
@@ -16,7 +16,7 @@ func initialize(config: ConfigFile, log_level: int = 30) -> void:
 	self.configure_logging("SoundPlayer")
 	for i in range(0, AudioServer.bus_count):
 		var bus_name: String = AudioServer.get_bus_name(i)
-		self.buses[bus_name] = GMCBus.new(bus_name, log_level)
+		self.buses[bus_name] = GMCBus.new(self.mpf, bus_name, log_level)
 		# Buses have tweens so must be in the tree
 		self.add_child(self.buses[bus_name])
 	if config.has_section("sound_system"):
@@ -40,8 +40,8 @@ func initialize(config: ConfigFile, log_level: int = 30) -> void:
 				self.default_duck_bus = self.buses[target_bus_name]
 
 func _ready() -> void:
-	MPF.game.volume.connect(self._on_volume)
-	MPF.server.connect("clear", self._on_clear_context)
+	self.mpf.game.volume.connect(self._on_volume)
+	self.mpf.server.connect("clear", self._on_clear_context)
 	# Set names to help debugging
 	duckAttackTimer.name = "DuckAttackTimer"
 	duckReleaseTimer.name = "DuckReleaseTimer"
@@ -68,12 +68,12 @@ func play_sounds(s: Dictionary) -> void:
 	for asset in s.settings.keys():
 		var settings: Dictionary = s.settings[asset]
 
-		assert(MPF.media.sounds.has(asset), "Unknown sound file or resource '%s'" % asset)
+		assert(self.mpf.media.sounds.has(asset), "Unknown sound file or resource '%s'" % asset)
 		# A key can override the default value
 		if not settings.get("key"):
 			settings["key"] = asset
 
-		var config: Variant = MPF.media.get_sound_instance(asset)
+		var config: Variant = self.mpf.media.get_sound_instance(asset)
 		if not config:
 			printerr("Unable to find sound instance for asset '%s'" % asset)
 			return
@@ -99,6 +99,14 @@ func play_sounds(s: Dictionary) -> void:
 		else:
 			assert(false, "Cannot play sound of class %s" % config.get_class())
 
+		if OS.has_feature("debug"):
+			if settings.get("bus"):
+				if not settings["bus"] in self.buses:
+					self.log.error("Unknown bus '%s' for playing sound with settings %s" % [settings["bus"], settings])
+					return
+			elif not self.default_bus:
+				self.log.error("Sound played without bus param and no default bus is specified: %s" % settings)
+				return
 		var bus: GMCBus = self.buses[settings["bus"]] if settings.get("bus") else self.default_bus
 		var action: String = settings.get("action", "play")
 

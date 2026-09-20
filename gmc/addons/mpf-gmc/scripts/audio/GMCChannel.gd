@@ -4,11 +4,13 @@ class_name GMCChannel
 
 var tweens: Array[Tween]
 var markers: Array[SoundMarker]
+var mpf: MPFGMC
 
 @warning_ignore("shadowed_global_identifier")
 var log: GMCLogger
 
-func _init(n: String, b: GMCBus):
+func _init(mpf_instance: MPFGMC, n: String, b: GMCBus):
+	self.mpf = mpf_instance
 	self.name = n
 	# This sets the AudioStreamPlayer.bus property to control its playback,
 	# and must be set to the StringName of the bus being used.
@@ -38,7 +40,8 @@ func play_with_settings(settings: Dictionary) -> AudioStream:
 		printerr("Attempting to play on channel %s with no stream. %s ", [self, settings])
 		return
 
-	self.log.debug("playing %s (%s) on %s with settings %s", [self.stream.resource_path, self.stream, self, settings])
+	self.log.debug("%s playing %s (%s) at volume %s with settings %s",
+		[self, self.stream.resource_path, self.stream, db_to_linear(self.volume_db), settings])
 	self.stream.set_meta("context", settings.context)
 	self.stream.set_meta("key", settings.key)
 	self.stream_paused = false
@@ -55,16 +58,20 @@ func play_with_settings(settings: Dictionary) -> AudioStream:
 			if self.stream is AudioStreamOggVorbis or self.stream is AudioStreamMP3:
 				self.stream.loop = true
 			elif self.stream is AudioStreamWAV:
-				self.stream.loop_mode = 1
+				self.stream.loop_mode = AudioStreamWAV.LoopMode.LOOP_FORWARD
+				# This file might have been imported with a loop end, respect that if present
+				if not self.stream.loop_end:
+					# Loop end is in samples, so multiple sample rate * length
+					self.stream.loop_end = self.stream.mix_rate * self.stream.get_length()
 			else:
 				self._connect_loop(settings["loops"])
 		else:
 			self._connect_loop(settings["loops"])
 
 	# TODO: Support marker events
-	if settings.get("events_when_started"):
-		for e in settings["events_when_started"]:
-			MPF.server.send_event(e)
+	if settings.get("events_when_played"):
+		for e in settings["events_when_played"]:
+			self.mpf.server.send_event(e)
 	if settings.get("events_when_stopped"):
 		# Store a reference to the callable so it can be disconnected
 		var callable = self._trigger_events.bind("stopped", settings["events_when_stopped"] as Array[String])
@@ -203,9 +210,9 @@ func _on_loop() -> void:
 
 func _trigger_events(state: String, events: Array) -> void:
 	for e in events:
-		MPF.server.send_event(e)
+		self.mpf.server.send_event(e)
 	self.finished.disconnect(self.stream.get_meta("events_when_%s" % state))
 	self.stream.remove_meta("events_when_%s" % state)
 
 func _to_string() -> String:
-	return "<GMCChannel:%s:current_stream=%s>" % [self.name, "%s" % self.stream if self.stream else "None"]
+	return "<GMCChannel:%s:current_stream=%s>" % [self.name, "%s" % self.stream.resource_path.get_file() if self.stream else "None"]

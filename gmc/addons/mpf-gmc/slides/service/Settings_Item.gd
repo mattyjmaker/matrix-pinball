@@ -55,8 +55,7 @@ func ready():
 		assert(selected_value in options, "Setting %s has no option for selected value %s. Available options: %s" % [title, selected_value, options])
 		if options[selected_value] == null:
 			options[selected_value] = "None"
-		$Option.text = options[selected_value]
-	set_option_text_color()
+		set_option_text_and_color()
 
 func _focus_entered() -> void:
 	self.is_focused = true
@@ -68,39 +67,43 @@ func _focus_exited() -> void:
 		self.is_focused = false
 		$Setting.button_pressed = false
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if self.is_focused and event.key_label == -1:
-		# If this is a toggle event, move focus in/out of the option
-		if IS_TOGGLE_STYLE:
-			if event.keycode == KEY_CAPSLOCK:
-				get_window().set_input_as_handled()
-				if self.has_focus():
-					is_option_focused = true
-					if callback:
-						callback.call_func()
-					else:
-						$Option.grab_focus()
-						self.set_setting_background_color(true)
+func _input(event: InputEvent) -> void:
+	if not event.is_class("InputEventKey") or event.key_label != -1:
+		return
+	if not self.is_focused:
+		return
+
+	# If this is a toggle event, move focus in/out of the option
+	if IS_TOGGLE_STYLE:
+		if event.keycode == KEY_CAPSLOCK:
+			get_window().set_input_as_handled()
+			if self.has_focus():
+				is_option_focused = true
+				if callback:
+					callback.call_func()
 				else:
-					self.grab_focus()
-					self.set_setting_background_color(false)
-					is_option_focused = false
-					self.save()
-			elif is_option_focused:
-				if event.keycode == KEY_ESCAPE:
-					get_window().set_input_as_handled()
-					select_option(-1)
-				elif event.keycode == KEY_ENTER:
-					get_window().set_input_as_handled()
-					select_option(1)
-		# If this is not toggle style, left and right hit the options directly
-		else:
+					$Option.grab_focus()
+					self.set_setting_background_color(true)
+			else:
+				self.grab_focus()
+				self.set_setting_background_color(false)
+				is_option_focused = false
+				self.save()
+		elif is_option_focused:
 			if event.keycode == KEY_ESCAPE:
 				get_window().set_input_as_handled()
 				select_option(-1)
 			elif event.keycode == KEY_ENTER:
 				get_window().set_input_as_handled()
 				select_option(1)
+	# If this is not toggle style, left and right hit the options directly
+	else:
+		if event.keycode == KEY_ESCAPE:
+			get_window().set_input_as_handled()
+			select_option(-1)
+		elif event.keycode == KEY_ENTER:
+			get_window().set_input_as_handled()
+			select_option(1)
 
 func save() -> void:
 	MPF.server.send_event("service_trigger&action=setting&variable=%s&value=%s" % [variable, selected_value])
@@ -115,12 +118,16 @@ func select_option(direction: int = 0) -> void:
 		next = posmod(next, keys.size())
 	if next >= 0 and next < keys.size():
 		selected_value = keys[next]
-		$Option.text = options[selected_value]
-		set_option_text_color()
+		set_option_text_and_color()
+		save()
 
-func set_option_text_color() -> void:
-	var color := Color(1,1,1,1) if selected_value == default else Color(0.98,0.34,0,1)
-	$Option.set("theme_override_colors/font_color", color)
+func set_option_text_and_color() -> void:
+	if selected_value == default:
+		$Option.text = options[selected_value] + " (default)"
+		$Option.set("theme_override_colors/font_color", Color(1,1,1,1))
+	else:
+		$Option.text = options[selected_value]
+		$Option.set("theme_override_colors/font_color", Color(0.98,0.34,0,1))
 
 func set_setting_background_color(is_invoked: bool) -> void:
 	if not is_invoked:

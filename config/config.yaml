@@ -240,33 +240,3 @@ slide_player:
   mode_base_started: base
   init_done: welcome
   mode_attract_started: attract
-
-keyboard:
-  s:
-    switch: s_start
-  q:
-    switch: s_right_inlane
-  1:
-    switch: s_trough1
-    toggle: true
-  2:
-    switch: s_trough2
-    toggle: true
-  3:
-    switch: s_trough3
-    toggle: true
-  4:
-    switch: s_trough4
-    toggle: true
-  5:
-    switch: s_trough5
-    toggle: true
-  6:
-    switch: s_trough6
-    toggle: true
-  7:
-    switch: s_trough7
-    toggle: true
-  p:
-    switch: s_plunger
-    toggle: true
