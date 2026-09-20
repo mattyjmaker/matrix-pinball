@@ -1,5 +1,12 @@
 #config_version=6
 
+# ---------------------------------------------------------------------------
+# HARDWARE TEST STATE
+# Devices that are not yet installed, or whose FAST switch numbers are not yet
+# known, are commented out below so MPF can start against real hardware.
+# Search for "TODO(hardware)" to find each one. When a device is wired and its
+# number is known, restore the block and update the number.
+# ---------------------------------------------------------------------------
 
 hardware:
     platform: fast
@@ -10,9 +17,8 @@ mpf:
 fast:
   net:
     debug: false      # change to true to see full NET serial communication in the log. Search for `[NET]`
-    # port: /dev/cu.usbmodem14601
     controller: neuron
-    io_loop: 
+    io_loop:
             cab:
                 model: FP-CAB-0001
                 order: 1
@@ -32,7 +38,7 @@ fast:
 
   exp:
     debug: false      # change to true to see full EXP serial communication in the log. Search for `[EXP]`
-    # port: /dev/cu.usbmodem14603
+    port: auto
     boards:
       neuron:
         model: FP-EXP-2000
@@ -46,16 +52,17 @@ modes:
 
 switches:
   ## Flipper Cabinet Buttons
-  s_left_flipper:
-    number: cab-99934534535434544
-    tags: left_flipper
-  s_right_flipper:
-    number: cab-99934535345345345
-    tags: right_flipper
-
-  s_start:
-    number: cab-999345345435345345
-    tags: start
+  # TODO(hardware): FP-CAB-0001 switch numbers unknown. Restore these three
+  # switches and the flippers: section once the cabinet inputs are confirmed.
+  # s_left_flipper:
+  #   number: TODO
+  #   tags: left_flipper
+  # s_right_flipper:
+  #   number: TODO
+  #   tags: right_flipper
+  # s_start:
+  #   number: TODO
+  #   tags: start
 
   ## Flipper EOS Switches
   s_left_flipper_eos: # End of Stroke
@@ -82,16 +89,18 @@ switches:
   s_outlane_right:
     number: bottom32-29
     tags: playfield_active
-  
+
   s_sling_left:
     number: bottom32-16 ## To check
   s_sling_right:
     number: bottom32-26
 
   #Trough Switches (x8)
-  s_trough1: # Opto Switch (Not yet installed)
-    number: bottom32-999-s_trough1
-    type: NC
+  # TODO(hardware): s_trough1 opto not yet installed. Restore here and in
+  # bd_trough ball_switches when fitted.
+  # s_trough1: # Opto Switch (Not yet installed)
+  #   number: TODO
+  #   type: NC
   s_trough2:
     number: bottom32-0
   s_trough3:
@@ -106,14 +115,19 @@ switches:
     number: bottom32-5
   s_trough8:
     number: bottom32-6
-  s_trough_jam:
-    number: bottom32-999-s_trough_jam # Not yet installed.
-    type: NC
+  # TODO(hardware): jam opto not yet installed. Restore here and the
+  # jam_switch / eject_coil_jam_pulse lines in bd_trough when fitted.
+  # s_trough_jam:
+  #   number: TODO
+  #   type: NC
 
   # plunger lane
-  s_plunger:
-    number: bottom32-999-s_plunger # Not yet installed.
-  
+  # TODO(hardware): plunger lane switch not yet installed. Restore here and
+  # the bd_plunger device, then set playfield default_source_device back to
+  # bd_plunger and bd_trough eject_targets back to bd_plunger.
+  # s_plunger:
+  #   number: TODO
+
   # EMP Pop Bumper Area Switches
   s_emp_pop:
     number: bottom32-14
@@ -175,10 +189,11 @@ coils:
     default_pulse_ms: 20
     platform_settings:
       recycle_ms: 40
-  
+
   # Middle Playfield Coils (in EMP)
+  # TODO(hardware): pop bumper coil not yet installed.
   # c_emp_pop:
-  #   number: top16-99945546455665 # Not yet installed.
+  #   number: TODO
   #   default_pulse_ms: 20
   #   platform_settings:
   #     recycle_ms: 40
@@ -194,47 +209,50 @@ autofire_coils:
 playfields:
   playfield:
     tags: default
-    default_source_device: bd_plunger
+    # TODO(hardware): set back to bd_plunger once s_plunger is installed.
+    # With no plunger switch the lane counts as playfield, so the trough is
+    # the source device (MPF docs: mechs/plungers/mechanical_no_switch).
+    default_source_device: bd_trough
 
 # virtual_platform_start_active_switches: s_trough1, s_trough2, s_trough3, s_trough4, s_trough5, s_trough6, s_trough7
 
 
-flippers:
-  left_flipper:
-    main_coil: c_flipper_left_main
-    hold_coil: c_flipper_left_hold
-    activation_switch: s_left_flipper
-    eos_switch: s_left_flipper_eos
-    use_eos: true
-    # enable_events: machine_reset_phase_3 # Allows the flippers to work before a ball is started
-  right_flipper:
-    main_coil: c_flipper_right_main
-    hold_coil: c_flipper_right_hold
-    activation_switch: s_right_flipper
-    eos_switch: s_right_flipper_eos
-    use_eos: true
-    # enable_events: machine_reset_phase_3 # Allows the flippers to work before a ball is started
+# TODO(hardware): flippers need the cabinet button switches above. Restore
+# together with s_left_flipper and s_right_flipper.
+# flippers:
+#   left_flipper:
+#     main_coil: c_flipper_left_main
+#     hold_coil: c_flipper_left_hold
+#     activation_switch: s_left_flipper
+#     eos_switch: s_left_flipper_eos
+#     use_eos: true
+#     # enable_events: machine_reset_phase_3 # Allows the flippers to work before a ball is started
+#   right_flipper:
+#     main_coil: c_flipper_right_main
+#     hold_coil: c_flipper_right_hold
+#     activation_switch: s_right_flipper
+#     eos_switch: s_right_flipper_eos
+#     use_eos: true
+#     # enable_events: machine_reset_phase_3 # Allows the flippers to work before a ball is started
 
 ball_devices:
   bd_trough:
-    ball_switches: s_trough1, s_trough2, s_trough3, s_trough4, s_trough5, s_trough6, s_trough7, s_trough8, s_trough_jam
+    # TODO(hardware): add s_trough1 and s_trough_jam back when installed.
+    ball_switches: s_trough2, s_trough3, s_trough4, s_trough5, s_trough6, s_trough7, s_trough8
     eject_coil: c_trough_eject
     tags: trough, home, drain
-    jam_switch: s_trough_jam # Opto switch to detect a jam in the trough
-    eject_coil_jam_pulse: 15ms
-    eject_targets: bd_plunger
+    # jam_switch: s_trough_jam # Opto switch to detect a jam in the trough
+    # eject_coil_jam_pulse: 15ms
+    # TODO(hardware): set back to bd_plunger once s_plunger is installed.
+    eject_targets: playfield
     eject_timeouts: 3s
-  bd_plunger:
-    ball_switches: s_plunger
-    mechanical_eject: true
-    eject_timeouts: 15s
-    tags: plunger, shooter
-    eject_coil: c_auto_plunge
-
-displays:
-  window:
-    width: 800
-    height: 600
+  # TODO(hardware): restore with s_plunger.
+  # bd_plunger:
+  #   ball_switches: s_plunger
+  #   mechanical_eject: true
+  #   eject_timeouts: 15s
+  #   tags: plunger, shooter
+  #   eject_coil: c_auto_plunge
 
 slide_player:
   mode_base_started: base

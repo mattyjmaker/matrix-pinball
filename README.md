@@ -1,47 +1,87 @@
 # matrix-pinball
-Matrix Pinball MPF Game Code
 
-Fast MPF Starter Configs:
-https://fastpinball.com/mpf/fast-mpf-starter-configs/
-Located in misc/fast-mpf-start-configs/
+Matrix Pinball game code for the Mission Pinball Framework (MPF) with the
+Godot Media Controller (GMC) and FAST Pinball Neuron hardware.
 
+## Versions this repo targets
 
-# Virtual Environment Install and Run:
+| Component | Version | Notes |
+| --- | --- | --- |
+| MPF | 0.80.x | Requires Python 3.10 to 3.14 |
+| GMC addon | 1.0.0 | Vendored in `gmc/addons/mpf-gmc`. Requires Godot 4.5 or newer |
+| Godot | 4.6 or newer (4.7.x is current stable) | Download from godotengine.org, not the distro package |
+| FAST hardware | Neuron, FP-EXP-2000, FP-CAB-0001, FP-I/O-1616, FP-I/O-3208 | Supported by mainline MPF. No FAST fork needed. FAST's own MPF docs and starter configs are at https://fastpinball.com/mpf/ |
 
-Installing Python 3.11 on Clean Lubuntu:
+## Layout
 
-- sudo add-apt-repository ppa:deadsnakes/ppa
-- sudo apt-get update
-- sudo apt install python3.11
-- sudo apt install python3.11-venv
-- mkdir ~/.mpfenv
-- python3.11 -m venv ~/.mpfenv/matrix
+- `config/` and `modes/` are the MPF machine folder (repo root is the machine path).
+- `gmc/` is the Godot project. Slides live in `gmc/slides/<name>/<name>.tscn`.
+- `docs/` holds the MPF documentation summaries, this machine's hardware notes and the parts inventory. Start at `docs/README.md`.
 
-To start environment for Python:
-- source ~/.mpfenv/matrix/bin/activate
+## Machine PC: Ubuntu 24.04 LTS
 
-Install MPF Latest:
-- pip install mpf --pre
+Ubuntu 24.04 ships Python 3.12, which MPF 0.80 supports, so no extra Python
+PPA is needed.
 
-Update to latest:
-- pip install --upgrade mpf
+    sudo apt update && sudo apt full-upgrade
+    sudo apt install python3-venv git git-lfs
+    sudo usermod -a -G dialout $USER
 
-# Allowing CoolTerm to Communicate with Linux
+Reboot after the group change. The `dialout` group is required for MPF to
+open the FAST serial ports.
 
-By default CoolTerm and MPF have issues sending and receiving serial port commands out of the box. The user needs to be added to 2 user groups in order to gain access to the commands and receive responses:
+## Python environment and MPF
 
-- sudo usermod -a -G dialout <user>
-- sudo usermod -a -G tty <user>
+    mkdir -p ~/.mpfenv
+    python3 -m venv ~/.mpfenv/matrix
+    source ~/.mpfenv/matrix/bin/activate
+    pip install --upgrade pip
+    pip install mpf
 
-Replace <user> with the actual username in those commands. Reboot is required.
+Update later with `pip install --upgrade mpf`.
 
+Clone with Git LFS so fonts, images and video assets are fetched:
 
-# Running MPF with Godot on Windows
-https://www.youtube.com/watch?v=IO3U1SMZ5-A
+    git lfs install
+    git clone <repo url>
 
-Open Powershell:
-mpf/Scripts/Activate.ps1
+## Godot and GMC
 
-Go to machine folder in Powershell. Open and play Godot file. Then:
+1. Install Godot 4.6 or newer from https://godotengine.org. The project is currently tagged for 4.6.
+2. Open `gmc/project.godot`. The first open in a newer Godot rewrites the import cache
+   and UID files. Let it finish, then commit any changed `.import` or `.uid` files.
+3. The GMC addon is already vendored and enabled. To upgrade it, replace the whole
+   `gmc/addons/mpf-gmc` folder with the matching release from
+   https://github.com/missionpinball/mpf-gmc. Do not edit files inside the addon.
 
-mpf -xt 
+## Running MPF with Godot
+
+Manual (development):
+
+    source ~/.mpfenv/matrix/bin/activate
+    cd <repo root>
+    mpf -t            # real hardware
+    mpf -xt           # virtual platform, no hardware
+
+Then press Play in the Godot editor with `gmc/project.godot` open. Godot will show
+"Connected to MPF" once the BCP link is up.
+
+Godot can also spawn MPF itself. Configure this in the Godot editor's MPF tab
+(it writes an `[mpf]` section to `gmc/gmc.cfg`). See the MPF docs page
+"Launching the MPF game with Godot".
+
+## Hardware test state
+
+Several switches and devices are not yet installed or do not have confirmed
+FAST numbers. They are commented out in `config/config.yaml` and marked
+`TODO(hardware)`. Until restored:
+
+- No flipper or start buttons are configured, so the `flippers:` section is off.
+- The trough runs on seven switches (trough 1 opto and jam opto are not fitted).
+- The plunger lane has no switch, so the trough ejects directly to the playfield
+  as described in the MPF docs for plunger lanes without a switch.
+
+## Serial terminal access
+
+The `dialout` group above also covers terminal emulators such as CoolTerm.
+Some guides add the `tty` group as well; it is not required for MPF.
