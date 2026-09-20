@@ -10,13 +10,12 @@ Godot Media Controller (GMC) and FAST Pinball Neuron hardware.
 | MPF | 0.80.x | Requires Python 3.10 to 3.14 |
 | GMC addon | 1.0.0 | Vendored in `gmc/addons/mpf-gmc`. Requires Godot 4.5 or newer |
 | Godot | 4.7.x stable | Download from godotengine.org, not the distro package |
-| FAST hardware | Neuron, FP-EXP-2000, FP-CAB-0001, FP-I/O-1616, FP-I/O-3208 | Supported by mainline MPF. No FAST fork needed |
+| FAST hardware | Neuron, FP-EXP-2000, FP-CAB-0001, FP-I/O-1616, FP-I/O-3208 | Supported by mainline MPF. No FAST fork needed. FAST's own MPF docs and starter configs are at https://fastpinball.com/mpf/ |
 
 ## Layout
 
 - `config/` and `modes/` are the MPF machine folder (repo root is the machine path).
 - `gmc/` is the Godot project. Slides live in `gmc/slides/<name>/<name>.tscn`.
-- `misc/fast-mpf-starter-configs/` is a vendored copy of FAST's hardware test configs.
 
 ## Machine PC: Ubuntu 24.04 LTS
 
@@ -80,16 +79,6 @@ FAST numbers. They are commented out in `config/config.yaml` and marked
 - The trough runs on seven switches (trough 1 opto and jam opto are not fitted).
 - The plunger lane has no switch, so the trough ejects directly to the playfield
   as described in the MPF docs for plunger lanes without a switch.
-
-## FAST hardware tests
-
-`misc/fast-mpf-starter-configs/hardware-tests/` contains FAST's LED cycling
-test configs. Set `port:` values or leave `auto`, then from that folder:
-
-    mpf -btc neuron
-
-Note: the vendored FAST README says a FAST fork of MPF is required. That is
-out of date. Mainline MPF 0.57 and newer supports the Neuron.
 
 ## Serial terminal access
 
