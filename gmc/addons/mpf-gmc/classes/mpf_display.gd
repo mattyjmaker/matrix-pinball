@@ -4,6 +4,8 @@ extends MPFSceneBase
 
 ## A container for slides and widgets. Each display is tracked separately and maintains its own stack of slides.
 
+signal slide_changed(active_slide: MPFSlide)
+
 ## If checked, slides played without a display target will be shown on this display.
 @export var is_default: bool = false
 ## The scene to render on this display during startup
@@ -86,14 +88,14 @@ func action_queue(action: String, slide_name: String, settings: Dictionary, c: S
 	if self._queue.size() == 1 or action == "queue_immediate":
 		return self._process_queue()
 
-func update_stack(kwargs: Dictionary) -> void:
+func update_stack(kwargs: Dictionary = {}) -> void:
 	self._update_stack(kwargs)
 
 func action_remove(slide: Node, kwargs: Dictionary = {}) -> void:
 	self._slide_stack.erase(slide)
 	self._update_stack(kwargs)
 
-func get_slide(slide_name) -> Node:
+func get_slide(slide_name=null) -> Node:
 	if not slide_name:
 		return self._current_slide
 	elif slide_name == "_overlay":
@@ -137,16 +139,11 @@ func _update_stack(kwargs: Dictionary = {}) -> void:
 			self._current_slide = null
 		return
 
-	var new_slide: MPFSlide = self._slide_stack[-1]
+	var new_slide: MPFSlide = self._find_active_slide()
 	var old_slide: MPFSlide = self._current_slide
 	if new_slide != old_slide:
-		new_slide.on_active()
-		if old_slide:
-			var is_removed: bool = self._slide_stack.find(old_slide) == -1
-			MPF.server.send_event_with_args("slide_%s_inactive" % old_slide.key,
-				{"is_removing": is_removed})
-		MPF.server.send_event_with_args("slide_%s_active" % new_slide.key, kwargs)
-		self._current_slide = new_slide
+		if new_slide and not new_slide.mask_from_active:
+			self._make_slide_active(new_slide, old_slide, kwargs)
 		# If the old slide is removed, check for animations
 		if old_slide and old_slide not in self._slide_stack:
 			# Store the old slide key in case its removed
@@ -161,6 +158,28 @@ func _update_stack(kwargs: Dictionary = {}) -> void:
 			if is_instance_valid(old_slide):
 				await old_slide.remove(old_slide.priority >= new_slide.priority)
 			MPF.server.send_event("slide_%s_removed" % old_slide_key)
+
+func _find_active_slide():
+	var top_slide: MPFSlide = self._slide_stack[-1]
+	if not top_slide.mask_from_active:
+		return top_slide
+	for i in range(1, len(self._slide_stack)):
+		top_slide = self._slide_stack[-1 - i]
+		if not top_slide.mask_from_active:
+			return top_slide
+
+func _make_slide_active(new_slide: MPFSlide, old_slide: MPFSlide, kwargs: Dictionary) -> void:
+	new_slide.on_active()
+	self.slide_changed.emit(new_slide)
+	if old_slide:
+		MPF.server.send_event_with_args("slide_%s_inactive" % old_slide.key,
+			{"is_removing": old_slide not in self._slide_stack})
+
+	# Copy the original kwargs and remove 'name' before sending active event
+	var evt_kwargs = kwargs.duplicate()
+	evt_kwargs.erase("name")
+	MPF.server.send_event_with_args("slide_%s_active" % new_slide.key, evt_kwargs)
+	self._current_slide = new_slide
 
 func _manage_queue(action: String) -> void:
 	if action == "clear":
@@ -204,9 +223,8 @@ func _on_clear(context_name: String) -> void:
 func _build_slide_container(cname: String) -> Control:
 	var container := Control.new()
 	container.name = cname
-	container.set_anchors_preset(PRESET_FULL_RECT)
-	container.size_flags_horizontal = SIZE_EXPAND
-	container.size_flags_vertical = SIZE_EXPAND
+	# Set the container to fill the size of the display
+	container.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	return container
 
 func _get_overlay_slide() -> MPFSlide:
@@ -215,6 +233,14 @@ func _get_overlay_slide() -> MPFSlide:
 	var overlay_container: Control = self._build_slide_container("%s_overlay" % self.name)
 	self._overlay_slide = MPFSlide.new()
 	self._overlay_slide.name = "%s_overlay_slide" % self.name
+	# The overlay slide should also be full rect
+	self._overlay_slide.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	# Set a z-index of the overlay slide. Not only is the overlay on top of the
+	# stack, it also has a z-index to appear over other slides in the stack that
+	# may have z-indexes (e.g. UI slides that are kept "below" the active slide
+	# and use z-index to stay on top). The max value is 4096, so custom slides
+	# can explicitly set themselves above the overlay if desired.
+	self._overlay_slide.z_index = 4000
 	overlay_container.add_child(self._overlay_slide)
 	self.add_child(overlay_container)
 	return self._overlay_slide
@@ -223,7 +249,6 @@ func _register_display_in_window() -> void:
 	var window: MPFWindow = MPF.util.find_parent_window(self)
 	if window:
 		window.register_display(self)
-
 
 func _render_preview() -> void:
 	var preview_colors := ["ff002e", "004eff", "ff7d00", "00ff9a", "9900ff", "ffc500"]

@@ -1,2 +1,3 @@
 logs/*
 gmc/.godot
+*.tmp

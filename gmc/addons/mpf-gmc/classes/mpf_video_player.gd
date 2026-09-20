@@ -119,3 +119,4 @@ func _get_parent():
 	if not parent:
 		printerr("No parent slide or widget found?")
 		return
+

@@ -1,3 +1,5 @@
+> **Note (matrix-pinball):** this file is a vendored copy of FAST's starter-config README. The statement below that a FAST fork of MPF is required is out of date. Mainline MPF 0.57 and newer supports the Neuron; install `mpf` from PyPI as described in the root README.
+
 # FAST MPF Starter Configs
 
 This repo contains starter configuration files for MPF you can use to test your MPF install with FAST hardware and/or to get started with your own FAST MPF config.
