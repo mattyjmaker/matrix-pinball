@@ -51,18 +51,25 @@ modes:
 
 
 switches:
-  ## Flipper Cabinet Buttons
-  # TODO(hardware): FP-CAB-0001 switch numbers unknown. Restore these three
-  # switches and the flippers: section once the cabinet inputs are confirmed.
-  # s_left_flipper:
-  #   number: TODO
-  #   tags: left_flipper
-  # s_right_flipper:
-  #   number: TODO
-  #   tags: right_flipper
-  # s_start:
-  #   number: TODO
-  #   tags: start
+  ## Cabinet Buttons (FP-CAB-0001, io_loop name "cab")
+  # The Cabinet I/O board is internally an FP-I/O-0024: 24 switch inputs
+  # (cab-0 .. cab-23) and 8 drivers (cab-0 .. cab-7).
+  # Header layout per FAST's recommended cabinet recipe:
+  #   coin door (J4)          cab-0  .. cab-7
+  #   left-side cabinet header  cab-8  .. cab-15
+  #   right-side cabinet header cab-16 .. cab-23
+  # TODO(hardware): these three numbers are the recommended defaults, not yet
+  # confirmed against this machine. After wiring, verify each one in the MPF
+  # service-mode switch test and correct the number if it differs.
+  s_left_flipper:
+    number: cab-8
+    tags: left_flipper
+  s_right_flipper:
+    number: cab-16
+    tags: right_flipper
+  s_start:
+    number: cab-10
+    tags: start
 
   ## Flipper EOS Switches
   s_left_flipper_eos: # End of Stroke
@@ -217,23 +224,24 @@ playfields:
 # virtual_platform_start_active_switches: s_trough1, s_trough2, s_trough3, s_trough4, s_trough5, s_trough6, s_trough7
 
 
-# TODO(hardware): flippers need the cabinet button switches above. Restore
-# together with s_left_flipper and s_right_flipper.
-# flippers:
-#   left_flipper:
-#     main_coil: c_flipper_left_main
-#     hold_coil: c_flipper_left_hold
-#     activation_switch: s_left_flipper
-#     eos_switch: s_left_flipper_eos
-#     use_eos: true
-#     # enable_events: machine_reset_phase_3 # Allows the flippers to work before a ball is started
-#   right_flipper:
-#     main_coil: c_flipper_right_main
-#     hold_coil: c_flipper_right_hold
-#     activation_switch: s_right_flipper
-#     eos_switch: s_right_flipper_eos
-#     use_eos: true
-#     # enable_events: machine_reset_phase_3 # Allows the flippers to work before a ball is started
+flippers:
+  left_flipper:
+    main_coil: c_flipper_left_main
+    hold_coil: c_flipper_left_hold
+    activation_switch: s_left_flipper
+    eos_switch: s_left_flipper_eos
+    use_eos: true
+    # enable_events defaults to ball_started and disable_events to
+    # ball_will_end, service_mode_entered. Uncomment the line below to let the
+    # flippers work outside a game (useful while testing the cabinet wiring).
+    # enable_events: machine_reset_phase_3
+  right_flipper:
+    main_coil: c_flipper_right_main
+    hold_coil: c_flipper_right_hold
+    activation_switch: s_right_flipper
+    eos_switch: s_right_flipper_eos
+    use_eos: true
+    # enable_events: machine_reset_phase_3
 
 ball_devices:
   bd_trough:

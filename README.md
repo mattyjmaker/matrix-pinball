@@ -76,10 +76,36 @@ Several switches and devices are not yet installed or do not have confirmed
 FAST numbers. They are commented out in `config/config.yaml` and marked
 `TODO(hardware)`. Until restored:
 
-- No flipper or start buttons are configured, so the `flippers:` section is off.
 - The trough runs on seven switches (trough 1 opto and jam opto are not fitted).
 - The plunger lane has no switch, so the trough ejects directly to the playfield
   as described in the MPF docs for plunger lanes without a switch.
+
+### Cabinet I/O board (FP-CAB-0001)
+
+`s_left_flipper`, `s_right_flipper`, `s_start` and the `flippers:` section are
+now configured against the `cab` board, so the side flipper buttons and the
+start button work once the board is wired. The board is internally an
+`FP-I/O-0024`: 24 switch inputs (`cab-0` to `cab-23`) and 8 drivers
+(`cab-0` to `cab-7`). The numbers in the config follow FAST's recommended
+cabinet recipe and are **not yet confirmed on this machine**:
+
+| Device | Number | Header |
+| --- | --- | --- |
+| `s_left_flipper` | `cab-8` | left-side cabinet header (`cab-8` to `cab-15`) |
+| `s_start` | `cab-10` | left-side cabinet header |
+| `s_right_flipper` | `cab-16` | right-side cabinet header (`cab-16` to `cab-23`) |
+
+MPF only range-checks these against the 24 inputs the board reports, so a
+wrong-but-in-range number will not raise an error. Confirm each one in the
+service-mode switch test after wiring and correct the config if it differs.
+
+Two things must be right before any `cab-…` number resolves at all:
+
+1. The Cabinet I/O board's NET cable has to be in the I/O loop.
+2. `io_loop:` in `config/config.yaml` must list every board with `order:`
+   values matching the real daisy-chain out of the Neuron. It currently
+   declares three boards but four are installed (the second `FP-I/O-1616` is
+   missing). Run `mpf hardware scan` to get the true order.
 
 ## Serial terminal access
 
