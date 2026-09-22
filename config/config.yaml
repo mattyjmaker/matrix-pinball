@@ -46,6 +46,18 @@ fast:
           - port: 1
             model: FP-PWR-0007
 
+machine:
+  # TESTING: running the machine with a single ball. Raise this to the real
+  # ball count when the rules need multiball, and raise the trough fill in
+  # virtual_platform_start_active_switches below to match. The trough is the
+  # 8-ball PBL-100-0016-00, so 8 is the physical ceiling (7 until the trough 1
+  # opto is fitted). balls_installed drives attract-mode ball search: MPF
+  # searches when 0 < balls known < balls_installed, so a wrong value here
+  # either never searches or searches constantly.
+  balls_installed: 1
+  # min_balls is left at the MPF default of 1: the number that must be
+  # accounted for before a game will start.
+
 modes:
   - base
 
@@ -221,17 +233,23 @@ playfields:
     # the source device (MPF docs: mechs/plungers/mechanical_no_switch).
     default_source_device: bd_trough
 
-# Fills the trough on the virtual and smart_virtual platforms so `mpf -x/-X`
-# starts with a full trough and the start button works straight away. Ignored
-# on real hardware.
+# Seeds the trough on the virtual and smart_virtual platforms so `mpf -x/-X`
+# starts with balls already in it and the start button works straight away.
+# Ignored on real hardware.
 #
-# This must list exactly the switches defined above: MPF hard-errors
-# (CFE-Smart_Virtual_Platform-1) on any name it cannot find. It also sets the
-# raw hardware state, which MPF then XORs with the switch's invert flag, so an
-# NC switch listed here reads as INACTIVE. When s_trough1 and s_trough_jam are
-# fitted, add s_trough1 here only if it is redefined as NO; leave s_trough_jam
-# out either way, since a jam is not the normal resting state.
-virtual_platform_start_active_switches: s_trough2, s_trough3, s_trough4, s_trough5, s_trough6, s_trough7, s_trough8
+# TESTING: one switch = one ball, matching machine: balls_installed: 1 above.
+# Keep the two in step. For a full trough, list all seven currently defined
+# switches: s_trough2, s_trough3, s_trough4, s_trough5, s_trough6, s_trough7,
+# s_trough8. MPF counts active ball_switches and ignores their position, so
+# which one is listed does not matter.
+#
+# Every name must resolve to a switch defined above or MPF hard-errors with
+# CFE-Smart_Virtual_Platform-1. The key also sets raw hardware state, which MPF
+# then XORs with the switch's invert flag, so an NC switch listed here reads as
+# INACTIVE. When s_trough1 and s_trough_jam are fitted, add s_trough1 here only
+# if it is redefined as NO; leave s_trough_jam out either way, since a jam is
+# not the normal resting state.
+virtual_platform_start_active_switches: s_trough2
 
 
 flippers:

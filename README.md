@@ -70,11 +70,11 @@ Godot can also spawn MPF itself. Configure this in the Godot editor's MPF tab
 (it writes an `[mpf]` section to `gmc/gmc.cfg`). See the MPF docs page
 "Launching the MPF game with Godot".
 
-On the virtual platforms the trough starts full, via
+On the virtual platforms the trough is seeded via
 `virtual_platform_start_active_switches:` in `config/config.yaml`, so the start
-button works as soon as the machine reaches attract. That key lists the seven
-trough switches that are currently defined and must be kept in step with them:
-MPF raises `CFE-Smart_Virtual_Platform-1` on any switch name it cannot find.
+button works as soon as the machine reaches attract. One listed switch is one
+ball. MPF raises `CFE-Smart_Virtual_Platform-1` on any switch name it cannot
+find, so the list must only name switches that are currently defined.
 
 ## Hardware test state
 
@@ -83,6 +83,10 @@ FAST numbers. They are commented out in `config/config.yaml` and marked
 `TODO(hardware)`. Until restored:
 
 - The trough runs on seven switches (trough 1 opto and jam opto are not fitted).
+- **The machine is set to a single ball while the rules are built out.**
+  `machine: balls_installed: 1` and the virtual trough is seeded with one ball.
+  Raise both together when multiball work starts. The trough is the 8-ball
+  PBL-100-0016-00, so 8 is the ceiling, 7 until the trough 1 opto is fitted.
 - The plunger lane has no switch, so the trough ejects directly to the playfield
   as described in the MPF docs for plunger lanes without a switch.
 
