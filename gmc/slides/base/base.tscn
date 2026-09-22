@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dxmhitrmhqv4s"]
+[gd_scene load_steps=19 format=3 uid="uid://dxmhitrmhqv4s"]
 
 [ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1_slide"]
 [ext_resource type="Shader" path="res://assets/shaders/matrix_rain.gdshader" id="2_rain"]
@@ -10,6 +10,12 @@
 [ext_resource type="Script" path="res://slides/base/stage.gd" id="8_stage"]
 [ext_resource type="Script" path="res://slides/base/roster_entry.gd" id="9_roster"]
 [ext_resource type="Script" path="res://slides/base/power_stations.gd" id="10_locks"]
+[ext_resource type="Script" path="res://slides/base/trace_readout.gd" id="11_trace"]
+[ext_resource type="FontFile" uid="uid://x50uvbht14xy" path="res://assets/fonts/JackInput.ttf" id="12_mono"]
+
+[sub_resource type="FontVariation" id="FontVariation_readout"]
+base_font = ExtResource("12_mono")
+spacing_glyph = 14
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rain"]
 shader = ExtResource("2_rain")
@@ -130,6 +136,42 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0)
+
+[node name="Readout" type="VBoxContainer" parent="Stage"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -196.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Heading" type="Label" parent="Stage/Readout"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.6)
+theme_override_font_sizes/font_size = 30
+text = "TRACE PROGRAM RUNNING"
+horizontal_alignment = 1
+
+[node name="Trace" type="RichTextLabel" parent="Stage/Readout"]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_fonts/normal_font = SubResource("FontVariation_readout")
+theme_override_font_sizes/normal_font_size = 64
+bbcode_enabled = true
+text = "[center]312-555-0690[/center]"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+mouse_filter = 2
+script = ExtResource("11_trace")
+target = "312-555-0690"
 
 [node name="Status" type="VBoxContainer" parent="."]
 layout_mode = 1

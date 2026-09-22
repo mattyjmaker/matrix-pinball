@@ -174,6 +174,21 @@ follows; until then each element shows its authored placeholder.
 | `balls_locked` | int | How many power station cells are lit |
 | `freed_trinity`, `freed_tank`, … | bool | Lights that name in the FREED roster |
 
+#### The trace readout
+
+`slides/base/trace_readout.gd` is the number-lock from the films: every position
+churns through digits until it locks, one at a time, left to right, locked
+positions bright and unlocked ones dim. Separators in the target string are
+treated as structure and lock immediately rather than churning.
+
+It is self-driving, so it loops on the idle stage with no rules behind it. Once
+modes exist, call `set_target("...")` to make a trace spell something meaningful
+and connect `trace_locked` to fire an award when the last position lands. Set
+`loop` false for a one-shot trace that stays locked.
+
+The signal is `trace_locked` rather than `finished` because `RichTextLabel`
+already defines a `finished` signal, and redefining it is a parse error.
+
 #### Effect shaders
 
 - `signal_trace.gdshader` is the idle stage: a sonar-style sweep with range
