@@ -36,9 +36,12 @@ open the FAST serial ports.
     python3 -m venv ~/.mpfenv/matrix
     source ~/.mpfenv/matrix/bin/activate
     pip install --upgrade pip
-    pip install mpf
+    pip install "mpf==0.80.*"
 
-Update later with `pip install --upgrade mpf`.
+Pin the minor version. MPF and GMC must match, and this repo's vendored GMC is
+1.0.0, which pairs with MPF 0.80.x. Update later with
+`pip install --upgrade "mpf==0.80.*"`. Do not use `--pre`, which pulls 0.81 dev
+builds.
 
 Clone with Git LFS so fonts, images and video assets are fetched:
 
@@ -60,15 +63,50 @@ Manual (development):
 
     source ~/.mpfenv/matrix/bin/activate
     cd <repo root>
-    mpf -t            # real hardware
-    mpf -xt           # virtual platform, no hardware
+    mpf               # real FAST hardware
+    mpf -X            # smart_virtual, no hardware
+    mpf -b -X         # smart_virtual, no hardware, no Godot
 
 Then press Play in the Godot editor with `gmc/project.godot` open. Godot will show
 "Connected to MPF" once the BCP link is up.
 
-Godot can also spawn MPF itself. Configure this in the Godot editor's MPF tab
-(it writes an `[mpf]` section to `gmc/gmc.cfg`). See the MPF docs page
-"Launching the MPF game with Godot".
+`mpf` runs the `game` command whenever the first argument is not a subcommand
+name, so `mpf` and `mpf game` are the same thing.
+
+The platform comes from `hardware: platform:` in `config/config.yaml`, which is
+`fast`. The command line only overrides it:
+
+| Flag | Effect |
+| --- | --- |
+| `-X` | Force the `smart_virtual` platform. Ball movement through devices is simulated. Use this one for development |
+| `-x` | Force the plain `virtual` platform. Devices respond, ball movement is not simulated |
+| `-b` | Do not attempt a BCP connection, so MPF runs without Godot |
+| `-t` | Turn **off** the ASCII text UI. It has nothing to do with hardware selection |
+| `-v` / `-V` | Verbose logging to the log file / to the console |
+| `-f` | Load all assets at startup, which surfaces broken asset paths early |
+| `-a` | Ignore the config cache and reload from the config files |
+
+### Starting both at once
+
+    mpf both -g gmc -X
+
+**`-g gmc` is required.** `mpf both` defaults the Godot project path to the
+machine path, which is the repo root, while `project.godot` lives in `gmc/`.
+Without it the command aborts with `FileNotFoundError: Unable to find GMC
+project.godot file`. Use `-G <path>` as well if `godot` is not on your PATH.
+
+Beware that two different files are called `gmc.cfg`:
+
+- `gmc/gmc.cfg` is the Godot project's own, `res://gmc.cfg`. It holds
+  `[keyboard]`, `[sound_system]` and the `[mpf]` section.
+- `mpf both` reads a `gmc.cfg` at the **machine path**, the repo root, for its
+  own `[cli]` defaults. The repo has no such file, which is why `-g` is needed.
+  Adding one containing `[cli]` and `gmc_project_path = "gmc"` would make plain
+  `mpf both -X` work.
+
+Godot can also spawn MPF itself. Configure this in the Godot editor's MPF tab,
+which writes `spawn_mpf` and `executable_path` into the `[mpf]` section of
+`gmc/gmc.cfg`. See the MPF docs page "Launching the MPF game with Godot".
 
 On the virtual platforms the trough is seeded via
 `virtual_platform_start_active_switches:` in `config/config.yaml`, so the start
