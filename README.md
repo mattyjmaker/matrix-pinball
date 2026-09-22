@@ -8,8 +8,8 @@ Godot Media Controller (GMC) and FAST Pinball Neuron hardware.
 | Component | Version | Notes |
 | --- | --- | --- |
 | MPF | 0.80.x | Requires Python 3.10 to 3.14 |
-| GMC addon | 1.0.0 | Vendored in `gmc/addons/mpf-gmc`. Requires Godot 4.5 or newer |
-| Godot | 4.6 or newer (4.7.x is current stable) | Download from godotengine.org, not the distro package |
+| GMC addon | 1.0.0 | Vendored in `gmc/addons/mpf-gmc`. Latest release; verified running on Godot 4.7.2 |
+| Godot | 4.7.2 (latest stable) | Download from godotengine.org, not the distro package. The project is tagged `4.7`. |
 | FAST hardware | Neuron, FP-EXP-2000, FP-CAB-0001, FP-I/O-1616, FP-I/O-3208 | Supported by mainline MPF. No FAST fork needed. FAST's own MPF docs and starter configs are at https://fastpinball.com/mpf/ |
 
 ## Layout
@@ -50,7 +50,8 @@ Clone with Git LFS so fonts, images and video assets are fetched:
 
 ## Godot and GMC
 
-1. Install Godot 4.6 or newer from https://godotengine.org. The project is currently tagged for 4.6.
+1. Install Godot 4.7.2 from https://godotengine.org. The project is tagged `4.7`, so an older
+   editor will warn that the project was made with a newer version.
 2. Open `gmc/project.godot`. The first open in a newer Godot rewrites the import cache
    and UID files. Let it finish, then commit any changed `.import` or `.uid` files.
 3. The GMC addon is already vendored and enabled. To upgrade it, replace the whole

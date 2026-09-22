@@ -53,7 +53,7 @@ sub-loom uses a different scheme.
 | Python | 3.14.4 (system) | `/usr/bin/python3` |
 | MPF | 0.80.0 (pinned) | venv `~/.mpfenv/matrix` |
 | MPF Monitor | 1.0.0.dev1 (+ PyQt6 6.11) | same venv |
-| Godot editor | 4.6.3-stable | `~/.local/opt/godot/`, symlinked as `~/.local/bin/godot` |
+| Godot editor | 4.6.3-stable installed; **project now targets 4.7.2** | `~/.local/opt/godot/`, symlinked as `~/.local/bin/godot` |
 | Godot export templates | 4.6.3 (Linux x86_64 only) | `~/.local/share/godot/export_templates/4.6.3.stable/` |
 | GMC addon | 1.0.0 | `~/matrix-pinball/gmc/addons/mpf-gmc/` (inside the project) |
 | Game project | `mattyjmaker/matrix-pinball` | `~/matrix-pinball` |
@@ -116,6 +116,14 @@ Logs go to `~/matrix-pinball/logs/`.
       drivers (`cab-0` to `cab-7`) are still unconfigured, so no knocker or
       button lamps yet.
 - [ ] Check whether the Cabinet I/O's **NET cable** is plugged into the I/O loop. If it isn't, it won't appear in `mpf hardware scan` and the config's `order: 1` for `cab` is wrong — every other board's order shifts.
+- [ ] **Install Godot 4.7.2 on this machine.** `project.godot` is now tagged
+      `4.7`, but the editor here is still 4.6.3, which will warn that the
+      project was made with a newer version. Download 4.7.2 from
+      godotengine.org, replace `~/.local/opt/godot/`, keep the
+      `~/.local/bin/godot` symlink pointing at it, and fetch the matching
+      4.7.2 export templates before building a production export.
+      Godot 4.7.2 was verified against this project in a container: the import
+      is clean, GMC 1.0.0 loads, and all four slides render unchanged.
 - [ ] No LED expansion boards are wired or configured yet (FP-EXP-0081 and FP-EXP-0071 are owned). Needed before any playfield RGB inserts or servos work.
 - [ ] Decide the plunger behaviour. `bd_plunger` has `eject_coil: c_auto_plunge` plus `mechanical_eject: true` but no `player_controlled_eject_event`, so a ball in the lane waits for a manual plunge. `eject_timeouts: 15s` is long; the docs suggest 3–5 s.
 - [ ] Modes `welcome`, `plunge_ready` and `skillshot` exist but aren't listed under `modes:` and have no start events. `skillshot.yaml` is empty.
