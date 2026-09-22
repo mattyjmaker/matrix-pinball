@@ -88,21 +88,28 @@ The platform comes from `hardware: platform:` in `config/config.yaml`, which is
 
 ### Starting both at once
 
-    mpf both -g gmc -X
+    mpf both -X
 
-**`-g gmc` is required.** `mpf both` defaults the Godot project path to the
-machine path, which is the repo root, while `project.godot` lives in `gmc/`.
-Without it the command aborts with `FileNotFoundError: Unable to find GMC
-project.godot file`. Use `-G <path>` as well if `godot` is not on your PATH.
+Add `-G <path>` if the Godot binary is not on your PATH as `godot`.
 
-Beware that two different files are called `gmc.cfg`:
+Beware that two different files are called `gmc.cfg`, read by different
+programs:
 
-- `gmc/gmc.cfg` is the Godot project's own, `res://gmc.cfg`. It holds
-  `[keyboard]`, `[sound_system]` and the `[mpf]` section.
-- `mpf both` reads a `gmc.cfg` at the **machine path**, the repo root, for its
-  own `[cli]` defaults. The repo has no such file, which is why `-g` is needed.
-  Adding one containing `[cli]` and `gmc_project_path = "gmc"` would make plain
-  `mpf both -X` work.
+| File | Read by | Holds |
+| --- | --- | --- |
+| `gmc/gmc.cfg` | Godot, as `res://gmc.cfg` | `[keyboard]`, `[sound_system]`, `[mpf]` |
+| `gmc.cfg` (repo root) | the `mpf both` CLI | `[cli]` only |
+
+`mpf both` defaults the Godot project path to the machine path, which is the
+repo root, while `project.godot` lives in `gmc/`. The root `gmc.cfg` sets
+`gmc_project_path = "gmc"` to correct that. Delete it and `mpf both` aborts with
+`FileNotFoundError: Unable to find GMC project.godot file` unless you pass
+`-g gmc` by hand.
+
+Note that the Godot editor's MPF tab rewrites `gmc/gmc.cfg` in full when it
+saves, and `ConfigFile.save()` does not preserve comments, so the comments in
+that file are lost on the first editor save. The root `gmc.cfg` is not touched
+by Godot.
 
 Godot can also spawn MPF itself. Configure this in the Godot editor's MPF tab,
 which writes `spawn_mpf` and `executable_path` into the `[mpf]` section of
