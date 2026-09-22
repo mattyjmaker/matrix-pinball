@@ -70,6 +70,12 @@ Godot can also spawn MPF itself. Configure this in the Godot editor's MPF tab
 (it writes an `[mpf]` section to `gmc/gmc.cfg`). See the MPF docs page
 "Launching the MPF game with Godot".
 
+On the virtual platforms the trough starts full, via
+`virtual_platform_start_active_switches:` in `config/config.yaml`, so the start
+button works as soon as the machine reaches attract. That key lists the seven
+trough switches that are currently defined and must be kept in step with them:
+MPF raises `CFE-Smart_Virtual_Platform-1` on any switch name it cannot find.
+
 ## Hardware test state
 
 Several switches and devices are not yet installed or do not have confirmed
