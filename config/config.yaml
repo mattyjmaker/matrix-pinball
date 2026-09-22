@@ -71,6 +71,8 @@ modes:
 
 switches:
   ## Cabinet Buttons (FP-CAB-0001, io_loop name "cab")
+  # Wire colours: orange out of the board input, purple on the return. See
+  # docs/08-this-machine.md, "Wiring colour convention".
   # The Cabinet I/O board is internally an FP-I/O-0024: 24 switch inputs
   # (cab-0 .. cab-23) and 8 drivers (cab-0 .. cab-7).
   # Header layout per FAST's recommended cabinet recipe:

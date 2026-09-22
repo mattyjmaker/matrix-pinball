@@ -26,6 +26,26 @@ What this means for the MPF side:
 - The upper playfield's switches and its flipper driver aren't wired, so the ~6-input shortfall in the capacity estimate isn't yet real — but it will be once the upper playfield lands. Count it in before deciding whether another 1616 is needed.
 - Unfinished wiring is why the placeholder switch numbers below can't all be replaced yet. Note the split: the flipper **coils** and the lower third are on the 3208 and wired, so those can be numbered now — while `s_left_flipper`, `s_right_flipper` and `s_start` are `cab-…` **switches** on the Cabinet I/O. Those three now carry FAST's recommended numbers (`cab-8`, `cab-16`, `cab-10`) rather than placeholders, but they stay unconfirmed until the cabinet is wired and switch-tested.
 
+### Wiring colour convention (user, 2026-09-22)
+
+This machine's own convention. Recorded as user-provided; it has not been
+cross-checked against FAST's published wiring guides, which are at
+fastpinball.com/wiring/neuron.
+
+| Circuit | Leg | Colour |
+| --- | --- | --- |
+| Switches (cabinet buttons, playfield switches) | Feed out of the board input | Orange |
+| Switches | Return back to the board | Purple |
+| Solenoids, coils and similar drivers | Negative | Black |
+| Solenoids, coils and similar drivers | Positive run | Blue |
+
+So a cabinet flipper button is orange out to the button and purple back, and a
+flipper coil is blue on the positive run and black on the negative.
+
+Not yet recorded, and worth adding here as they are decided: LED and lamp
+wiring, opto power and signal, ground and earth bonding, and whether any
+sub-loom uses a different scheme.
+
 ## Installed software
 
 | What | Version | Location |
