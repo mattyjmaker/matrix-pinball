@@ -1,124 +1,206 @@
-[gd_scene load_steps=5 format=3 uid="uid://dxmhitrmhqv4s"]
+[gd_scene load_steps=9 format=3 uid="uid://dxmhitrmhqv4s"]
 
-[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1_syi61"]
-[ext_resource type="Texture2D" uid="uid://6js05uykyxm8" path="res://slides/attract/assets/matrix-wallpaper-placeholder.png" id="2_sv4i3"]
-[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_variable.gd" id="3_b3l8b"]
-[ext_resource type="Theme" uid="uid://ccb1am66a2yg0" path="res://assets/themes/ui-code.tres" id="4_topqf"]
+[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1_slide"]
+[ext_resource type="Shader" path="res://assets/shaders/matrix_rain.gdshader" id="2_rain"]
+[ext_resource type="Shader" path="res://assets/shaders/phosphor.gdshader" id="3_phos"]
+[ext_resource type="Theme" uid="uid://ccb1am66a2yg0" path="res://assets/themes/ui-code.tres" id="4_code"]
+[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_variable.gd" id="5_var"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rain"]
+shader = ExtResource("2_rain")
+shader_parameter/columns = 72.0
+shader_parameter/rows = 36.0
+shader_parameter/fall_speed = 0.13
+shader_parameter/trail_length = 0.35
+shader_parameter/density = 0.6
+shader_parameter/glyph_rate = 5.0
+shader_parameter/flicker = 0.2
+shader_parameter/intensity = 0.45
+shader_parameter/head_color = Color(0.6, 1, 0.7, 1)
+shader_parameter/trail_color = Color(0.12, 0.7, 0.24, 1)
+shader_parameter/background_color = Color(0.002, 0.014, 0.007, 1)
+shader_parameter/background_alpha = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_phos"]
+shader = ExtResource("3_phos")
+shader_parameter/scanline_count = 720.0
+shader_parameter/scanline_depth = 0.12
+shader_parameter/vignette_strength = 0.85
+shader_parameter/vignette_softness = 0.6
+shader_parameter/tint = Color(0, 0, 0, 1)
 
 [node name="Base" type="Control"]
 layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_slide")
+
+[node name="Rain" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_rain")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Scrim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="Status" type="VBoxContainer" parent="."]
+layout_mode = 1
 anchors_preset = 0
-script = ExtResource("1_syi61")
-
-[node name="background" type="Sprite2D" parent="."]
-position = Vector2(1284, 727.5)
-scale = Vector2(3.21, 2.91)
-texture = ExtResource("2_sv4i3")
-
-[node name="score" type="Label" parent="."]
-layout_mode = 0
-offset_top = 849.0
-offset_right = 2568.0
-offset_bottom = 1054.0
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 150
-text = "1,000,000"
-horizontal_alignment = 1
-script = ExtResource("3_b3l8b")
-variable_name = "score"
-comma_separate = true
-min_digits = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 0
 offset_left = 96.0
-offset_top = 70.0
-offset_right = 455.0
-offset_bottom = 110.0
+offset_top = 64.0
+offset_right = 900.0
+offset_bottom = 220.0
+theme_override_constants/separation = 8
 
-[node name="player" type="Label" parent="HBoxContainer"]
+[node name="player" type="Label" parent="Status"]
 layout_mode = 2
-theme = ExtResource("4_topqf")
-theme_override_font_sizes/font_size = 40
-text = "Player 1."
-script = ExtResource("3_b3l8b")
+theme = ExtResource("4_code")
+theme_override_colors/font_color = Color(0.55, 1, 0.65, 0.95)
+theme_override_font_sizes/font_size = 54
+text = "PLAYER 1"
+script = ExtResource("5_var")
 variable_name = "player"
-template_string = "Player %s."
+template_string = "PLAYER %s"
 min_players = 2
 
-[node name="ball" type="Label" parent="HBoxContainer"]
+[node name="ball" type="Label" parent="Status"]
 layout_mode = 2
-theme = ExtResource("4_topqf")
-theme_override_font_sizes/font_size = 40
-text = "Ball 1."
-script = ExtResource("3_b3l8b")
+theme = ExtResource("4_code")
+theme_override_colors/font_color = Color(0.4, 0.95, 0.5, 0.8)
+theme_override_font_sizes/font_size = 54
+text = "BALL 1"
+script = ExtResource("5_var")
 variable_name = "ball"
-template_string = "Ball %s."
+template_string = "BALL %s"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="PlayerScores" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = 2086.0
-offset_top = 40.0
-offset_right = 2530.0
-offset_bottom = 279.0
+offset_left = -760.0
+offset_top = 64.0
+offset_right = -96.0
+offset_bottom = 300.0
 grow_horizontal = 0
+theme_override_constants/separation = 6
 
-[node name="player1score" type="Label" parent="VBoxContainer"]
+[node name="player1score" type="Label" parent="PlayerScores"]
 layout_mode = 2
-theme = ExtResource("4_topqf")
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 40
-text = "Player 1: 1,000,000"
-horizontal_alignment = 1
-script = ExtResource("3_b3l8b")
+theme = ExtResource("4_code")
+theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
+theme_override_font_sizes/font_size = 44
+text = "P1  1,000,000"
+horizontal_alignment = 2
+script = ExtResource("5_var")
 variable_type = 4
 variable_name = "score"
 comma_separate = true
 min_digits = 2
-template_string = "Player 1: %s"
+template_string = "P1  %s"
 min_players = 2
 
-[node name="player2score" type="Label" parent="VBoxContainer"]
+[node name="player2score" type="Label" parent="PlayerScores"]
 layout_mode = 2
-theme = ExtResource("4_topqf")
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 40
-text = "PLayer 2: 1,000,000"
-horizontal_alignment = 1
-script = ExtResource("3_b3l8b")
+theme = ExtResource("4_code")
+theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
+theme_override_font_sizes/font_size = 44
+text = "P2  1,000,000"
+horizontal_alignment = 2
+script = ExtResource("5_var")
+variable_type = 5
 variable_name = "score"
 comma_separate = true
 min_digits = 2
-template_string = "Player 2: %s"
+template_string = "P2  %s"
 min_players = 2
 
-[node name="player3score" type="Label" parent="VBoxContainer"]
+[node name="player3score" type="Label" parent="PlayerScores"]
 layout_mode = 2
-theme = ExtResource("4_topqf")
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 40
-text = "Player 3: 1,000,000"
-horizontal_alignment = 1
-script = ExtResource("3_b3l8b")
+theme = ExtResource("4_code")
+theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
+theme_override_font_sizes/font_size = 44
+text = "P3  1,000,000"
+horizontal_alignment = 2
+script = ExtResource("5_var")
+variable_type = 6
 variable_name = "score"
 comma_separate = true
 min_digits = 2
-template_string = "Player 3: %s"
+template_string = "P3  %s"
 min_players = 3
 
-[node name="player4score" type="Label" parent="VBoxContainer"]
+[node name="player4score" type="Label" parent="PlayerScores"]
 layout_mode = 2
-theme = ExtResource("4_topqf")
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 40
-text = "Player 4: 1,000,000"
-horizontal_alignment = 1
-script = ExtResource("3_b3l8b")
+theme = ExtResource("4_code")
+theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
+theme_override_font_sizes/font_size = 44
+text = "P4  1,000,000"
+horizontal_alignment = 2
+script = ExtResource("5_var")
+variable_type = 7
 variable_name = "score"
 comma_separate = true
 min_digits = 2
-template_string = "Player 4: %s"
-max_players = 4
+template_string = "P4  %s"
+min_players = 4
+
+[node name="ScoreBlock" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 96.0
+offset_top = -420.0
+offset_right = -96.0
+offset_bottom = -110.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 16
+
+[node name="Rule" type="ColorRect" parent="ScoreBlock"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.16, 0.9, 0.32, 0.35)
+
+[node name="score" type="Label" parent="ScoreBlock"]
+layout_mode = 2
+size_flags_vertical = 3
+theme = ExtResource("4_code")
+theme_override_colors/font_color = Color(0.82, 1, 0.86, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 1, 0.3, 0.35)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_constants/shadow_outline_size = 22
+theme_override_font_sizes/font_size = 190
+text = "1,000,000"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("5_var")
+variable_name = "score"
+comma_separate = true
+min_digits = 2
+
+[node name="Phosphor" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_phos")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

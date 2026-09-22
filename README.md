@@ -121,6 +121,44 @@ button works as soon as the machine reaches attract. One listed switch is one
 ball. MPF raises `CFE-Smart_Virtual_Platform-1` on any switch name it cannot
 find, so the list must only name switches that are currently defined.
 
+## Slides and the Matrix look
+
+Slides live in `gmc/slides/<name>/<name>.tscn` and are put on screen by
+`slide_player:` in the MPF config.
+
+| Slide | Shown on | Contents |
+| --- | --- | --- |
+| `attract` | `mode_attract_started` | Digital rain, MATRIX title, pulsing PRESS START |
+| `base` | `mode_base_started` | Gameplay HUD: player, ball, score, per-player scores |
+| `welcome` | `init_done` | Loading placeholder |
+| `plunge_ready` | `mode_plunge_ready_started` | "wake up player 1..." terminal line |
+
+Both Matrix screens share two shaders in `gmc/assets/shaders/`:
+
+- `matrix_rain.gdshader` draws the digital rain procedurally, as pseudo-glyphs
+  on a 5x7 dot matrix. Procedural rather than a video loop so it stays sharp at
+  any display size, costs no video decode during gameplay and needs no new LFS
+  assets. Every parameter is exposed, so `attract` runs it bright and fast while
+  `base` runs the same shader dimmed and slowed so it does not fight the HUD.
+- `phosphor.gdshader` adds CRT scanlines and a vignette as a dark overlay.
+
+`slides/attract/assets/matrixrain.ogv` is still in the repo but no longer used
+by the attract slide. Swap it back in by replacing the `Rain` ColorRect with a
+`VideoStreamPlayer` if you prefer the video.
+
+### Font notes
+
+- `Miltown1.ttf` is the display face, used for the MATRIX title. Its glyphs have
+  long horizontal arms that overlap their neighbours by design, so it needs a
+  `FontVariation` with `spacing_glyph` (the title uses 70). Widening the spacing
+  further does not stop the arms crossing; that is how the face is drawn.
+- **Miltown1's digits render as plain horizontal bars**, so it cannot be used for
+  scores or any number.
+- `Miltown2.ttf` is an overlay companion to Miltown1, not a standalone face. On
+  its own the letters sit on top of each other.
+- `JackInput.ttf`, via the `ui-code.tres` theme, is the monospace used for all
+  HUD text and every numeric value.
+
 ## Hardware test state
 
 Several switches and devices are not yet installed or do not have confirmed

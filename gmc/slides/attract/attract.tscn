@@ -1,25 +1,158 @@
-[gd_scene load_steps=5 format=3 uid="uid://beah3ghimt2j6"]
+[gd_scene load_steps=10 format=3 uid="uid://beah3ghimt2j6"]
 
-[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1_cw3x3"]
-[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_video_player.gd" id="2_5xfga"]
-[ext_resource type="VideoStream" path="res://slides/attract/assets/matrixrain.ogv" id="2_t60sw"]
-[ext_resource type="Texture2D" uid="uid://6js05uykyxm8" path="res://slides/attract/assets/matrix-wallpaper-placeholder.png" id="4_5pngr"]
+[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1_slide"]
+[ext_resource type="Shader" path="res://assets/shaders/matrix_rain.gdshader" id="2_rain"]
+[ext_resource type="Shader" path="res://assets/shaders/phosphor.gdshader" id="3_phos"]
+[ext_resource type="FontFile" uid="uid://c3bdhjx62d5d6" path="res://assets/fonts/Miltown1.ttf" id="4_title"]
+[ext_resource type="Theme" uid="uid://ccb1am66a2yg0" path="res://assets/themes/ui-code.tres" id="5_code"]
+[ext_resource type="Script" path="res://slides/attract/pulse.gd" id="6_pulse"]
+
+[sub_resource type="FontVariation" id="FontVariation_title"]
+base_font = ExtResource("4_title")
+spacing_glyph = 70
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rain"]
+shader = ExtResource("2_rain")
+shader_parameter/columns = 72.0
+shader_parameter/rows = 36.0
+shader_parameter/fall_speed = 0.22
+shader_parameter/trail_length = 0.6
+shader_parameter/density = 0.9
+shader_parameter/glyph_rate = 8.0
+shader_parameter/flicker = 0.25
+shader_parameter/intensity = 1.0
+shader_parameter/head_color = Color(0.85, 1, 0.9, 1)
+shader_parameter/trail_color = Color(0.16, 0.9, 0.32, 1)
+shader_parameter/background_color = Color(0.004, 0.024, 0.012, 1)
+shader_parameter/background_alpha = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_phos"]
+shader = ExtResource("3_phos")
+shader_parameter/scanline_count = 720.0
+shader_parameter/scanline_depth = 0.16
+shader_parameter/vignette_strength = 1.0
+shader_parameter/vignette_softness = 0.55
+shader_parameter/tint = Color(0, 0, 0, 1)
 
 [node name="Attract" type="Control"]
 layout_mode = 3
-anchors_preset = 0
-script = ExtResource("1_cw3x3")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_slide")
 
-[node name="MPFVideoPlayer" type="VideoStreamPlayer" parent="."]
-clip_contents = true
-layout_mode = 0
-offset_right = 1920.0
-offset_bottom = 1088.0
-stream = ExtResource("2_t60sw")
-autoplay = true
-loop = true
-script = ExtResource("2_5xfga")
+[node name="Rain" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_rain")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Matrix-wallpaper-placeholder" type="Sprite2D" parent="."]
-position = Vector2(805, 472)
-texture = ExtResource("4_5pngr")
+[node name="Scrim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.45)
+
+[node name="Centre" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+theme_override_constants/separation = 40
+
+[node name="Eyebrow" type="Label" parent="Centre"]
+layout_mode = 2
+theme = ExtResource("5_code")
+theme_override_colors/font_color = Color(0.4, 0.95, 0.5, 0.75)
+theme_override_font_sizes/font_size = 44
+text = "wake up..."
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="Centre"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 1, 0.78, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 1, 0.3, 0.45)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_constants/shadow_outline_size = 26
+theme_override_fonts/font = SubResource("FontVariation_title")
+theme_override_font_sizes/font_size = 200
+text = "MATRIX"
+horizontal_alignment = 1
+
+[node name="Rule" type="ColorRect" parent="Centre"]
+custom_minimum_size = Vector2(620, 3)
+layout_mode = 2
+size_flags_horizontal = 4
+color = Color(0.16, 0.9, 0.32, 0.55)
+
+[node name="Subtitle" type="Label" parent="Centre"]
+layout_mode = 2
+theme = ExtResource("5_code")
+theme_override_colors/font_color = Color(0.45, 1, 0.55, 0.8)
+theme_override_font_sizes/font_size = 46
+text = "there is no spoon"
+horizontal_alignment = 1
+
+[node name="PressStart" type="Label" parent="Centre"]
+layout_mode = 2
+theme = ExtResource("5_code")
+theme_override_colors/font_color = Color(0.85, 1, 0.88, 1)
+theme_override_font_sizes/font_size = 72
+text = "PRESS START"
+horizontal_alignment = 1
+script = ExtResource("6_pulse")
+min_alpha = 0.3
+
+[node name="Footer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 96.0
+offset_top = -190.0
+offset_right = -96.0
+offset_bottom = -110.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="FreePlay" type="Label" parent="Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("5_code")
+theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.9)
+theme_override_font_sizes/font_size = 40
+text = "FREE PLAY"
+vertical_alignment = 1
+
+[node name="Version" type="Label" parent="Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("5_code")
+theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.9)
+theme_override_font_sizes/font_size = 40
+text = "follow the white rabbit"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Phosphor" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_phos")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
