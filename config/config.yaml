@@ -6,6 +6,13 @@
 # known, are commented out below so MPF can start against real hardware.
 # Search for "TODO(hardware)" to find each one. When a device is wired and its
 # number is known, restore the block and update the number.
+#
+# Keyboard mappings for virtual testing live in the [keyboard] section of
+# gmc/gmc.cfg, not here: MPF 0.80 rejects a keyboard: section with
+# CFE-ConfigProcessor-3. Each TODO(hardware) block below names the mapping to
+# add when that switch is restored. Those reminders are kept here rather than
+# in gmc/gmc.cfg because the Godot editor's MPF tab rewrites that file in full
+# and ConfigFile.save() discards comments.
 # ---------------------------------------------------------------------------
 
 hardware:
@@ -115,8 +122,12 @@ switches:
     number: bottom32-26
 
   #Trough Switches (x8)
-  # TODO(hardware): s_trough1 opto not yet installed. Restore here and in
-  # bd_trough ball_switches when fitted.
+  # TODO(hardware): s_trough1 opto not yet installed. When fitted, restore it
+  # here, add it to bd_trough ball_switches, and add this line to the
+  # [keyboard] section of gmc/gmc.cfg:
+  #     z=["switch", "s_trough1", "toggle"]
+  # It is NC, so leave it out of virtual_platform_start_active_switches unless
+  # it is redefined as NO. See the note on that key below.
   # s_trough1: # Opto Switch (Not yet installed)
   #   number: TODO
   #   type: NC
@@ -134,16 +145,19 @@ switches:
     number: bottom32-5
   s_trough8:
     number: bottom32-6
-  # TODO(hardware): jam opto not yet installed. Restore here and the
-  # jam_switch / eject_coil_jam_pulse lines in bd_trough when fitted.
+  # TODO(hardware): jam opto not yet installed. When fitted, restore it here and
+  # uncomment the jam_switch / eject_coil_jam_pulse lines in bd_trough. It needs
+  # no keyboard mapping, since a jam is not a state worth simulating by hand.
   # s_trough_jam:
   #   number: TODO
   #   type: NC
 
   # plunger lane
-  # TODO(hardware): plunger lane switch not yet installed. Restore here and
-  # the bd_plunger device, then set playfield default_source_device back to
-  # bd_plunger and bd_trough eject_targets back to bd_plunger.
+  # TODO(hardware): plunger lane switch not yet installed. When fitted, restore
+  # it here and the bd_plunger device, set playfield default_source_device back
+  # to bd_plunger, set bd_trough eject_targets back to bd_plunger, and add this
+  # line to the [keyboard] section of gmc/gmc.cfg:
+  #     p=["switch", "s_plunger", "toggle"]
   # s_plunger:
   #   number: TODO
 
