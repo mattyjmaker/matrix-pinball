@@ -147,6 +147,48 @@ Both Matrix screens share two shaders in `gmc/assets/shaders/`:
 by the attract slide. Swap it back in by replacing the `Rain` ColorRect with a
 `VideoStreamPlayer` if you prefer the video.
 
+### The gameplay HUD
+
+`base.tscn` keeps its centre deliberately empty. That space is the stage a mode
+takes over with `widget_player:`; nothing permanent is drawn there, so the score
+reads when nothing is happening and a mode owns the screen when it is. The
+persistent HUD sits around it: player and ball top left, act top centre, player
+scores top right, the FREED roster down the left, power station locks bottom
+right, and the objective line above the score.
+
+While the stage is idle it runs ambient effects, which `slides/base/stage.gd`
+fades out as soon as a widget appears and back in when it goes. It finds the
+widget container by name (`_<slide>_widgets`, created lazily by MPFSlide), so if
+the addon ever renames it the effects simply stay visible.
+
+#### Player variables the HUD reads
+
+The HUD is already wired to these. Set them from the mode code and the display
+follows; until then each element shows its authored placeholder.
+
+| Variable | Type | Drives |
+| --- | --- | --- |
+| `score`, `player`, `ball` | int | Score, player and ball readouts |
+| `act` | str | The `ACT ...` marker, e.g. `I`, `II`, `III` |
+| `objective` | str | The objective line above the score |
+| `balls_locked` | int | How many power station cells are lit |
+| `freed_trinity`, `freed_tank`, … | bool | Lights that name in the FREED roster |
+
+#### Effect shaders
+
+- `signal_trace.gdshader` is the idle stage: a sonar-style sweep with range
+  rings and contacts that light as the arm passes. Morpheus tracing Neo, rather
+  than a generic decoration. Set `aspect` to the node's width / height or the
+  dish turns into an ellipse.
+- `matrix_rain.gdshader` gained a `radial_falloff`, so the same shader is both
+  the full-screen backdrop (`0.0`, the default) and the brighter, coarser "code
+  well" inside the trace dish.
+- `glitch.gdshader` tears the whole slide for about 220 ms every 9 seconds:
+  bands shift sideways and the colour channels pull apart. It reads the back
+  buffer, so it must stay the last child, and it samples straight through
+  between tears. That back-buffer copy runs every frame, which is free on the
+  cabinet's GPU but is the first thing to remove if a weaker machine struggles.
+
 ### Display scaling
 
 `project.godot` sets `window/stretch/mode="canvas_items"` with

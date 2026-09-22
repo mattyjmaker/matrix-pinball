@@ -1,10 +1,15 @@
-[gd_scene load_steps=9 format=3 uid="uid://dxmhitrmhqv4s"]
+[gd_scene load_steps=16 format=3 uid="uid://dxmhitrmhqv4s"]
 
 [ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1_slide"]
 [ext_resource type="Shader" path="res://assets/shaders/matrix_rain.gdshader" id="2_rain"]
-[ext_resource type="Shader" path="res://assets/shaders/phosphor.gdshader" id="3_phos"]
-[ext_resource type="Theme" uid="uid://ccb1am66a2yg0" path="res://assets/themes/ui-code.tres" id="4_code"]
-[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_variable.gd" id="5_var"]
+[ext_resource type="Shader" path="res://assets/shaders/signal_trace.gdshader" id="3_trace"]
+[ext_resource type="Shader" path="res://assets/shaders/phosphor.gdshader" id="4_phos"]
+[ext_resource type="Shader" path="res://assets/shaders/glitch.gdshader" id="5_glitch"]
+[ext_resource type="Theme" uid="uid://ccb1am66a2yg0" path="res://assets/themes/ui-code.tres" id="6_code"]
+[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_variable.gd" id="7_var"]
+[ext_resource type="Script" path="res://slides/base/stage.gd" id="8_stage"]
+[ext_resource type="Script" path="res://slides/base/roster_entry.gd" id="9_roster"]
+[ext_resource type="Script" path="res://slides/base/power_stations.gd" id="10_locks"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rain"]
 shader = ExtResource("2_rain")
@@ -20,14 +25,52 @@ shader_parameter/head_color = Color(0.6, 1, 0.7, 1)
 shader_parameter/trail_color = Color(0.12, 0.7, 0.24, 1)
 shader_parameter/background_color = Color(0.002, 0.014, 0.007, 1)
 shader_parameter/background_alpha = 1.0
+shader_parameter/radial_falloff = 0.0
+shader_parameter/falloff_aspect = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_well"]
+shader = ExtResource("2_rain")
+shader_parameter/columns = 12.0
+shader_parameter/rows = 9.0
+shader_parameter/fall_speed = 0.3
+shader_parameter/trail_length = 0.5
+shader_parameter/density = 1.0
+shader_parameter/glyph_rate = 11.0
+shader_parameter/flicker = 0.28
+shader_parameter/intensity = 2.4
+shader_parameter/head_color = Color(0.9, 1, 0.93, 1)
+shader_parameter/trail_color = Color(0.2, 0.95, 0.38, 1)
+shader_parameter/background_color = Color(0, 0, 0, 1)
+shader_parameter/background_alpha = 0.0
+shader_parameter/radial_falloff = 0.8
+shader_parameter/falloff_aspect = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_trace"]
+shader = ExtResource("3_trace")
+shader_parameter/aspect = 1.0
+shader_parameter/sweep_speed = 0.2
+shader_parameter/ring_count = 4.0
+shader_parameter/contact_count = 6.0
+shader_parameter/intensity = 1.5
+shader_parameter/grid_color = Color(0.16, 0.9, 0.32, 1)
+shader_parameter/sweep_color = Color(0.72, 1, 0.8, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_phos"]
-shader = ExtResource("3_phos")
+shader = ExtResource("4_phos")
 shader_parameter/scanline_count = 720.0
 shader_parameter/scanline_depth = 0.12
 shader_parameter/vignette_strength = 0.85
 shader_parameter/vignette_softness = 0.6
 shader_parameter/tint = Color(0, 0, 0, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_glitch"]
+shader = ExtResource("5_glitch")
+shader_parameter/interval = 9.0
+shader_parameter/duration = 0.22
+shader_parameter/band_count = 26.0
+shader_parameter/displacement = 0.025
+shader_parameter/channel_split = 0.003
+shader_parameter/band_share = 0.4
 
 [node name="Base" type="Control"]
 layout_mode = 3
@@ -56,6 +99,38 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.55)
 
+[node name="Stage" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 890.0
+offset_top = 210.0
+offset_right = 1670.0
+offset_bottom = 990.0
+mouse_filter = 2
+script = ExtResource("8_stage")
+
+[node name="Well" type="ColorRect" parent="Stage"]
+material = SubResource("ShaderMaterial_well")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="Trace" type="ColorRect" parent="Stage"]
+material = SubResource("ShaderMaterial_trace")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
 [node name="Status" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 0
@@ -67,45 +142,62 @@ theme_override_constants/separation = 8
 
 [node name="player" type="Label" parent="Status"]
 layout_mode = 2
-theme = ExtResource("4_code")
+theme = ExtResource("6_code")
 theme_override_colors/font_color = Color(0.55, 1, 0.65, 0.95)
 theme_override_font_sizes/font_size = 54
 text = "PLAYER 1"
-script = ExtResource("5_var")
+script = ExtResource("7_var")
 variable_name = "player"
 template_string = "PLAYER %s"
 min_players = 2
 
 [node name="ball" type="Label" parent="Status"]
 layout_mode = 2
-theme = ExtResource("4_code")
+theme = ExtResource("6_code")
 theme_override_colors/font_color = Color(0.4, 0.95, 0.5, 0.8)
 theme_override_font_sizes/font_size = 54
 text = "BALL 1"
-script = ExtResource("5_var")
+script = ExtResource("7_var")
 variable_name = "ball"
 template_string = "BALL %s"
+
+[node name="act" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 64.0
+offset_bottom = 130.0
+grow_horizontal = 2
+theme = ExtResource("6_code")
+theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.8)
+theme_override_font_sizes/font_size = 48
+text = "ACT I"
+horizontal_alignment = 1
+script = ExtResource("7_var")
+variable_name = "act"
+template_string = "ACT %s"
+initialize_empty = false
 
 [node name="PlayerScores" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -760.0
+offset_left = -800.0
 offset_top = 64.0
-offset_right = -96.0
+offset_right = -120.0
 offset_bottom = 300.0
 grow_horizontal = 0
 theme_override_constants/separation = 6
 
 [node name="player1score" type="Label" parent="PlayerScores"]
 layout_mode = 2
-theme = ExtResource("4_code")
+theme = ExtResource("6_code")
 theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
 theme_override_font_sizes/font_size = 44
 text = "P1  1,000,000"
 horizontal_alignment = 2
-script = ExtResource("5_var")
+script = ExtResource("7_var")
 variable_type = 4
 variable_name = "score"
 comma_separate = true
@@ -115,12 +207,12 @@ min_players = 2
 
 [node name="player2score" type="Label" parent="PlayerScores"]
 layout_mode = 2
-theme = ExtResource("4_code")
+theme = ExtResource("6_code")
 theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
 theme_override_font_sizes/font_size = 44
 text = "P2  1,000,000"
 horizontal_alignment = 2
-script = ExtResource("5_var")
+script = ExtResource("7_var")
 variable_type = 5
 variable_name = "score"
 comma_separate = true
@@ -130,12 +222,12 @@ min_players = 2
 
 [node name="player3score" type="Label" parent="PlayerScores"]
 layout_mode = 2
-theme = ExtResource("4_code")
+theme = ExtResource("6_code")
 theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
 theme_override_font_sizes/font_size = 44
 text = "P3  1,000,000"
 horizontal_alignment = 2
-script = ExtResource("5_var")
+script = ExtResource("7_var")
 variable_type = 6
 variable_name = "score"
 comma_separate = true
@@ -145,18 +237,148 @@ min_players = 3
 
 [node name="player4score" type="Label" parent="PlayerScores"]
 layout_mode = 2
-theme = ExtResource("4_code")
+theme = ExtResource("6_code")
 theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
 theme_override_font_sizes/font_size = 44
 text = "P4  1,000,000"
 horizontal_alignment = 2
-script = ExtResource("5_var")
+script = ExtResource("7_var")
 variable_type = 7
 variable_name = "score"
 comma_separate = true
 min_digits = 2
 template_string = "P4  %s"
 min_players = 4
+
+[node name="Roster" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 96.0
+offset_top = 300.0
+offset_right = 560.0
+offset_bottom = 980.0
+theme_override_constants/separation = 10
+
+[node name="Heading" type="Label" parent="Roster"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.55)
+theme_override_font_sizes/font_size = 34
+text = "FREED"
+
+[node name="Underline" type="ColorRect" parent="Roster"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.16, 0.9, 0.32, 0.3)
+
+[node name="Trinity" type="Label" parent="Roster"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] TRINITY"
+script = ExtResource("9_roster")
+key = "TRINITY"
+freed = true
+[node name="Tank" type="Label" parent="Roster"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] TANK"
+script = ExtResource("9_roster")
+key = "TANK"
+freed = true
+[node name="Dozer" type="Label" parent="Roster"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] DOZER"
+script = ExtResource("9_roster")
+key = "DOZER"
+freed = true
+[node name="Switch" type="Label" parent="Roster"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] SWITCH"
+script = ExtResource("9_roster")
+key = "SWITCH"
+freed = false
+[node name="Apoc" type="Label" parent="Roster"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] APOC"
+script = ExtResource("9_roster")
+key = "APOC"
+freed = false
+[node name="Mouse" type="Label" parent="Roster"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] MOUSE"
+script = ExtResource("9_roster")
+key = "MOUSE"
+freed = false
+[node name="Niobe" type="Label" parent="Roster"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] NIOBE"
+script = ExtResource("9_roster")
+key = "NIOBE"
+freed = false
+[node name="Link" type="Label" parent="Roster"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] LINK"
+script = ExtResource("9_roster")
+key = "LINK"
+freed = false
+
+[node name="Locks" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -560.0
+offset_top = -470.0
+offset_right = -96.0
+offset_bottom = -350.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="Heading" type="Label" parent="Locks"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.55)
+theme_override_font_sizes/font_size = 34
+text = "POWER STATIONS"
+horizontal_alignment = 2
+
+[node name="Cells" type="HBoxContainer" parent="Locks"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/separation = 12
+script = ExtResource("10_locks")
+locked = 2
+
+[node name="Cell1" type="ColorRect" parent="Locks/Cells"]
+custom_minimum_size = Vector2(54, 30)
+layout_mode = 2
+color = Color(0.16, 0.9, 0.32, 0.2)
+[node name="Cell2" type="ColorRect" parent="Locks/Cells"]
+custom_minimum_size = Vector2(54, 30)
+layout_mode = 2
+color = Color(0.16, 0.9, 0.32, 0.2)
+[node name="Cell3" type="ColorRect" parent="Locks/Cells"]
+custom_minimum_size = Vector2(54, 30)
+layout_mode = 2
+color = Color(0.16, 0.9, 0.32, 0.2)
 
 [node name="ScoreBlock" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -165,12 +387,24 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 96.0
-offset_top = -420.0
+offset_top = -340.0
 offset_right = -96.0
-offset_bottom = -110.0
+offset_bottom = -80.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_constants/separation = 16
+theme_override_constants/separation = 14
+
+[node name="objective" type="Label" parent="ScoreBlock"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_colors/font_color = Color(0.5, 1, 0.6, 0.9)
+theme_override_font_sizes/font_size = 44
+text = "> TRACE THE SIGNAL :: HIT THE EMP TARGETS"
+horizontal_alignment = 1
+script = ExtResource("7_var")
+variable_name = "objective"
+template_string = "> %s"
+initialize_empty = false
 
 [node name="Rule" type="ColorRect" parent="ScoreBlock"]
 custom_minimum_size = Vector2(0, 2)
@@ -180,23 +414,33 @@ color = Color(0.16, 0.9, 0.32, 0.35)
 [node name="score" type="Label" parent="ScoreBlock"]
 layout_mode = 2
 size_flags_vertical = 3
-theme = ExtResource("4_code")
+theme = ExtResource("6_code")
 theme_override_colors/font_color = Color(0.82, 1, 0.86, 1)
 theme_override_colors/font_shadow_color = Color(0.1, 1, 0.3, 0.35)
 theme_override_constants/shadow_offset_x = 0
 theme_override_constants/shadow_offset_y = 0
 theme_override_constants/shadow_outline_size = 22
-theme_override_font_sizes/font_size = 190
+theme_override_font_sizes/font_size = 170
 text = "1,000,000"
 horizontal_alignment = 1
 vertical_alignment = 1
-script = ExtResource("5_var")
+script = ExtResource("7_var")
 variable_name = "score"
 comma_separate = true
 min_digits = 2
 
 [node name="Phosphor" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_phos")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Glitch" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_glitch")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

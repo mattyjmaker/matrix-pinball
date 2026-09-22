@@ -25,6 +25,12 @@ uniform vec3 trail_color : source_color = vec3(0.16, 0.9, 0.32);
 uniform vec3 background_color : source_color = vec3(0.004, 0.024, 0.012);
 uniform float background_alpha : hint_range(0.0, 1.0) = 1.0;
 
+// Optional circular falloff, so the same shader can be a full-screen backdrop
+// (0.0, the default) or a contained "code well" that fades out at the edge of
+// a circle. `falloff_aspect` must be the node's width / height to stay round.
+uniform float radial_falloff : hint_range(0.0, 1.0) = 0.0;
+uniform float falloff_aspect = 1.0;
+
 float hash1(float n) {
 	return fract(sin(n * 12.9898) * 43758.5453123);
 }
@@ -71,6 +77,12 @@ void fragment() {
 	float fl = 1.0 - flicker * hash2(vec2(col, floor(TIME * 11.0)));
 	float lum = tail * active * fl;
 
+	float mask = 1.0;
+	if (radial_falloff > 0.0) {
+		vec2 q = (UV - vec2(0.5)) * vec2(falloff_aspect, 1.0) * 2.0;
+		mask = 1.0 - smoothstep(1.0 - radial_falloff, 1.0, length(q));
+	}
+
 	vec3 c = mix(trail_color, head_color, head_mask);
-	COLOR = vec4(background_color + c * g * lum * intensity, background_alpha);
+	COLOR = vec4((background_color + c * g * lum * intensity) * mask, background_alpha * mask);
 }
