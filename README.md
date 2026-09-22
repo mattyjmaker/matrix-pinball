@@ -147,6 +147,20 @@ Both Matrix screens share two shaders in `gmc/assets/shaders/`:
 by the attract slide. Swap it back in by replacing the `Rain` ColorRect with a
 `VideoStreamPlayer` if you prefer the video.
 
+### Display scaling
+
+`project.godot` sets `window/stretch/mode="canvas_items"` with
+`window/stretch/aspect="expand"`. Slides are laid out against the 2560x1440
+design size and the whole canvas is scaled to whatever the window or panel
+actually is, so font sizes scale with it. Without this the layouts reflowed on
+their anchors but text stayed a fixed pixel size, which made the 190px score
+swamp a 720p window.
+
+`expand` fills the screen and reveals a little more area on a panel that is not
+exactly 16:9, rather than letterboxing. Switch `aspect` to `keep` if you would
+rather have black bars and a guaranteed-identical composition. On a 16:9 panel
+the two are the same.
+
 ### Font notes
 
 - `Miltown1.ttf` is the display face, used for the MATRIX title. Its glyphs have
