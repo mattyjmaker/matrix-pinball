@@ -231,6 +231,79 @@ the two are the same.
 - `JackInput.ttf`, via the `ui-code.tres` theme, is the monospace used for all
   HUD text and every numeric value.
 
+## Film clips
+
+### Format: Ogg Theora only
+
+Godot 4.7.2 exposes exactly one `VideoStream` subclass, `VideoStreamTheora`, so
+`.ogv` is the only video the engine can open. There is no h264, mp4 or WebM
+support to fall back on. Encoding and naming are covered in
+`gmc/video/README.md`.
+
+Audio is separate: Godot's file-backed streams are `AudioStreamWAV`,
+`AudioStreamOggVorbis` and `AudioStreamMP3`, and GMC catalogues `.wav`, `.ogg`,
+`.mp3` and `.tres` from the sounds folder.
+
+| Use | Format | Why |
+| --- | --- | --- |
+| Callouts and short effects | WAV, 16-bit 44.1 kHz | No decode latency, so it fires on the frame |
+| Music and long ambience | Ogg Vorbis | Good compression, clean looping |
+| Anything | Not MP3 | Supported, but no advantage over Vorbis and worse for gapless loops |
+
+Prefer stripping audio from clips and driving sound through GMC's sound system,
+which gives you buses and ducking. Keep it embedded only where lip-sync matters.
+
+### One widget, not one scene per clip
+
+`gmc/widgets/video_clip.tscn` plays any clip. `widget_player` passes the name as
+a token and the widget loads `res://video/<name>.ogv` at play time:
+
+    widget_player:
+      agent_battle_started:
+        video_clip:
+          tokens:
+            clip: agent_smith_intro
+
+Adding a clip is one line of YAML and one file, rather than a new scene each
+time. The widget registers itself as an updater on its parent, which is what
+makes plain tokens arrive without needing `action: method` in the config. A name
+with no file behind it logs an error and carries on rather than crashing, and
+falls back to `fallback_clip` if one is set.
+
+`MPFVideoPlayer` supplies the rest: `end_behavior` to tear the widget down when
+the clip finishes, `events_when_stopped` to post an event back to MPF so a mode
+can chain off it, and a `bus` so the audio ducks.
+
+Three rules worth holding to:
+
+1. **One video at a time.** Theora decodes on the CPU; two clips during
+   multiball is how frames get dropped.
+2. **Preload the widget** with `get_widget_instance(name, preload_only)`. A clip
+   that stutters on start is worse than no clip.
+3. **Short and inset during play.** The player is watching the playfield.
+   Full-screen belongs to mode intros, ball end and attract.
+
+The idle stage cooperates already: `stage.gd` fades the trace and rain out as
+soon as a widget appears, so a clip gets a clean background for free.
+
+### The clips are not in version control
+
+`.gitignore` excludes everything in `gmc/video/` except its README and manifest,
+because a clip library runs to gigabytes and committing film footage publishes
+it. Keep the library in Dropbox with the design files and sync it onto the
+machine.
+
+`gmc/video/manifest.txt` lists what the machine expects. Check a checkout with:
+
+    python3 tools/check_video.py
+
+It reports missing clips, clips present but unlisted, and any file in a format
+Godot cannot open, and exits non-zero if something listed is missing.
+
+For a production export, add `video/*` to the export preset's include filter.
+`VideoStreamTheora` has no scriptable file path, so clips have to be `res://`
+resources and will otherwise be left out of the pack.
+
 ## Hardware test state
 
 Several switches and devices are not yet installed or do not have confirmed

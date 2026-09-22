@@ -1,0 +1,13 @@
+# Film clips this machine expects, one per line.
+#
+# The name is what widget_player passes as the `clip` token: no folder, no
+# extension. Blank lines and lines starting with # are ignored.
+#
+# The clips themselves are not in version control, so this file is how a fresh
+# checkout knows what is missing. Check it with:
+#
+#     python3 tools/check_video.py
+#
+# Sample clip, tracked in the repo. Copy it in with:
+#   cp gmc/slides/attract/assets/matrixrain.ogv gmc/video/
+matrixrain
