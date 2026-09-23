@@ -46,6 +46,114 @@ Not yet recorded, and worth adding here as they are decided: LED and lamp
 wiring, opto power and signal, ground and earth bonding, and whether any
 sub-loom uses a different scheme.
 
+### Audio wiring (decided 2026-09-23, not yet installed)
+
+Current chain (user): NUC headphone out -> Fosi MC101 RCA line input -> the
+donated car speakers. To add: the Kenwood KFC-WPS1200F 12" sub, driven by the
+Blaupunkt AMP1501.
+
+Neither the audio signal nor the sub amp's power goes through the FAST boards.
+The Cabinet I/O (FP-CAB-0001) only carries switch inputs and low-side drivers.
+The Smart Power Filter Board's 12 V headers are 0.156" parts rated 7 A per pin
+(FAST, "Smart Power Filter Board Wiring"), while the AMP1501 carries
+2 x 20 A fuses. FAST's own audio option is the FAST Audio Interface board
+(12 V, 4 ohm main and sub amps, software volume); it is not owned.
+
+Published specs (retailer and manufacturer listings, not measured here):
+
+| Item | Spec |
+| --- | --- |
+| Kenwood KFC-WPS1200F | Single 4 ohm voice coil, 350 W RMS, 1400 W peak, 91 dB, shallow mount |
+| Fosi MC101 | Stereo only, 2 x TPA3116, 2 x 100 W at 4 ohm. RCA line in and Bluetooth. 3.5 mm sub pre-out: full range (no low-pass filter), follows the master volume. No sub amplifier channel |
+| Blaupunkt AMP1501 | Class D, 563 W RMS at 4 ohm, 11 to 16 V DC, 2 x 20 A fuses, RCA (low-level) input, 10 to 300 Hz |
+
+Because the MC101 has no sub amplifier, the sub needs the AMP1501:
+
+- Signal: MC101 3.5 mm sub pre-out -> 3.5 mm to 2 x RCA lead -> AMP1501 RCA
+  inputs. The pre-out is unfiltered, so the AMP1501's low-pass filter is the
+  crossover (start at about 80 Hz).
+- Power: its own mains-to-12 V supply, not the filter board. Size it for
+  sustained output, because the sub is used for effect build-ups that hold
+  near full power for seconds, not only for music peaks: 350 W to the sub is
+  roughly 440 W in (assuming about 80% efficiency), about 33 A at 13.2 V.
+  Mains stays in the backbox (user's design goal), so the supply goes in the
+  backbox and only 12 V DC runs down to the amp in the cabinet. Chosen
+  supply (user, 2026-09-23, confirmed to fit the backbox): Mean Well
+  RSP-500-12 (12 V, 41.7 A, fan-cooled, active PFC, universal 85 to 264 V AC
+  input, 230 x 127 x 40.5 mm, 1.3 kg, output adjustable 10.8 to 13.2 V; same
+  family as the backbox RSP-500-48). Set the output to 13.2 V. Chosen over
+  the fanless UHP-500-12 (232 x 81 x 31 mm) because the fan holds full output
+  in the enclosed backbox. Keep its fan intake and exhaust clear. Feed its
+  mains input from the same switched, fused split as the other two supplies,
+  and check that the existing mains fuse suits the added load. Fuse the +V
+  lead within about 300 mm of the supply (50 A, MIDI, ANL or maxi blade), run
+  8 AWG pure copper (not CCA) down, and put a 50 A
+  connector (e.g. Anderson SB50) at the backbox/cabinet join so the backbox
+  can still be separated. Neither backbox Mean Well suits it: the FAST bundle
+  pair is an RSP-500-48 (wrong voltage; the amp takes 11 to 16 V) and an
+  LRS-150-12 (12.5 A, and it feeds the controller's 12 V rail). The installed
+  models are not yet confirmed from their labels. Link the amp's `REM` terminal to its `+12V` terminal
+  so it powers up with the supply. Earth the supply to mains earth.
+- Gain: the amp can exceed the sub's 350 W RMS, so the amp's gain setting is
+  what protects the sub.
+
+Rejected alternative (user chose a dedicated 12 V supply, 2026-09-23): an amp powered from the existing backbox
+RSP-500-48 (10.5 A) instead of a new 12 V supply. The LRS-150-12 is too small
+for any useful sub power. The candidate is a Fosi BT30D Pro, which takes
+24 to 48 V (only units labelled "DC INPUT 24~48V"; units labelled 19~36V
+must not get 48 V), has a sub low-pass and sub level control, and would
+replace both the MC101 and the AMP1501. Fosi says it needs active cooling at
+48 V. Sustained build-up draw is roughly 6 A at 48 V (estimate), which leaves
+about 4.5 A for coils during a build-up. Risks, not yet tested: weaker
+flippers during build-ups, coil clicks in the audio, the Smart Power Filter
+Board's 48 V over-current cut-out also muting the sub, and a ground loop via
+the NUC. Feed it from a fused 48 V output of the filter board, not upstream of
+it. Test by playing the loudest build-up while hammering the flippers. If it
+fails, the Fosi 48 V brick in the backbox with 48 V DC run down (about 6 A,
+16 AWG) is the fallback. The Fosi V3 Mono (48 V, 240 W at 4 ohm) was
+rejected because it has no low-pass and the MC101 pre-out is unfiltered.
+
+Effects use (user, 2026-09-23): the sub is also for tension build-ups that
+shake the cabinet, not only background bass. Consequences:
+
+- The AMP1501 is the right amp for this. A BT30D Pro on its 48 V 5 A brick
+  (240 W across all three channels) cannot sustain a long build-up.
+- Bolt the sub rigidly to the cabinet floor, firing down through a grilled
+  cutout, so the cabinet structure is driven.
+- Author build-ups as rumble in roughly the 30 to 60 Hz range, high-passed
+  at about 25 Hz in the audio file. The Kenwood is rated to 30 Hz, and
+  whether the AMP1501 has a subsonic filter is unknown.
+- Set the AMP1501 gain with the loudest build-up, not with music.
+- The MC101 feeds the car speakers full range with no high-pass, so turn its
+  bass control down and check the speakers do not bottom out on build-ups.
+- No bus changes are needed: the build-ups are ordinary sounds on the
+  `effects` bus, and the AMP1501 low-pass sends their low end to the sub.
+- Pair build-ups with the JJP shaker motor (PBL-100-0092-00, owned) on a
+  Cabinet I/O driver, run as a coil with a low `default_hold_power` from a
+  show (see 04-game-logic-and-mechs.md, "Shakers"). `shakers:` needs the
+  FAST EXP-1313, which is not owned. The shaker's voltage, current and
+  diode are not yet checked.
+
+Open items:
+- [x] Order the Mean Well RSP-500-12 and the 50 A fuse (user, 2026-09-23).
+- [ ] Buy the rest: 8 mm² twin-core tinned OFC cable (sold per metre; one run
+      carries both +V and -V, so buy the route length plus about 0.5 m),
+      a genuine Anderson SB50 pair with 8 AWG contacts, 8 AWG ferrules for
+      the amp end, short 12 AWG leads with ring terminals and a small -V
+      junction block for the supply end, a hex crimp tool, heatshrink, a
+      grommet and cable clips, a 3.5 mm to 2 x RCA lead, and a short
+      18 to 22 AWG REM jumper (not blue, which this machine uses for coil
+      positive runs).
+- [ ] Mount the RSP-500-12 in the backbox with its fan clear, and print a
+      mount like the existing LRS-150 mounts if needed.
+- [ ] Check the existing mains fuse rating (and slow-blow type) against the
+      third supply's added load.
+- [ ] Read the labels on the two existing backbox Mean Wells to confirm they
+      are the RSP-500-48 and LRS-150-12.
+- [ ] Check the JJP shaker's rated voltage, current and flyback diode before
+      assigning it a Cabinet I/O driver.
+- [ ] Decide the sub's mounting position and enclosure in the cabinet.
+
 ## Installed software
 
 | What | Version | Location |
