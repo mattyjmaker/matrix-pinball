@@ -77,7 +77,10 @@ Because the MC101 has no sub amplifier, the sub needs the AMP1501:
   near full power for seconds, not only for music peaks: 350 W to the sub is
   roughly 440 W in (assuming about 80% efficiency), about 32 A at 13.8 V. Use a
   500 to 600 W (40 to 50 A) supply trimmed to 13.8 V, 8 AWG, and a 40 to 50 A
-  fuse near the supply. Link the amp's `REM` terminal to its `+12V` terminal
+  fuse near the supply. Neither backbox Mean Well suits it: the FAST bundle
+  pair is an RSP-500-48 (wrong voltage; the amp takes 11 to 16 V) and an
+  LRS-150-12 (12.5 A, and it feeds the controller's 12 V rail). The installed
+  models are not yet confirmed from their labels. Link the amp's `REM` terminal to its `+12V` terminal
   so it powers up with the supply. Earth the supply to mains earth.
 - Gain: the amp can exceed the sub's 350 W RMS, so the amp's gain setting is
   what protects the sub.
