@@ -24,7 +24,27 @@ Still to build:
 What this means for the MPF side:
 - Ball paths aren't final, so `ball_devices:`, opto placement and eject targets can't be locked down yet. Coil tuning in particular should wait: ramp shots need re-tuning once the ramps are physically in (see 06-tutorials-cookbook-finalization.md, "Revisit it once ramps are installed").
 - The upper playfield's switches and its flipper driver aren't wired, so the ~6-input shortfall in the capacity estimate isn't yet real — but it will be once the upper playfield lands. Count it in before deciding whether another 1616 is needed.
-- Unfinished wiring is why the placeholder switch numbers below can't all be replaced yet. Note the split: the flipper **coils** and the lower third are on the 3208 and wired, so those can be numbered now — but `s_left_flipper`, `s_right_flipper` and `s_start` are `cab-…` **switches** on the unwired Cabinet I/O, so they must stay placeholders until the cabinet is wired.
+- Unfinished wiring is why the placeholder switch numbers below can't all be replaced yet. Note the split: the flipper **coils** and the lower third are on the 3208 and wired, so those can be numbered now — while `s_left_flipper`, `s_right_flipper` and `s_start` are `cab-…` **switches** on the Cabinet I/O. Those three now carry FAST's recommended numbers (`cab-8`, `cab-16`, `cab-10`) rather than placeholders, but they stay unconfirmed until the cabinet is wired and switch-tested.
+
+### Wiring colour convention (user, 2026-09-22)
+
+This machine's own convention. Recorded as user-provided; it has not been
+cross-checked against FAST's published wiring guides, which are at
+fastpinball.com/wiring/neuron.
+
+| Circuit | Leg | Colour |
+| --- | --- | --- |
+| Switches (cabinet buttons, playfield switches) | Feed out of the board input | Orange |
+| Switches | Return back to the board | Purple |
+| Solenoids, coils and similar drivers | Negative | Black |
+| Solenoids, coils and similar drivers | Positive run | Blue |
+
+So a cabinet flipper button is orange out to the button and purple back, and a
+flipper coil is blue on the positive run and black on the negative.
+
+Not yet recorded, and worth adding here as they are decided: LED and lamp
+wiring, opto power and signal, ground and earth bonding, and whether any
+sub-loom uses a different scheme.
 
 ## Installed software
 
@@ -33,7 +53,7 @@ What this means for the MPF side:
 | Python | 3.14.4 (system) | `/usr/bin/python3` |
 | MPF | 0.80.0 (pinned) | venv `~/.mpfenv/matrix` |
 | MPF Monitor | 1.0.0.dev1 (+ PyQt6 6.11) | same venv |
-| Godot editor | 4.6.3-stable | `~/.local/opt/godot/`, symlinked as `~/.local/bin/godot` |
+| Godot editor | 4.6.3-stable installed; **project now targets 4.7.2** | `~/.local/opt/godot/`, symlinked as `~/.local/bin/godot` |
 | Godot export templates | 4.6.3 (Linux x86_64 only) | `~/.local/share/godot/export_templates/4.6.3.stable/` |
 | GMC addon | 1.0.0 | `~/matrix-pinball/gmc/addons/mpf-gmc/` (inside the project) |
 | Game project | `mattyjmaker/matrix-pinball` | `~/matrix-pinball` |
@@ -78,13 +98,32 @@ Logs go to `~/matrix-pinball/logs/`.
 - [ ] Install system packages. This needs sudo, so the user runs it:
   `sudo apt update && sudo apt install -y git git-lfs python3.14-venv && sudo usermod -aG dialout,tty pinball`, then log out and back in.
 - [ ] Turn `~/matrix-pinball` into a real git clone (with git-lfs) and commit the changes above.
-- [ ] Replace placeholder switch numbers. MPF won't start on real hardware until these are fixed:
-  - `s_left_flipper`, `s_right_flipper` and `s_start` (`cab-9993…`)
-  - `s_trough1`, `s_trough_jam` and `s_plunger` (`bottom32-999-…`)
+- [ ] Replace placeholder switch numbers for `s_trough1`, `s_trough_jam` and `s_plunger`.
+      These are still commented out in `config/config.yaml`.
+- [ ] Confirm the cabinet button numbers. `s_left_flipper` (`cab-8`), `s_start`
+      (`cab-10`) and `s_right_flipper` (`cab-16`) are now in the config with the
+      `flippers:` section enabled, but the numbers are FAST's recommended
+      defaults, not measured on this machine. MPF range-checks them against the
+      24 inputs the board reports and nothing more, so a wrong-but-in-range
+      number reads the wrong input silently. Verify in the service-mode switch
+      test once the board is wired.
 - [ ] **Add the second 1616 to `io_loop:` in `config/config.yaml`.** The config declares only three boards (`cab`, `top16`, `bottom32`) but two 1616s are installed. Until the fourth entry exists — with `order:` values matching the real daisy-chain order out of the Neuron — switch and driver numbers will land on the wrong boards.
 - [ ] Run `mpf hardware scan` to confirm the board models and loop order match the config (`FP-CAB-0001`, `FP-I/O-1616` ×2, `FP-I/O-3208`, `FP-EXP-2000` + `FP-PWR-0007`). This is the fastest way to get the true `order:` values.
-- [ ] Wire the Cabinet I/O (FP-CAB-0001). It's mounted but unwired, which blocks the `cab-…` switch numbers (flipper buttons, start) and the cabinet drivers (knocker, button lamps).
+- [ ] Wire the Cabinet I/O (FP-CAB-0001). It's mounted but unwired. The config
+      now assumes the side flipper buttons and start button land on the
+      left-side (`cab-8` to `cab-15`) and right-side (`cab-16` to `cab-23`)
+      headers; the coin door header J4 is `cab-0` to `cab-7`. The board's 8
+      drivers (`cab-0` to `cab-7`) are still unconfigured, so no knocker or
+      button lamps yet.
 - [ ] Check whether the Cabinet I/O's **NET cable** is plugged into the I/O loop. If it isn't, it won't appear in `mpf hardware scan` and the config's `order: 1` for `cab` is wrong — every other board's order shifts.
+- [ ] **Install Godot 4.7.2 on this machine.** `project.godot` is now tagged
+      `4.7`, but the editor here is still 4.6.3, which will warn that the
+      project was made with a newer version. Download 4.7.2 from
+      godotengine.org, replace `~/.local/opt/godot/`, keep the
+      `~/.local/bin/godot` symlink pointing at it, and fetch the matching
+      4.7.2 export templates before building a production export.
+      Godot 4.7.2 was verified against this project in a container: the import
+      is clean, GMC 1.0.0 loads, and all four slides render unchanged.
 - [ ] No LED expansion boards are wired or configured yet (FP-EXP-0081 and FP-EXP-0071 are owned). Needed before any playfield RGB inserts or servos work.
 - [ ] Decide the plunger behaviour. `bd_plunger` has `eject_coil: c_auto_plunge` plus `mechanical_eject: true` but no `player_controlled_eject_event`, so a ball in the lane waits for a manual plunge. `eject_timeouts: 15s` is long; the docs suggest 3–5 s.
 - [ ] Modes `welcome`, `plunge_ready` and `skillshot` exist but aren't listed under `modes:` and have no start events. `skillshot.yaml` is empty.

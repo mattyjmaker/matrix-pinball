@@ -2,3 +2,9 @@ logs/*
 data/*
 gmc/.godot
 *.tmp
+
+# Film clips are deliberately outside version control: a clip library runs to
+# gigabytes and committing film footage publishes it. See gmc/video/README.md.
+gmc/video/*
+!gmc/video/README.md
+!gmc/video/manifest.txt

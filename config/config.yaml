@@ -6,6 +6,13 @@
 # known, are commented out below so MPF can start against real hardware.
 # Search for "TODO(hardware)" to find each one. When a device is wired and its
 # number is known, restore the block and update the number.
+#
+# Keyboard mappings for virtual testing live in the [keyboard] section of
+# gmc/gmc.cfg, not here: MPF 0.80 rejects a keyboard: section with
+# CFE-ConfigProcessor-3. Each TODO(hardware) block below names the mapping to
+# add when that switch is restored. Those reminders are kept here rather than
+# in gmc/gmc.cfg because the Godot editor's MPF tab rewrites that file in full
+# and ConfigFile.save() discards comments.
 # ---------------------------------------------------------------------------
 
 hardware:
@@ -46,23 +53,44 @@ fast:
           - port: 1
             model: FP-PWR-0007
 
+machine:
+  # TESTING: running the machine with a single ball. Raise this to the real
+  # ball count when the rules need multiball, and raise the trough fill in
+  # virtual_platform_start_active_switches below to match. The trough is the
+  # 8-ball PBL-100-0016-00, so 8 is the physical ceiling (7 until the trough 1
+  # opto is fitted). balls_installed drives attract-mode ball search: MPF
+  # searches when 0 < balls known < balls_installed, so a wrong value here
+  # either never searches or searches constantly.
+  balls_installed: 1
+  # min_balls is left at the MPF default of 1: the number that must be
+  # accounted for before a game will start.
+
 modes:
   - base
 
 
 switches:
-  ## Flipper Cabinet Buttons
-  # TODO(hardware): FP-CAB-0001 switch numbers unknown. Restore these three
-  # switches and the flippers: section once the cabinet inputs are confirmed.
-  # s_left_flipper:
-  #   number: TODO
-  #   tags: left_flipper
-  # s_right_flipper:
-  #   number: TODO
-  #   tags: right_flipper
-  # s_start:
-  #   number: TODO
-  #   tags: start
+  ## Cabinet Buttons (FP-CAB-0001, io_loop name "cab")
+  # Wire colours: orange out of the board input, purple on the return. See
+  # docs/08-this-machine.md, "Wiring colour convention".
+  # The Cabinet I/O board is internally an FP-I/O-0024: 24 switch inputs
+  # (cab-0 .. cab-23) and 8 drivers (cab-0 .. cab-7).
+  # Header layout per FAST's recommended cabinet recipe:
+  #   coin door (J4)          cab-0  .. cab-7
+  #   left-side cabinet header  cab-8  .. cab-15
+  #   right-side cabinet header cab-16 .. cab-23
+  # TODO(hardware): these three numbers are the recommended defaults, not yet
+  # confirmed against this machine. After wiring, verify each one in the MPF
+  # service-mode switch test and correct the number if it differs.
+  s_left_flipper:
+    number: cab-8
+    tags: left_flipper
+  s_right_flipper:
+    number: cab-16
+    tags: right_flipper
+  s_start:
+    number: cab-10
+    tags: start
 
   ## Flipper EOS Switches
   s_left_flipper_eos: # End of Stroke
@@ -96,8 +124,12 @@ switches:
     number: bottom32-26
 
   #Trough Switches (x8)
-  # TODO(hardware): s_trough1 opto not yet installed. Restore here and in
-  # bd_trough ball_switches when fitted.
+  # TODO(hardware): s_trough1 opto not yet installed. When fitted, restore it
+  # here, add it to bd_trough ball_switches, and add this line to the
+  # [keyboard] section of gmc/gmc.cfg:
+  #     z=["switch", "s_trough1", "toggle"]
+  # It is NC, so leave it out of virtual_platform_start_active_switches unless
+  # it is redefined as NO. See the note on that key below.
   # s_trough1: # Opto Switch (Not yet installed)
   #   number: TODO
   #   type: NC
@@ -115,16 +147,19 @@ switches:
     number: bottom32-5
   s_trough8:
     number: bottom32-6
-  # TODO(hardware): jam opto not yet installed. Restore here and the
-  # jam_switch / eject_coil_jam_pulse lines in bd_trough when fitted.
+  # TODO(hardware): jam opto not yet installed. When fitted, restore it here and
+  # uncomment the jam_switch / eject_coil_jam_pulse lines in bd_trough. It needs
+  # no keyboard mapping, since a jam is not a state worth simulating by hand.
   # s_trough_jam:
   #   number: TODO
   #   type: NC
 
   # plunger lane
-  # TODO(hardware): plunger lane switch not yet installed. Restore here and
-  # the bd_plunger device, then set playfield default_source_device back to
-  # bd_plunger and bd_trough eject_targets back to bd_plunger.
+  # TODO(hardware): plunger lane switch not yet installed. When fitted, restore
+  # it here and the bd_plunger device, set playfield default_source_device back
+  # to bd_plunger, set bd_trough eject_targets back to bd_plunger, and add this
+  # line to the [keyboard] section of gmc/gmc.cfg:
+  #     p=["switch", "s_plunger", "toggle"]
   # s_plunger:
   #   number: TODO
 
@@ -214,26 +249,43 @@ playfields:
     # the source device (MPF docs: mechs/plungers/mechanical_no_switch).
     default_source_device: bd_trough
 
-# virtual_platform_start_active_switches: s_trough1, s_trough2, s_trough3, s_trough4, s_trough5, s_trough6, s_trough7
+# Seeds the trough on the virtual and smart_virtual platforms so `mpf -x/-X`
+# starts with balls already in it and the start button works straight away.
+# Ignored on real hardware.
+#
+# TESTING: one switch = one ball, matching machine: balls_installed: 1 above.
+# Keep the two in step. For a full trough, list all seven currently defined
+# switches: s_trough2, s_trough3, s_trough4, s_trough5, s_trough6, s_trough7,
+# s_trough8. MPF counts active ball_switches and ignores their position, so
+# which one is listed does not matter.
+#
+# Every name must resolve to a switch defined above or MPF hard-errors with
+# CFE-Smart_Virtual_Platform-1. The key also sets raw hardware state, which MPF
+# then XORs with the switch's invert flag, so an NC switch listed here reads as
+# INACTIVE. When s_trough1 and s_trough_jam are fitted, add s_trough1 here only
+# if it is redefined as NO; leave s_trough_jam out either way, since a jam is
+# not the normal resting state.
+virtual_platform_start_active_switches: s_trough2
 
 
-# TODO(hardware): flippers need the cabinet button switches above. Restore
-# together with s_left_flipper and s_right_flipper.
-# flippers:
-#   left_flipper:
-#     main_coil: c_flipper_left_main
-#     hold_coil: c_flipper_left_hold
-#     activation_switch: s_left_flipper
-#     eos_switch: s_left_flipper_eos
-#     use_eos: true
-#     # enable_events: machine_reset_phase_3 # Allows the flippers to work before a ball is started
-#   right_flipper:
-#     main_coil: c_flipper_right_main
-#     hold_coil: c_flipper_right_hold
-#     activation_switch: s_right_flipper
-#     eos_switch: s_right_flipper_eos
-#     use_eos: true
-#     # enable_events: machine_reset_phase_3 # Allows the flippers to work before a ball is started
+flippers:
+  left_flipper:
+    main_coil: c_flipper_left_main
+    hold_coil: c_flipper_left_hold
+    activation_switch: s_left_flipper
+    eos_switch: s_left_flipper_eos
+    use_eos: true
+    # enable_events defaults to ball_started and disable_events to
+    # ball_will_end, service_mode_entered. Uncomment the line below to let the
+    # flippers work outside a game (useful while testing the cabinet wiring).
+    # enable_events: machine_reset_phase_3
+  right_flipper:
+    main_coil: c_flipper_right_main
+    hold_coil: c_flipper_right_hold
+    activation_switch: s_right_flipper
+    eos_switch: s_right_flipper_eos
+    use_eos: true
+    # enable_events: machine_reset_phase_3
 
 ball_devices:
   bd_trough:
