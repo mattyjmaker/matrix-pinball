@@ -76,11 +76,14 @@ Because the MC101 has no sub amplifier, the sub needs the AMP1501:
   sustained output, because the sub is used for effect build-ups that hold
   near full power for seconds, not only for music peaks: 350 W to the sub is
   roughly 440 W in (assuming about 80% efficiency), about 33 A at 13.2 V.
-  Recommended supply: Mean Well RSP-500-12 (12 V, 41.7 A, active PFC, universal
-  input, same family as the backbox RSP-500-48), trimmed to its 13.2 V maximum.
-  Alternative: LRS-600-12 (50 A, also 13.2 V maximum, but has a 115/230 V
-  input selector that must be set to 230 V). Wire with 8 AWG and a 40 to 50 A
-  fuse near the supply. Neither backbox Mean Well suits it: the FAST bundle
+  Mains stays in the backbox (user's design goal), so the supply goes in the
+  backbox and only 12 V DC runs down to the amp in the cabinet. Recommended
+  supply: Mean Well UHP-500-12 (12 V, 41.7 A, active PFC, fanless, slim
+  232 x 81 x 31 mm), chosen for footprint over the RSP-500-12
+  (230 x 127 x 40.5 mm) and LRS-600-12. Fanless, so leave free air around it.
+  Fuse the +V lead at the supply (40 to 50 A), run 8 AWG down, and put a 50 A
+  connector (e.g. Anderson SB50) at the backbox/cabinet join so the backbox
+  can still be separated. Neither backbox Mean Well suits it: the FAST bundle
   pair is an RSP-500-48 (wrong voltage; the amp takes 11 to 16 V) and an
   LRS-150-12 (12.5 A, and it feeds the controller's 12 V rail). The installed
   models are not yet confirmed from their labels. Link the amp's `REM` terminal to its `+12V` terminal
