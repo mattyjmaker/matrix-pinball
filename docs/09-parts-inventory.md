@@ -93,7 +93,9 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 | Fosi Audio MC101 (2 x TPA3116) stereo amp, 3.5 mm full-range sub pre-out | 1 | HAVE (user, 2026-09-23). Currently drives the car speakers |
 | Kenwood KFC-WPS1200F 12" subwoofer | 1 | HAVE |
 | Stereo car speakers (donated) | 1 pair | HAVE |
-| Blaupunkt AMP1501 monoblock sub amp (12 V car amp, 1500 W "max") | 1 | HAVE (user, 2026-09-23). Optional; see 08-this-machine.md, "Audio wiring". |
+| Blaupunkt AMP1501 monoblock sub amp (12 V car amp, 1500 W "max") | 1 | HAVE (user, 2026-09-23). Drives the sub; see 08-this-machine.md, "Audio wiring". |
+| Mean Well UHP-500-12 (12 V 41.7 A, slim, fanless), backbox supply for the AMP1501 | 1 | PLANNED (user, 2026-09-23) |
+| Anderson SB50 connector pair, 40 to 50 A inline fuse, 8 AWG cable, 3.5 mm to 2 x RCA lead | 1 lot | PLANNED |
 | Triangular button guard side rails (Stern) + mounting tape | — | HAVE (Feb 2023) |
 | Red start button (500-6388-44) | 1 | HAVE (Feb 2023) |
 | Cabinet flipper buttons, transparent green, with spring | 2 | HAVE (Feb 2023) |

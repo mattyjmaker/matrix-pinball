@@ -46,7 +46,7 @@ Not yet recorded, and worth adding here as they are decided: LED and lamp
 wiring, opto power and signal, ground and earth bonding, and whether any
 sub-loom uses a different scheme.
 
-### Audio wiring (planned, 2026-09-23)
+### Audio wiring (decided 2026-09-23, not yet installed)
 
 Current chain (user): NUC headphone out -> Fosi MC101 RCA line input -> the
 donated car speakers. To add: the Kenwood KFC-WPS1200F 12" sub, driven by the
@@ -77,8 +77,8 @@ Because the MC101 has no sub amplifier, the sub needs the AMP1501:
   near full power for seconds, not only for music peaks: 350 W to the sub is
   roughly 440 W in (assuming about 80% efficiency), about 33 A at 13.2 V.
   Mains stays in the backbox (user's design goal), so the supply goes in the
-  backbox and only 12 V DC runs down to the amp in the cabinet. Recommended
-  supply: Mean Well UHP-500-12 (12 V, 41.7 A, active PFC, fanless, slim
+  backbox and only 12 V DC runs down to the amp in the cabinet. Chosen
+  supply (user, 2026-09-23): Mean Well UHP-500-12 (12 V, 41.7 A, active PFC, fanless, slim
   232 x 81 x 31 mm), chosen for footprint over the RSP-500-12
   (230 x 127 x 40.5 mm) and LRS-600-12. Fanless, so leave free air around it.
   Fuse the +V lead at the supply (40 to 50 A), run 8 AWG down, and put a 50 A
@@ -91,7 +91,7 @@ Because the MC101 has no sub amplifier, the sub needs the AMP1501:
 - Gain: the amp can exceed the sub's 350 W RMS, so the amp's gain setting is
   what protects the sub.
 
-Alternative under consideration: an amp powered from the existing backbox
+Rejected alternative (user chose the UHP-500-12, 2026-09-23): an amp powered from the existing backbox
 RSP-500-48 (10.5 A) instead of a new 12 V supply. The LRS-150-12 is too small
 for any useful sub power. The candidate is a Fosi BT30D Pro, which takes
 24 to 48 V (only units labelled "DC INPUT 24~48V"; units labelled 19~36V
@@ -129,10 +129,13 @@ shake the cabinet, not only background bass. Consequences:
   diode are not yet checked.
 
 Open items:
-- [ ] Decide between a BT30D Pro on the backbox RSP-500-48 (the owned unit is
-      in the arcade cabinet, so this means buying a second one or swapping it
-      with the MC101) and the AMP1501 with a UHP-500-12. Powered from the
-      RSP-500-48, the BT30D Pro needs no brick.
+- [ ] Buy the Mean Well UHP-500-12, a 40 to 50 A inline fuse and holder,
+      8 AWG red and black cable, an Anderson SB50 pair, and a 3.5 mm to
+      2 x RCA lead.
+- [ ] Measure and place the UHP-500-12 in the backbox with free air around it
+      (fanless), and print a mount like the existing LRS-150 mounts.
+- [ ] Read the labels on the two existing backbox Mean Wells to confirm they
+      are the RSP-500-48 and LRS-150-12.
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
       assigning it a Cabinet I/O driver.
 - [ ] Decide the sub's mounting position and enclosure in the cabinet.
