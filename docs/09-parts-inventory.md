@@ -13,6 +13,7 @@ Status key:
 - **HAVE:** marked "purchased!" or has an amount in Total Purchased on the Parts sheet, proven by the running machine, or seen in the **Feb 2023 order**.
 - **ORDER:** no longer used. On 2026-09-19 the user confirmed that **all orders arrived** (First, Second Mar 2024, Third Oct 2024), so those items are now HAVE, marked (2nd) or (3rd).
 - **PLANNED:** on the BOM but not bought.
+- **ORDERED:** bought, not yet received (used for the sub amp parts from 2026-09-23).
 
 The **Feb 2023 order** was placed through Pinside/Trident Pinball and paid 2023-02-04 (US$2,846: Pinball Life US$1,460 + FAST US$1,086 + shipping and handling). The cart screenshots are in Dropbox under `Invoices Purchases/Trident Pinball/Order 1 - Feb 2023/`. The Pinball Life cart had 122 items, so the screenshots may not show every line. This order covers most of the BOM's "First Order" plus the trough, shooter and cabinet mechs, even though the Parts sheet never marked them purchased.
 
@@ -94,8 +95,9 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 | Kenwood KFC-WPS1200F 12" subwoofer | 1 | HAVE |
 | Stereo car speakers (donated) | 1 pair | HAVE |
 | Blaupunkt AMP1501 monoblock sub amp (12 V car amp, 1500 W "max") | 1 | HAVE (user, 2026-09-23). Drives the sub; see 08-this-machine.md, "Audio wiring". |
-| Mean Well RSP-500-12 (12 V 41.7 A, fan-cooled, 230 x 127 x 40.5 mm), backbox supply for the AMP1501 | 1 | PLANNED (user, 2026-09-23; confirmed to fit the backbox) |
-| Anderson SB50 connector pair, 50 A fuse and holder, 8 AWG pure copper cable (not CCA), 3.5 mm to 2 x RCA lead | 1 lot | PLANNED |
+| Mean Well RSP-500-12 (12 V 41.7 A, fan-cooled, 230 x 127 x 40.5 mm), backbox supply for the AMP1501 | 1 | ORDERED (user, 2026-09-23; confirmed to fit the backbox) |
+| 50 A DC fuse and holder, for the RSP-500-12 +V lead | 1 | ORDERED (user, 2026-09-23) |
+| Anderson SB50 connector pair (8 AWG contacts), 8 mm² twin-core tinned OFC cable, 3.5 mm to 2 x RCA lead, terminals and ferrules | 1 lot | PLANNED |
 | Triangular button guard side rails (Stern) + mounting tape | — | HAVE (Feb 2023) |
 | Red start button (500-6388-44) | 1 | HAVE (Feb 2023) |
 | Cabinet flipper buttons, transparent green, with spring | 2 | HAVE (Feb 2023) |

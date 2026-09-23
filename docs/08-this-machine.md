@@ -135,9 +135,15 @@ shake the cabinet, not only background bass. Consequences:
   diode are not yet checked.
 
 Open items:
-- [ ] Buy the Mean Well RSP-500-12, a 50 A fuse and holder, 8 AWG pure
-      copper red and black cable, an Anderson SB50 pair, and a 3.5 mm to
-      2 x RCA lead.
+- [x] Order the Mean Well RSP-500-12 and the 50 A fuse (user, 2026-09-23).
+- [ ] Buy the rest: 8 mm² twin-core tinned OFC cable (sold per metre; one run
+      carries both +V and -V, so buy the route length plus about 0.5 m),
+      a genuine Anderson SB50 pair with 8 AWG contacts, 8 AWG ferrules for
+      the amp end, short 12 AWG leads with ring terminals and a small -V
+      junction block for the supply end, a hex crimp tool, heatshrink, a
+      grommet and cable clips, a 3.5 mm to 2 x RCA lead, and a short
+      18 to 22 AWG REM jumper (not blue, which this machine uses for coil
+      positive runs).
 - [ ] Mount the RSP-500-12 in the backbox with its fan clear, and print a
       mount like the existing LRS-150 mounts if needed.
 - [ ] Check the existing mains fuse rating (and slow-blow type) against the
