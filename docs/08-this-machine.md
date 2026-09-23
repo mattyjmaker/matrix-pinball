@@ -76,7 +76,7 @@ Because the MC101 has no sub amplifier, the sub needs the AMP1501:
   sustained output, because the sub is used for effect build-ups that hold
   near full power for seconds, not only for music peaks: 350 W to the sub is
   roughly 440 W in (assuming about 80% efficiency), about 33 A at 13.2 V.
-  Chosen supply: Mean Well RSP-500-12 (12 V, 41.7 A, active PFC, universal
+  Recommended supply: Mean Well RSP-500-12 (12 V, 41.7 A, active PFC, universal
   input, same family as the backbox RSP-500-48), trimmed to its 13.2 V maximum.
   Alternative: LRS-600-12 (50 A, also 13.2 V maximum, but has a 115/230 V
   input selector that must be set to 230 V). Wire with 8 AWG and a 40 to 50 A
