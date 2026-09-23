@@ -75,8 +75,11 @@ Because the MC101 has no sub amplifier, the sub needs the AMP1501:
 - Power: its own mains-to-12 V supply, not the filter board. Size it for
   sustained output, because the sub is used for effect build-ups that hold
   near full power for seconds, not only for music peaks: 350 W to the sub is
-  roughly 440 W in (assuming about 80% efficiency), about 32 A at 13.8 V. Use a
-  500 to 600 W (40 to 50 A) supply trimmed to 13.8 V, 8 AWG, and a 40 to 50 A
+  roughly 440 W in (assuming about 80% efficiency), about 33 A at 13.2 V.
+  Chosen supply: Mean Well RSP-500-12 (12 V, 41.7 A, active PFC, universal
+  input, same family as the backbox RSP-500-48), trimmed to its 13.2 V maximum.
+  Alternative: LRS-600-12 (50 A, also 13.2 V maximum, but has a 115/230 V
+  input selector that must be set to 230 V). Wire with 8 AWG and a 40 to 50 A
   fuse near the supply. Neither backbox Mean Well suits it: the FAST bundle
   pair is an RSP-500-48 (wrong voltage; the amp takes 11 to 16 V) and an
   LRS-150-12 (12.5 A, and it feeds the controller's 12 V rail). The installed
