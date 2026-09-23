@@ -89,7 +89,8 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 | Coin door with 2 coin acceptors + switches (Alibaba), plus 2 spare acceptors | 1 | HAVE |
 | Alienware AW2723DF 27" monitor (backbox display) | 1 | HAVE |
 | VESA 100 tilt/swivel monitor mount | 1 | HAVE |
-| Fosi Audio BT30D Pro (TPA3255) stereo amp | 1 | HAVE |
+| Fosi Audio BT30D Pro (TPA3255) stereo amp | 1 | HAVE (unconfirmed; the user reports the amp in the chain is an MC101) |
+| Fosi Audio MC101 (2 x TPA3116) stereo amp, 3.5 mm full-range sub pre-out | 1 | HAVE (user, 2026-09-23). Currently drives the car speakers |
 | Kenwood KFC-WPS1200F 12" subwoofer | 1 | HAVE |
 | Stereo car speakers (donated) | 1 pair | HAVE |
 | Blaupunkt AMP1501 monoblock sub amp (12 V car amp, 1500 W "max") | 1 | HAVE (user, 2026-09-23). Optional; see 08-this-machine.md, "Audio wiring". |

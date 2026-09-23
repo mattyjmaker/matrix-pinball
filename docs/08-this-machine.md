@@ -48,8 +48,8 @@ sub-loom uses a different scheme.
 
 ### Audio wiring (planned, 2026-09-23)
 
-Current chain (user): NUC headphone out -> Fosi BT30D Pro input -> the donated
-car speakers. To add: the Kenwood KFC-WPS1200F 12" sub, optionally through the
+Current chain (user): NUC headphone out -> Fosi MC101 RCA line input -> the
+donated car speakers. To add: the Kenwood KFC-WPS1200F 12" sub, driven by the
 Blaupunkt AMP1501.
 
 Neither the audio signal nor the sub amp's power goes through the FAST boards.
@@ -64,23 +64,24 @@ Published specs (retailer and manufacturer listings, not measured here):
 | Item | Spec |
 | --- | --- |
 | Kenwood KFC-WPS1200F | Single 4 ohm voice coil, 350 W RMS, 1400 W peak, 91 dB, shallow mount |
-| Fosi BT30D Pro sub channel | 350 W at 4 ohm with the 48 V supply (less on the 32 V supply). `SUB OUT` for a passive sub, `PRE OUT` for an external amp. `SUB FREQ` 0 to 300 Hz |
+| Fosi MC101 | Stereo only, 2 x TPA3116, 2 x 100 W at 4 ohm. RCA line in and Bluetooth. 3.5 mm sub pre-out: full range (no low-pass filter), follows the master volume. No sub amplifier channel |
 | Blaupunkt AMP1501 | Class D, 563 W RMS at 4 ohm, 11 to 16 V DC, 2 x 20 A fuses, RCA (low-level) input, 10 to 300 Hz |
 
-Option A (preferred): Fosi `SUB OUT` straight to the Kenwood. No extra supply.
-Only worth its full output if the Fosi is on the 48 V brick. Do not power the
-Fosi from the machine's 48 V coil rail.
+Because the MC101 has no sub amplifier, the sub needs the AMP1501:
 
-Option B: Fosi `PRE OUT` -> RCA -> AMP1501 -> Kenwood. Needs its own
-mains-to-12 V supply (13.8 V, about 30 A), not the filter board. Link the
-amp's `REM` terminal to its `+12V` terminal so it powers up with the supply.
-The amp can exceed the sub's 350 W RMS, so the amp's gain setting is what
-protects the sub.
+- Signal: MC101 3.5 mm sub pre-out -> 3.5 mm to 2 x RCA lead -> AMP1501 RCA
+  inputs. The pre-out is unfiltered, so the AMP1501's low-pass filter is the
+  crossover (start at about 80 Hz).
+- Power: its own mains-to-12 V supply (13.8 V, about 30 A), not the filter
+  board. Link the amp's `REM` terminal to its `+12V` terminal so it powers up
+  with the supply. Earth the supply to mains earth.
+- Gain: the amp can exceed the sub's 350 W RMS, so the amp's gain setting is
+  what protects the sub.
 
 Open items:
-- [ ] Confirm which Fosi supply is fitted (32 V or 48 V).
-- [ ] Confirm whether `PRE OUT` is low-passed by `SUB FREQ` (manuals.plus copy of
-      the Fosi manual says it is).
+- [ ] 09-parts-inventory.md lists a Fosi BT30D Pro, which has a built-in 4 ohm
+      sub channel. Confirm whether it is actually owned. If so, it could
+      replace the MC101 and drive the sub without the AMP1501 or a 12 V supply.
 - [ ] Decide the sub's mounting position and enclosure in the cabinet.
 
 ## Installed software
