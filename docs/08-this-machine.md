@@ -91,6 +91,22 @@ Because the MC101 has no sub amplifier, the sub needs the AMP1501:
 - Gain: the amp can exceed the sub's 350 W RMS, so the amp's gain setting is
   what protects the sub.
 
+Alternative under consideration: an amp powered from the existing backbox
+RSP-500-48 (10.5 A) instead of a new 12 V supply. The LRS-150-12 is too small
+for any useful sub power. The candidate is a Fosi BT30D Pro, which takes
+24 to 48 V (only units labelled "DC INPUT 24~48V"; units labelled 19~36V
+must not get 48 V), has a sub low-pass and sub level control, and would
+replace both the MC101 and the AMP1501. Fosi says it needs active cooling at
+48 V. Sustained build-up draw is roughly 6 A at 48 V (estimate), which leaves
+about 4.5 A for coils during a build-up. Risks, not yet tested: weaker
+flippers during build-ups, coil clicks in the audio, the Smart Power Filter
+Board's 48 V over-current cut-out also muting the sub, and a ground loop via
+the NUC. Feed it from a fused 48 V output of the filter board, not upstream of
+it. Test by playing the loudest build-up while hammering the flippers. If it
+fails, the Fosi 48 V brick in the backbox with 48 V DC run down (about 6 A,
+16 AWG) is the fallback. The Fosi V3 Mono (48 V, 240 W at 4 ohm) was
+rejected because it has no low-pass and the MC101 pre-out is unfiltered.
+
 Effects use (user, 2026-09-23): the sub is also for tension build-ups that
 shake the cabinet, not only background bass. Consequences:
 
