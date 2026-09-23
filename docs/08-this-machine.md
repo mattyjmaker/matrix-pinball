@@ -129,9 +129,10 @@ shake the cabinet, not only background bass. Consequences:
   diode are not yet checked.
 
 Open items:
-- [ ] 09-parts-inventory.md lists a Fosi BT30D Pro, which has a built-in 4 ohm
-      sub channel. Confirm whether it is actually owned. It would suit music
-      bass, but not sustained effect build-ups, so the AMP1501 stays.
+- [ ] Decide between a BT30D Pro on the backbox RSP-500-48 (the owned unit is
+      in the arcade cabinet, so this means buying a second one or swapping it
+      with the MC101) and the AMP1501 with a UHP-500-12. Powered from the
+      RSP-500-48, the BT30D Pro needs no brick.
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
       assigning it a Cabinet I/O driver.
 - [ ] Decide the sub's mounting position and enclosure in the cabinet.
