@@ -92,7 +92,7 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 | Fosi Audio BT30D Pro (TPA3255) stereo amp | 1 | HAVE |
 | Kenwood KFC-WPS1200F 12" subwoofer | 1 | HAVE |
 | Stereo car speakers (donated) | 1 pair | HAVE |
-| Blaupunkt 1500 W monoblock sub amp | 1 | PLANNED |
+| Blaupunkt AMP1501 monoblock sub amp (12 V car amp, 1500 W "max") | 1 | HAVE (user, 2026-09-23). Optional; see 08-this-machine.md, "Audio wiring". |
 | Triangular button guard side rails (Stern) + mounting tape | — | HAVE (Feb 2023) |
 | Red start button (500-6388-44) | 1 | HAVE (Feb 2023) |
 | Cabinet flipper buttons, transparent green, with spring | 2 | HAVE (Feb 2023) |

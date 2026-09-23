@@ -46,6 +46,43 @@ Not yet recorded, and worth adding here as they are decided: LED and lamp
 wiring, opto power and signal, ground and earth bonding, and whether any
 sub-loom uses a different scheme.
 
+### Audio wiring (planned, 2026-09-23)
+
+Current chain (user): NUC headphone out -> Fosi BT30D Pro input -> the donated
+car speakers. To add: the Kenwood KFC-WPS1200F 12" sub, optionally through the
+Blaupunkt AMP1501.
+
+Neither the audio signal nor the sub amp's power goes through the FAST boards.
+The Cabinet I/O (FP-CAB-0001) only carries switch inputs and low-side drivers.
+The Smart Power Filter Board's 12 V headers are 0.156" parts rated 7 A per pin
+(FAST, "Smart Power Filter Board Wiring"), while the AMP1501 carries
+2 x 20 A fuses. FAST's own audio option is the FAST Audio Interface board
+(12 V, 4 ohm main and sub amps, software volume); it is not owned.
+
+Published specs (retailer and manufacturer listings, not measured here):
+
+| Item | Spec |
+| --- | --- |
+| Kenwood KFC-WPS1200F | Single 4 ohm voice coil, 350 W RMS, 1400 W peak, 91 dB, shallow mount |
+| Fosi BT30D Pro sub channel | 350 W at 4 ohm with the 48 V supply (less on the 32 V supply). `SUB OUT` for a passive sub, `PRE OUT` for an external amp. `SUB FREQ` 0 to 300 Hz |
+| Blaupunkt AMP1501 | Class D, 563 W RMS at 4 ohm, 11 to 16 V DC, 2 x 20 A fuses, RCA (low-level) input, 10 to 300 Hz |
+
+Option A (preferred): Fosi `SUB OUT` straight to the Kenwood. No extra supply.
+Only worth its full output if the Fosi is on the 48 V brick. Do not power the
+Fosi from the machine's 48 V coil rail.
+
+Option B: Fosi `PRE OUT` -> RCA -> AMP1501 -> Kenwood. Needs its own
+mains-to-12 V supply (13.8 V, about 30 A), not the filter board. Link the
+amp's `REM` terminal to its `+12V` terminal so it powers up with the supply.
+The amp can exceed the sub's 350 W RMS, so the amp's gain setting is what
+protects the sub.
+
+Open items:
+- [ ] Confirm which Fosi supply is fitted (32 V or 48 V).
+- [ ] Confirm whether `PRE OUT` is low-passed by `SUB FREQ` (manuals.plus copy of
+      the Fosi manual says it is).
+- [ ] Decide the sub's mounting position and enclosure in the cabinet.
+
 ## Installed software
 
 | What | Version | Location |
