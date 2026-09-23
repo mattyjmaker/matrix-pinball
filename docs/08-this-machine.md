@@ -78,10 +78,16 @@ Because the MC101 has no sub amplifier, the sub needs the AMP1501:
   roughly 440 W in (assuming about 80% efficiency), about 33 A at 13.2 V.
   Mains stays in the backbox (user's design goal), so the supply goes in the
   backbox and only 12 V DC runs down to the amp in the cabinet. Chosen
-  supply (user, 2026-09-23): Mean Well UHP-500-12 (12 V, 41.7 A, active PFC, fanless, slim
-  232 x 81 x 31 mm), chosen for footprint over the RSP-500-12
-  (230 x 127 x 40.5 mm) and LRS-600-12. Fanless, so leave free air around it.
-  Fuse the +V lead at the supply (40 to 50 A), run 8 AWG down, and put a 50 A
+  supply (user, 2026-09-23, confirmed to fit the backbox): Mean Well
+  RSP-500-12 (12 V, 41.7 A, fan-cooled, active PFC, universal 85 to 264 V AC
+  input, 230 x 127 x 40.5 mm, 1.3 kg, output adjustable 10.8 to 13.2 V; same
+  family as the backbox RSP-500-48). Set the output to 13.2 V. Chosen over
+  the fanless UHP-500-12 (232 x 81 x 31 mm) because the fan holds full output
+  in the enclosed backbox. Keep its fan intake and exhaust clear. Feed its
+  mains input from the same switched, fused split as the other two supplies,
+  and check that the existing mains fuse suits the added load. Fuse the +V
+  lead within about 300 mm of the supply (50 A, MIDI, ANL or maxi blade), run
+  8 AWG pure copper (not CCA) down, and put a 50 A
   connector (e.g. Anderson SB50) at the backbox/cabinet join so the backbox
   can still be separated. Neither backbox Mean Well suits it: the FAST bundle
   pair is an RSP-500-48 (wrong voltage; the amp takes 11 to 16 V) and an
@@ -91,7 +97,7 @@ Because the MC101 has no sub amplifier, the sub needs the AMP1501:
 - Gain: the amp can exceed the sub's 350 W RMS, so the amp's gain setting is
   what protects the sub.
 
-Rejected alternative (user chose the UHP-500-12, 2026-09-23): an amp powered from the existing backbox
+Rejected alternative (user chose a dedicated 12 V supply, 2026-09-23): an amp powered from the existing backbox
 RSP-500-48 (10.5 A) instead of a new 12 V supply. The LRS-150-12 is too small
 for any useful sub power. The candidate is a Fosi BT30D Pro, which takes
 24 to 48 V (only units labelled "DC INPUT 24~48V"; units labelled 19~36V
@@ -129,11 +135,13 @@ shake the cabinet, not only background bass. Consequences:
   diode are not yet checked.
 
 Open items:
-- [ ] Buy the Mean Well UHP-500-12, a 40 to 50 A inline fuse and holder,
-      8 AWG red and black cable, an Anderson SB50 pair, and a 3.5 mm to
+- [ ] Buy the Mean Well RSP-500-12, a 50 A fuse and holder, 8 AWG pure
+      copper red and black cable, an Anderson SB50 pair, and a 3.5 mm to
       2 x RCA lead.
-- [ ] Measure and place the UHP-500-12 in the backbox with free air around it
-      (fanless), and print a mount like the existing LRS-150 mounts.
+- [ ] Mount the RSP-500-12 in the backbox with its fan clear, and print a
+      mount like the existing LRS-150 mounts if needed.
+- [ ] Check the existing mains fuse rating (and slow-blow type) against the
+      third supply's added load.
 - [ ] Read the labels on the two existing backbox Mean Wells to confirm they
       are the RSP-500-48 and LRS-150-12.
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
