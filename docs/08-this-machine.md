@@ -72,16 +72,43 @@ Because the MC101 has no sub amplifier, the sub needs the AMP1501:
 - Signal: MC101 3.5 mm sub pre-out -> 3.5 mm to 2 x RCA lead -> AMP1501 RCA
   inputs. The pre-out is unfiltered, so the AMP1501's low-pass filter is the
   crossover (start at about 80 Hz).
-- Power: its own mains-to-12 V supply (13.8 V, about 30 A), not the filter
-  board. Link the amp's `REM` terminal to its `+12V` terminal so it powers up
-  with the supply. Earth the supply to mains earth.
+- Power: its own mains-to-12 V supply, not the filter board. Size it for
+  sustained output, because the sub is used for effect build-ups that hold
+  near full power for seconds, not only for music peaks: 350 W to the sub is
+  roughly 440 W in (assuming about 80% efficiency), about 32 A at 13.8 V. Use a
+  500 to 600 W (40 to 50 A) supply trimmed to 13.8 V, 8 AWG, and a 40 to 50 A
+  fuse near the supply. Link the amp's `REM` terminal to its `+12V` terminal
+  so it powers up with the supply. Earth the supply to mains earth.
 - Gain: the amp can exceed the sub's 350 W RMS, so the amp's gain setting is
   what protects the sub.
 
+Effects use (user, 2026-09-23): the sub is also for tension build-ups that
+shake the cabinet, not only background bass. Consequences:
+
+- The AMP1501 is the right amp for this. A BT30D Pro on its 48 V 5 A brick
+  (240 W across all three channels) cannot sustain a long build-up.
+- Bolt the sub rigidly to the cabinet floor, firing down through a grilled
+  cutout, so the cabinet structure is driven.
+- Author build-ups as rumble in roughly the 30 to 60 Hz range, high-passed
+  at about 25 Hz in the audio file. The Kenwood is rated to 30 Hz, and
+  whether the AMP1501 has a subsonic filter is unknown.
+- Set the AMP1501 gain with the loudest build-up, not with music.
+- The MC101 feeds the car speakers full range with no high-pass, so turn its
+  bass control down and check the speakers do not bottom out on build-ups.
+- No bus changes are needed: the build-ups are ordinary sounds on the
+  `effects` bus, and the AMP1501 low-pass sends their low end to the sub.
+- Pair build-ups with the JJP shaker motor (PBL-100-0092-00, owned) on a
+  Cabinet I/O driver, run as a coil with a low `default_hold_power` from a
+  show (see 04-game-logic-and-mechs.md, "Shakers"). `shakers:` needs the
+  FAST EXP-1313, which is not owned. The shaker's voltage, current and
+  diode are not yet checked.
+
 Open items:
 - [ ] 09-parts-inventory.md lists a Fosi BT30D Pro, which has a built-in 4 ohm
-      sub channel. Confirm whether it is actually owned. If so, it could
-      replace the MC101 and drive the sub without the AMP1501 or a 12 V supply.
+      sub channel. Confirm whether it is actually owned. It would suit music
+      bass, but not sustained effect build-ups, so the AMP1501 stays.
+- [ ] Check the JJP shaker's rated voltage, current and flyback diode before
+      assigning it a Cabinet I/O driver.
 - [ ] Decide the sub's mounting position and enclosure in the cabinet.
 
 ## Installed software
