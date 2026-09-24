@@ -1,0 +1,4 @@
+# Procedurally generated, flat-palette pixel art (~12 KB each). Too small to
+# be worth LFS, so this overrides the repo-wide *.png rule in
+# ../../../.gitattributes and stores these as plain git blobs.
+*.png -filter -diff -merge -text
