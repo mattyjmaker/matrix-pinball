@@ -8,3 +8,6 @@ gmc/.godot
 gmc/video/*
 !gmc/video/README.md
 !gmc/video/manifest.txt
+
+# Python bytecode from mode code and the tests.
+__pycache__/
