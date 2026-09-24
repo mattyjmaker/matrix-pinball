@@ -1,0 +1,5 @@
+# These pixel-art sprites are a few hundred bytes to ~2 KB each (flat-colour
+# 24x24 art, nearest-neighbour upscaled). Too small to be worth LFS, so they
+# override the repo-wide *.png rule in ../../../.gitattributes and store as
+# plain git blobs.
+*.png -filter -diff -merge -text
