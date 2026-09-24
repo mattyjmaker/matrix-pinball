@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_widget.gd" id="1_widget"]
+[ext_resource type="PackedScene" path="res://assets/parts/countdown_clock.tscn" id="2_clock"]
+
+[node name="Countdown" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_widget")
+
+[node name="Panel" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 890.0
+offset_top = 220.0
+offset_right = 1670.0
+offset_bottom = 450.0
+mouse_filter = 2
+color = Color(0, 0.03, 0.01, 0.75)
+
+[node name="Clock" parent="." instance=ExtResource("2_clock")]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 890.0
+offset_top = 220.0
+offset_right = 1670.0
+offset_bottom = 450.0

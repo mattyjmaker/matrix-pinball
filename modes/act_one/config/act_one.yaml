@@ -28,3 +28,91 @@ variable_player:
     score: 250000
   the_one_lit:
     score: 500000
+
+# Callouts for things that end a chapter live here rather than in the chapter:
+# MPF clears a mode's widgets the moment the mode stops, so a chapter cannot
+# show its own ending.
+widget_player:
+  crew_freed{crew=="trinity"}:
+    chapter_card:
+      key: crew_card
+      priority: 10
+      tokens:
+        kicker: CREW FREED
+        title: TRINITY
+        goal: TRINITY'S ESCAPE COMPLETE
+      expire: 4s
+  crew_freed{crew=="apoc"}:
+    chapter_card:
+      key: crew_card
+      priority: 10
+      tokens:
+        kicker: CREW FREED
+        title: APOC
+        goal: UNPLUGGED SUPER JACKPOT
+      expire: 4s
+  crew_freed{crew=="mouse"}:
+    chapter_card:
+      key: crew_card
+      priority: 10
+      tokens:
+        kicker: CREW FREED
+        title: MOUSE
+        goal: THE CONSTRUCT COMPLETE
+      expire: 4s
+  crew_freed{crew=="tank"}:
+    chapter_card:
+      key: crew_card
+      priority: 10
+      tokens:
+        kicker: CREW FREED
+        title: TANK
+        goal: MORPHEUS RESCUED
+      expire: 4s
+  crew_freed{crew=="switch"}:
+    chapter_card:
+      key: crew_card
+      priority: 10
+      tokens:
+        kicker: CREW FREED
+        title: SWITCH
+        goal: TRINITY MULTIBALL COMPLETE
+      expire: 4s
+  crew_freed{crew=="dozer"}:
+    chapter_card:
+      key: crew_card
+      priority: 10
+      tokens:
+        kicker: CREW FREED
+        title: DOZER
+        goal: SENTINEL MULTIBALL COMPLETE
+      expire: 4s
+  the_one_lit:
+    mode_banner:
+      tokens:
+        title: THE ONE IS LIT
+        detail: SHOOT THE MISSION SCOOP
+      expire: 4s
+  multiball_queued:
+    mode_banner:
+      tokens:
+        title: MULTIBALL READY
+        detail: STARTS WHEN THIS MULTIBALL ENDS
+      expire: 3s
+  ch1_failed:
+    video_clip:
+      tokens:
+        clip: phone_booth_truck
+      expire: 6s
+  ch2_blue:
+    mode_banner:
+      tokens:
+        title: THE STORY ENDS
+        detail: YOU WAKE UP IN YOUR BED
+      expire: 3s
+  ch3_jump_missed:
+    mode_banner:
+      tokens:
+        title: EVERYBODY FALLS THE FIRST TIME
+        detail: ""
+      expire: 3s

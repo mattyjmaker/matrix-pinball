@@ -38,6 +38,13 @@ widget_player:
       tokens:
         clip: trinity_mb_intro
       expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: MULTIBALL
+        title: TRINITY
+        goal: TRINITY RAMP FOR JACKPOTS
+      expire: 4s
   trinity_ramp_hit:
     mode_banner:
       tokens:

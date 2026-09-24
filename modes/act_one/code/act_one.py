@@ -201,7 +201,7 @@ class ActOne(Mode):
             if name not in pending:
                 pending.append(name)
                 self._set_pending(pending)
-            self.machine.events.post("multiball_queued", name=name)
+            self.machine.events.post("multiball_queued", multiball=name)
             return
         self._start_multiball(name)
 
@@ -241,7 +241,7 @@ class ActOne(Mode):
             return
         self.player[freed_var] = 1
         self.player["freed_count"] += 1
-        self.machine.events.post("crew_freed", name=freed_var[len("freed_"):])
+        self.machine.events.post("crew_freed", crew=freed_var[len("freed_"):])
 
         threshold = int(self.machine.settings.get_setting_value("the_one_threshold"))
         if not self.player["the_one_lit"] and self.player["freed_count"] >= threshold:

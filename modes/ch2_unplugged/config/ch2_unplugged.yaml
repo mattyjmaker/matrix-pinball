@@ -46,6 +46,13 @@ widget_player:
       tokens:
         clip: pod_wake
       expire: 8s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: RED PILL  MULTIBALL
+        title: UNPLUGGED
+        goal: REAL WORLD RAMP FOR JACKPOTS
+      expire: 5s
   real_world_ramp_hit:
     mode_banner:
       tokens:
@@ -56,5 +63,5 @@ widget_player:
     mode_banner:
       tokens:
         title: SUPER JACKPOT
-        detail: APOC FREED
+        detail: ALL THREE REAL WORLD TARGETS
       expire: 3s

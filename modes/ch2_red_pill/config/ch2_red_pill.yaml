@@ -49,24 +49,17 @@ variable_player:
   ch2_blue:
     score: 5000
 
+# The choice screen goes when this mode stops. The blue pill's callout is in
+# act_one.yaml for that reason.
 widget_player:
   mode_ch2_red_pill_started:
     video_clip:
       tokens:
         clip: pills_choice
       expire: 10s
-    mode_banner:
-      key: ch2_choice
+    pill_choice:
+      priority: 10
       tokens:
-        title: RED PILL OR BLUE PILL
-        detail: "LEFT: BLUE   RIGHT: RED"
-  mode_ch2_red_pill_stopped:
-    mode_banner:
-      key: ch2_choice
-      action: remove
-  ch2_blue:
-    mode_banner:
-      tokens:
-        title: THE STORY ENDS
-        detail: YOU WAKE UP IN YOUR BED
-      expire: 3s
+        label: ACT I  CHAPTER 2
+        event: timer_ch2_choice_tick
+        seconds: "10"

@@ -120,12 +120,53 @@ widget_player:
       tokens:
         clip: lobby_shootout
       expire: 8s
+    chapter_card:
+      key: ch4_stage_card
+      priority: 10
+      tokens:
+        kicker: RESCUE MORPHEUS  STAGE 1
+        title: THE LOBBY
+        goal: HIT EVERY GUARD
+      expire: 4s
+  ch4_rooftop_started:
+    chapter_card:
+      key: ch4_stage_card
+      priority: 10
+      tokens:
+        kicker: RESCUE MORPHEUS  STAGE 2
+        title: THE ROOFTOP
+        goal: TRINITY RAMP, THEN HIT AN AGENT
+      expire: 4s
+  ch4_helicopter_started:
+    chapter_card:
+      key: ch4_stage_card
+      priority: 10
+      tokens:
+        kicker: RESCUE MORPHEUS  STAGE 3
+        title: THE HELICOPTER
+        goal: CATCH MORPHEUS AT THE SENTINEL MAGNET
+      expire: 4s
   ch4_dodge_lit:
     mode_banner:
       tokens:
         title: DODGE THIS
         detail: HIT AN AGENT NOW
       expire: 3s
+    countdown:
+      key: ch4_dodge_clock
+      priority: 10
+      tokens:
+        label: DODGE THIS
+        event: timer_ch4_dodge_tick
+        seconds: "10"
+  ch4_dodge_this:
+    countdown:
+      key: ch4_dodge_clock
+      action: remove
+  timer_ch4_dodge_complete:
+    countdown:
+      key: ch4_dodge_clock
+      action: remove
   ch4_morpheus_caught:
     video_clip:
       tokens:

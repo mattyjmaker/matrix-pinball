@@ -57,20 +57,36 @@ variable_player:
     score:
       int: 250000 + device.timers.ch1_phone.ticks * 25000
 
+# The completion and failure callouts are in act_one.yaml: this mode's widgets
+# are cleared when it stops.
 widget_player:
   mode_ch1_trinity_escape_started:
     video_clip:
       tokens:
         clip: trinity_room_303
       expire: 8s
-  ch1_completed:
-    mode_banner:
+    chapter_card:
+      priority: 10
       tokens:
-        title: TRINITY FREED
-        detail: SHE MADE THE CALL
-      expire: 3s
-  ch1_failed:
-    video_clip:
+        kicker: ACT I  CHAPTER 1
+        title: TRINITY'S ESCAPE
+        goal: 3 RAMP JUMPS BEFORE THE TRUCK
+      expire: 5s
+    countdown:
+      key: ch1_clock
+      priority: 10
       tokens:
-        clip: phone_booth_truck
-      expire: 6s
+        label: ROOFTOPS
+        event: timer_ch1_rooftops_tick
+        seconds: "40"
+  ch1_rooftops_done:
+    countdown:
+      key: ch1_clock
+      action: update
+      tokens:
+        label: THE PHONE IS RINGING
+        event: timer_ch1_phone_tick
+        seconds: "20"
+        total: "20"
+        value_base: "250000"
+        value_step: "25000"

@@ -282,11 +282,37 @@ and the Sentinel gate are off.
 | `balls_locked` | Trinity Ramp lock count |
 | `freed_*` | Section 7 |
 
-Callouts use the `mode_banner` widget (`gmc/widgets/mode_banner.tscn`), a
-title and detail line over the centre stage, fed by `widget_player` tokens.
-Anything that changes while it is on screen, such as the phone's ramp or the
-act select countdown, goes on the objective line instead, because MPF does not
-substitute event arguments into widget tokens.
+### Stage widgets
+
+Modes draw on the HUD's empty centre stage with `widget_player`. The stage is
+split into three zones so these widgets can share it:
+
+| Widget | Zone (2560x1440 design) | Shows | Used for |
+| --- | --- | --- | --- |
+| `countdown` | Top, y 220 to 450 | Label, two-digit clock that churns and locks on every tick (the trace readout's number-lock), draining bar, optional hurry-up value | Chapter 1 rooftops then phone (with the phone's falling value), Chapter 3 rounds, Chapter 4 "Dodge this", The Chase |
+| `chapter_card` | Middle, y 460 to 745 | Kicker, title, goal | Every chapter and multiball start, the stages of Rescue Morpheus and The One, each crew member freed, Act I complete |
+| `mode_banner` | Bottom, y 760 to 980 | Title and detail | Jackpots and short callouts |
+| `pill_choice` | Whole stage | Clock, blue and red pills with their flippers | Chapter 2's choice |
+| `act_select` | Whole stage | Clock, the act on offer (player variable `act_choice`) | The act select |
+
+- **Clocks** subscribe over BCP to the event named in their `event` token
+  (`timer_<name>_tick` for MPF timers; `the_one_chase_tick` and
+  `act_select_show` for the two code-driven clocks) and read the seconds from
+  its `ticks` argument, or the argument named by `arg`. The shared part is
+  `gmc/assets/parts/countdown_clock.tscn`.
+- **A mode cannot show its own ending.** MPF clears every widget a mode played
+  the moment the mode stops (MPF 0.80.0 source, `config_player.mode_stop`). So
+  the callouts for events that end a mode are played by a mode that keeps
+  running: crew cards, the truck clip, "The story ends" and "Everybody falls"
+  by `act_one`; the EMP clip and "Act I complete" by `base`.
+- **A live clock is switched with `action: update`**, not a second `play`: GMC
+  ignores a play whose `key` is already on screen (`mpf_scene_base.gd`).
+- **No placeholders in tokens.** MPF does not substitute event arguments into
+  widget tokens, so anything that changes while on screen goes on the HUD's
+  objective line or in a clock.
+- **No event argument called `name`.** `widget_player` passes the triggering
+  event's arguments on to BCP, where `name` collides with BCP's own and raises
+  a `TypeError`. The tests caught this on `crew_freed`, which now uses `crew`.
 
 ## 10. Film clips
 
@@ -359,12 +385,16 @@ platform with no hardware or Godot:
 
     python -m unittest discover -s tests -t .
 
-53 tests at the time of writing. They cover every chapter, both standalone
+66 tests at the time of writing. They cover every chapter, both standalone
 multiballs, the multiball queue, the roster threshold, The One (including
 resuming after a drain and the EMP) and the act select, plus spot checks of
 the scores and timers in this document (`tests/test_scoring.py` and the
-chapter tests). Not every score above has its own test. They need MPF 0.80
-installed (see the README).
+chapter tests). Not every score above has its own test.
+
+`tests/test_display.py` checks what the rules send to the display through
+MPF's mock BCP client: which widgets each mode plays and with which tokens,
+that end-of-mode callouts survive their mode stopping, and that every widget
+and clip the YAML names exists. They need MPF 0.80 installed (see the README).
 
 For hands-on play, `mpf both -X` with the keyboard: section "Keyboard" in the
 README lists the keys added for these rules.
@@ -375,8 +405,11 @@ README lists the keys added for these rules.
   Verified here only on smart_virtual (the tests, and `mpf game -X -b` booting
   to attract with no errors in the log). The FAST platform cannot start in this
   container.
-- **The display.** `mode_banner.tscn` loads and instantiates in Godot 4.7.2
-  headless, but has not been seen on screen; the fonts in that checkout were
-  Git LFS pointers.
+- **The display on the cabinet.** Every stage widget was rendered in Godot
+  4.7.2 (OpenGL, under Xvfb, with the real fonts) over the gameplay HUD at
+  1280x720, including a clock driven through its tick handler and the longest
+  texts the rules use. Not yet checked: the cabinet's own display, a live BCP
+  connection to MPF, and how the full-screen film clips sit over these widgets
+  once the clips exist.
 - **Scoring balance**, once the machine is playable.
 - The hardware assumptions in section 11.
