@@ -11,3 +11,23 @@
 # Sample clip, tracked in the repo. Copy it in with:
 #   cp gmc/slides/attract/assets/matrixrain.ogv gmc/video/
 matrixrain
+
+# Act I clips. Referenced by the mode configs (see docs/11-rules-act-1.md,
+# section 10) and not yet cut, so check_video.py reports them missing until
+# they are. Each widget_player entry has an `expire`, so a missing clip leaves
+# the stage after that time rather than blocking it.
+trinity_room_303
+phone_booth_truck
+pills_choice
+pod_wake
+kung_fu_load
+jump_program
+deja_vu_cat
+lots_of_guns
+lobby_shootout
+helicopter_catch
+trinity_mb_intro
+sentinel_attack
+subway_smith
+neo_resurrects
+emp_fire

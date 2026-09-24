@@ -15,6 +15,9 @@ Godot Media Controller (GMC) and FAST Pinball Neuron hardware.
 ## Layout
 
 - `config/` and `modes/` are the MPF machine folder (repo root is the machine path).
+  `config/playfield_pending.yaml` holds the playfield features that are not
+  built or wired yet (see "Game rules" below).
+- `tests/` runs the rules against the real config with MPF's test framework.
 - `gmc/` is the Godot project. Slides live in `gmc/slides/<name>/<name>.tscn`.
 - `docs/` holds the MPF documentation summaries, this machine's hardware notes and the parts inventory. Start at `docs/README.md`.
 
@@ -122,6 +125,55 @@ button works as soon as the machine reaches attract. One listed switch is one
 ball. MPF raises `CFE-Smart_Virtual_Platform-1` on any switch name it cannot
 find, so the list must only name switches that are currently defined.
 
+## Game rules
+
+Act I (the first film) is implemented: four chapter modes in film order, the
+VPX Trinity and Sentinel multiballs, the FREED roster and The One wizard. The
+rules, every timer and score, and the mode map are in
+`docs/11-rules-act-1.md`.
+
+### Running the tests
+
+With the MPF venv active, from the repo root:
+
+    python -m unittest discover -s tests -t .
+
+The tests run the real config on the smart_virtual platform, with no hardware
+or Godot, and play through every chapter, multiball and wizard stage.
+
+### Unwired features run on the virtual platform
+
+`hardware: platform: fast, virtual` loads both platforms. Everything in
+`config/playfield_pending.yaml` is `platform: virtual`, so the full rules load
+on the real machine: those switches never close and those coils do nothing
+until the feature is wired. To bring one online, move its entries into
+`config/config.yaml`, give them FAST numbers and delete `platform: virtual`.
+Keep each switch's `events_when_activated:` line: the modes listen to those
+logical events (for example `trinity_ramp_hit`), never to switch names.
+
+### Keyboard
+
+On `mpf both -X` the `[keyboard]` section of `gmc/gmc.cfg` drives the switches.
+Keys marked toggle stay closed until pressed again, which is how a ball sits in
+a device or a drop target stays down.
+
+| Key | Switch | | Key | Switch |
+| --- | --- | --- | --- | --- |
+| `1` | Start | | `u` | Deja Vu VUK (toggle) |
+| `a` / `d` | Left / right flipper | | `i` | Sentinel VUK (toggle) |
+| `q` | Mission Drop (toggle) | | `o` | Agents Coming scoop (toggle) |
+| `w` | Mission scoop (toggle) | | `f` `g` `h` | Trinity lock 1 to 3 (toggle) |
+| `e` | Trinity Ramp | | `j` | Ammo Lock (toggle) |
+| `r` | Deja Vu Ramp | | `l` | Ammo target |
+| `t` | Real World Ramp | | `s` / `5` | Sentinel left / right target |
+| `y` | Sentinel Ramp | | `6` | Sentinel magnet |
+| `2` `3` `4` | Agents 1 to 3 (toggle) | | `0` `9` `8` `7` | Outlanes and inlanes |
+
+The trough keys are `x c v b n m k`. The Matrix Team drops, Real World
+standups, Sentinel boss target and EMP standups have no key; use MPF Monitor
+(`pinball-monitor`) for those. The Godot editor's MPF tab rewrites
+`gmc/gmc.cfg` in full, so check this section survives an editor save.
+
 ## Slides and the Matrix look
 
 Slides live in `gmc/slides/<name>/<name>.tscn` and are put on screen by
@@ -173,6 +225,10 @@ follows; until then each element shows its authored placeholder.
 | `objective` | str | The objective line above the score |
 | `balls_locked` | int | How many power station cells are lit |
 | `freed_trinity`, `freed_tank`, … | bool | Lights that name in the FREED roster |
+
+The Act I modes set all of these (docs/11-rules-act-1.md, section 9). Their
+callouts use `gmc/widgets/mode_banner.tscn`, a title and detail line over the
+centre stage that reads the `title` and `detail` tokens from `widget_player`.
 
 #### The trace readout
 
@@ -311,10 +367,12 @@ FAST numbers. They are commented out in `config/config.yaml` and marked
 `TODO(hardware)`. Until restored:
 
 - The trough runs on seven switches (trough 1 opto and jam opto are not fitted).
-- **The machine is set to a single ball while the rules are built out.**
-  `machine: balls_installed: 1` and the virtual trough is seeded with one ball.
-  Raise both together when multiball work starts. The trough is the 8-ball
-  PBL-100-0016-00, so 8 is the ceiling, 7 until the trough 1 opto is fitted.
+- **The machine is set to seven balls** for the Act I multiballs:
+  `machine: balls_installed: 7`, and the virtual trough is seeded with seven.
+  Load seven balls, or attract mode ball-searches constantly. The trough is the
+  8-ball PBL-100-0016-00; raise both to 8 once the trough 1 opto is fitted.
+- Playfield features not yet built or wired are on the virtual platform in
+  `config/playfield_pending.yaml` (see "Game rules").
 - The plunger lane has no switch, so the trough ejects directly to the playfield
   as described in the MPF docs for plunger lanes without a switch.
 

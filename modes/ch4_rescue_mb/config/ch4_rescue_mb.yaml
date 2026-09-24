@@ -1,0 +1,133 @@
+#config_version=6
+
+# Chapter 4: Rescue Morpheus multiball, three stages.
+#   Lobby (3 balls): hit every guard, the four EMP standups and three Agents.
+#   Rooftop (4 balls): Trinity Ramp lights "Dodge this" for 10 s; hit an
+#     Agent while it is lit.
+#   Helicopter (5 balls): a ball over the Sentinel magnet is caught (Neo
+#     catches Morpheus) for the super jackpot, which frees TANK.
+# See docs/11-rules-act-1.md, section 4.
+
+mode:
+  start_events: start_rescue_mb
+  stop_events: multiball_rescue_ended
+  events_when_stopped: ch4_ended
+  priority: 310
+
+multiballs:
+  rescue:
+    ball_count: 3
+    ball_count_type: total
+    ball_locks: bd_ammo_lock
+    shoot_again: 20s
+    start_events: mode_ch4_rescue_mb_started
+    add_a_ball_events: ch4_rooftop_started, ch4_helicopter_started
+    add_a_ball_shoot_again: 10s
+
+state_machines:
+  ch4_stage:
+    starting_state: lobby
+    states:
+      lobby:
+        label: Lobby
+      rooftop:
+        label: Rooftop
+        events_when_started: ch4_rooftop_started
+      helicopter:
+        label: Helicopter
+        events_when_started: ch4_helicopter_started
+      done:
+        label: Rescued
+    transitions:
+      - source: lobby
+        target: rooftop
+        events: ch4_lobby_cleared
+      - source: rooftop
+        target: helicopter
+        events: ch4_dodge_this
+      - source: helicopter
+        target: done
+        events: ch4_morpheus_caught
+
+accruals:
+  ch4_lobby_guards:
+    events:
+      - emp_target_1_hit
+      - emp_target_2_hit
+      - emp_target_3_hit
+      - emp_target_4_hit
+      - drop_target_agent_1_down
+      - drop_target_agent_2_down
+      - drop_target_agent_3_down
+    events_when_complete: ch4_lobby_cleared
+    start_enabled: true
+
+timers:
+  ch4_dodge:
+    start_value: 10
+    end_value: 0
+    direction: down
+    control_events:
+      - event: ch4_dodge_lit
+        action: restart
+      - event: ch4_dodge_this
+        action: stop
+
+event_player:
+  mode_ch4_rescue_mb_started: agents_raise
+  ch4_rooftop_started: agents_raise
+  trinity_ramp_hit{device.state_machines.ch4_stage.state=="rooftop"}: ch4_dodge_lit
+  drop_target_bank_agents_down{device.state_machines.ch4_stage.state=="lobby"}: agents_raise
+  drop_target_agent_1_down{device.state_machines.ch4_stage.state=="rooftop" and device.timers.ch4_dodge.running}: ch4_dodge_this
+  drop_target_agent_2_down{device.state_machines.ch4_stage.state=="rooftop" and device.timers.ch4_dodge.running}: ch4_dodge_this
+  drop_target_agent_3_down{device.state_machines.ch4_stage.state=="rooftop" and device.timers.ch4_dodge.running}: ch4_dodge_this
+  ch4_dodge_this: agents_raise
+  sentinel_magnet_hit{device.state_machines.ch4_stage.state=="helicopter"}: ch4_morpheus_caught
+  ch4_morpheus_caught: sentinel_magnet_grab, sentinel_magnet_release|2s, ch4_completed
+
+variable_player:
+  mode_ch4_rescue_mb_started:
+    objective:
+      action: set
+      string: "LOBBY: HIT EVERY GUARD"
+  emp_target_hit{device.state_machines.ch4_stage.state=="lobby"}:
+    score: 75000
+  drop_target_agent_1_down{device.state_machines.ch4_stage.state=="lobby"}:
+    score: 75000
+  drop_target_agent_2_down{device.state_machines.ch4_stage.state=="lobby"}:
+    score: 75000
+  drop_target_agent_3_down{device.state_machines.ch4_stage.state=="lobby"}:
+    score: 75000
+  ch4_rooftop_started:
+    objective:
+      action: set
+      string: "ROOFTOP: TRINITY RAMP, THEN HIT AN AGENT"
+  ch4_dodge_this:
+    score: 250000
+  ch4_helicopter_started:
+    objective:
+      action: set
+      string: "HELICOPTER: CATCH MORPHEUS AT THE SENTINEL MAGNET"
+  ch4_morpheus_caught:
+    score: 1000000
+    objective:
+      action: set
+      string: "MORPHEUS RESCUED"
+
+widget_player:
+  mode_ch4_rescue_mb_started:
+    video_clip:
+      tokens:
+        clip: lobby_shootout
+      expire: 8s
+  ch4_dodge_lit:
+    mode_banner:
+      tokens:
+        title: DODGE THIS
+        detail: HIT AN AGENT NOW
+      expire: 3s
+  ch4_morpheus_caught:
+    video_clip:
+      tokens:
+        clip: helicopter_catch
+      expire: 6s

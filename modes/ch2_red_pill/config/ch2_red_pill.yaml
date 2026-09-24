@@ -1,0 +1,72 @@
+#config_version=6
+
+# Chapter 2: Red Pill, the choice. The Mission scoop holds the ball while
+# Morpheus offers the pills. Left flipper: blue. Right flipper: red. No input
+# for 10 s: red. Blue ends the chapter (played, not completed). Red starts
+# Unplugged Multiball (ch2_unplugged). See docs/11-rules-act-1.md, section 4.
+
+mode:
+  start_events: start_ch2
+  stop_events: ch2_blue, ch2_red
+  priority: 300
+
+timers:
+  ch2_choice:
+    start_value: 10
+    end_value: 0
+    direction: down
+    start_running: true
+
+state_machines:
+  ch2_choice:
+    starting_state: choosing
+    states:
+      choosing:
+        label: Choosing
+      blue:
+        label: Blue pill
+        events_when_started: ch2_blue
+      red:
+        label: Red pill
+        events_when_started: ch2_red
+    transitions:
+      - source: choosing
+        target: blue
+        events: s_left_flipper_active
+      - source: choosing
+        target: red
+        events: s_right_flipper_active, timer_ch2_choice_complete
+
+event_player:
+  ch2_blue: mission_release, ch2_ended
+  ch2_red: request_unplugged_mb, mission_release
+
+variable_player:
+  mode_ch2_red_pill_started:
+    objective:
+      action: set
+      string: "LEFT FLIPPER: BLUE PILL   RIGHT FLIPPER: RED PILL"
+  ch2_blue:
+    score: 5000
+
+widget_player:
+  mode_ch2_red_pill_started:
+    video_clip:
+      tokens:
+        clip: pills_choice
+      expire: 10s
+    mode_banner:
+      key: ch2_choice
+      tokens:
+        title: RED PILL OR BLUE PILL
+        detail: "LEFT: BLUE   RIGHT: RED"
+  mode_ch2_red_pill_stopped:
+    mode_banner:
+      key: ch2_choice
+      action: remove
+  ch2_blue:
+    mode_banner:
+      tokens:
+        title: THE STORY ENDS
+        detail: YOU WAKE UP IN YOUR BED
+      expire: 3s

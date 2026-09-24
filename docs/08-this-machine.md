@@ -189,6 +189,7 @@ Keyboard (virtual mode, from `gmc/gmc.cfg`):
 - `p` toggle the plunger lane
 - `0`/`9` outlanes
 - `8`/`7` inlanes
+- The Act I playfield keys are listed in the README, section "Keyboard".
 
 Logs go to `~/matrix-pinball/logs/`.
 
@@ -203,6 +204,17 @@ Logs go to `~/matrix-pinball/logs/`.
 - A simulated game works: start → base mode → trough ejects to the plunger → an inlane scores 100.
 
 ## Still to do
+- [ ] **Load 7 balls.** `balls_installed` is now 7 for the Act I multiballs
+      (docs/11-rules-act-1.md, section 2). With fewer balls in the machine,
+      attract mode ball-searches constantly.
+- [ ] **First boot of the Act I rules on the FAST hardware.** `hardware:
+      platform:` is now `fast, virtual`, with the unwired features on the
+      virtual platform. This has only been run on smart_virtual (the tests and
+      `mpf -X`). Run `pinball hw` and check the log for errors before playing.
+- [ ] As each playfield feature is wired, move it out of
+      `config/playfield_pending.yaml` (see that file's header) and check the
+      `TODO` assumptions there: Trinity lock positions, Ammo Lock capacity,
+      Sentinel gate type, and which ramps are left and right.
 - [ ] Install system packages. This needs sudo, so the user runs it:
   `sudo apt update && sudo apt install -y git git-lfs python3.14-venv && sudo usermod -aG dialout,tty pinball`, then log out and back in.
 - [ ] Turn `~/matrix-pinball` into a real git clone (with git-lfs) and commit the changes above.

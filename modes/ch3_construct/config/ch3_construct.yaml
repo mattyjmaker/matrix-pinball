@@ -1,0 +1,248 @@
+#config_version=6
+
+# Chapter 3: The Construct. Single-ball skill mode, three timed rounds.
+#   1. "I know kung fu": all five Matrix Team drops inside 30 s.
+#   2. Sparring: 4 combos alternating left-side and right-side shots, 30 s.
+#   3. The jump program: Real World ramp, then a Real World standup, 20 s.
+#      A miss still counts: "Everybody falls the first time."
+# Bonus in rounds 2 and 3: the Woman in the Red Dress walks across the ramps.
+# Shoot the ramp she is on and an Agent rises; hit it before the round ends.
+# Winning rounds 1 and 2 frees MOUSE. See docs/11-rules-act-1.md, section 4.
+
+mode:
+  start_events: start_ch3
+  stop_events: ch3_finish
+  events_when_stopped: ch3_ended
+  priority: 300
+
+timers:
+  ch3_round:
+    start_value: 30
+    end_value: 0
+    direction: down
+    start_running: true
+    control_events:
+      - event: ch3_sparring_started
+        action: restart
+      - event: ch3_jump_started
+        action: jump
+        value: 20
+      - event: ch3_done
+        action: stop
+  # The Woman in the Red Dress moves to the next ramp on each tick.
+  ch3_walk:
+    start_value: 0
+    direction: up
+    tick_interval: 3s
+    control_events:
+      - event: ch3_sparring_started
+        action: start
+      - event: ch3_done
+        action: stop
+
+state_machines:
+  ch3_round:
+    starting_state: kung_fu
+    states:
+      kung_fu:
+        label: I know kung fu
+      sparring:
+        label: Sparring
+        events_when_started: ch3_sparring_started
+      jump:
+        label: Jump program
+        events_when_started: ch3_jump_started
+      done:
+        label: Done
+        events_when_started: ch3_done
+    transitions:
+      - source: kung_fu
+        target: sparring
+        events: drop_target_bank_matrix_team_down
+        events_when_transitioning: ch3_kung_fu_won
+      - source: kung_fu
+        target: sparring
+        events: timer_ch3_round_complete
+      - source: sparring
+        target: jump
+        events: ch3_sparring_won
+      - source: sparring
+        target: jump
+        events: timer_ch3_round_complete
+      - source: jump
+        target: done
+        events: ch3_jump_made
+      - source: jump
+        target: done
+        events: timer_ch3_round_complete
+        events_when_transitioning: ch3_jump_missed
+  # Which side the last sparring shot came from. A shot from the other side
+  # is a combo.
+  ch3_side:
+    starting_state: none
+    states:
+      none:
+        label: No shot yet
+      left:
+        label: Left
+      right:
+        label: Right
+    transitions:
+      - source: none
+        target: left
+        events: left_shot_hit
+      - source: none
+        target: right
+        events: right_shot_hit
+      - source: left
+        target: right
+        events: right_shot_hit
+        events_when_transitioning: ch3_combo
+      - source: right
+        target: left
+        events: left_shot_hit
+        events_when_transitioning: ch3_combo
+
+counters:
+  ch3_combos:
+    count_events: ch3_combo
+    count_complete_value: 4
+    enable_events: ch3_sparring_started
+    disable_events: ch3_jump_started
+    events_when_complete: ch3_sparring_won
+
+shot_profiles:
+  ch3_woman:
+    advance_on_hit: false
+    states:
+      - name: away
+      - name: here
+
+shots:
+  ch3_woman_1:
+    hit_events: trinity_ramp_hit
+    profile: ch3_woman
+    enable_events: ch3_sparring_started
+    disable_events: ch3_done
+    control_events:
+      - events: ch3_sparring_started
+        state: 1
+  ch3_woman_2:
+    hit_events: dejavu_ramp_hit
+    profile: ch3_woman
+    enable_events: ch3_sparring_started
+    disable_events: ch3_done
+  ch3_woman_3:
+    hit_events: real_world_ramp_hit
+    profile: ch3_woman
+    enable_events: ch3_sparring_started
+    disable_events: ch3_done
+  ch3_woman_4:
+    hit_events: sentinel_ramp_hit
+    profile: ch3_woman
+    enable_events: ch3_sparring_started
+    disable_events: ch3_done
+
+shot_groups:
+  ch3_woman:
+    shots: ch3_woman_1, ch3_woman_2, ch3_woman_3, ch3_woman_4
+    rotate_right_events: timer_ch3_walk_tick{ticks > 0}
+
+event_player:
+  mode_ch3_construct_started: matrix_team_reset
+  ch3_woman_here_hit: agent_2_raise, ch3_agent_raised
+  drop_target_agent_2_down{current_player.ch3_agent_armed==1}: ch3_woman_bonus
+  real_world_target_hit{device.state_machines.ch3_round.state=="jump" and current_player.ch3_jumping==1}: ch3_jump_made
+  ch3_done{current_player.ch3_won_kung_fu==1 and current_player.ch3_won_sparring==1}: ch3_completed
+  ch3_done: ch3_finish|500ms
+
+variable_player:
+  mode_ch3_construct_started:
+    objective:
+      action: set
+      string: "I KNOW KUNG FU: ALL 5 MATRIX TEAM TARGETS"
+    ch3_won_kung_fu:
+      action: set
+      int: 0
+    ch3_won_sparring:
+      action: set
+      int: 0
+    ch3_jumping:
+      action: set
+      int: 0
+    ch3_agent_armed:
+      action: set
+      int: 0
+  ch3_kung_fu_won:
+    score: 150000
+    ch3_won_kung_fu:
+      action: set
+      int: 1
+  ch3_sparring_started:
+    objective:
+      action: set
+      string: "SPARRING: ALTERNATE LEFT AND RIGHT SHOTS"
+    ch3_agent_armed:
+      action: set
+      int: 0
+  ch3_combo:
+    score: 50000
+  ch3_sparring_won:
+    score: 200000
+    ch3_won_sparring:
+      action: set
+      int: 1
+  ch3_jump_started:
+    objective:
+      action: set
+      string: "JUMP PROGRAM: REAL WORLD RAMP, THEN A STANDUP"
+    ch3_agent_armed:
+      action: set
+      int: 0
+  real_world_ramp_hit{device.state_machines.ch3_round.state=="jump"}:
+    ch3_jumping:
+      action: set
+      int: 1
+  ch3_jump_made:
+    score: 300000
+  ch3_jump_missed:
+    score: 100000
+  ch3_agent_raised:
+    ch3_agent_armed:
+      action: set
+      int: 1
+  ch3_woman_bonus:
+    score: 200000
+    ch3_agent_armed:
+      action: set
+      int: 0
+
+widget_player:
+  mode_ch3_construct_started:
+    video_clip:
+      tokens:
+        clip: kung_fu_load
+      expire: 6s
+  ch3_kung_fu_won:
+    mode_banner:
+      tokens:
+        title: I KNOW KUNG FU
+        detail: SHOW ME
+      expire: 2s
+  ch3_jump_started:
+    video_clip:
+      tokens:
+        clip: jump_program
+      expire: 5s
+  ch3_jump_missed:
+    mode_banner:
+      tokens:
+        title: EVERYBODY FALLS THE FIRST TIME
+        detail: ""
+      expire: 3s
+  ch3_woman_here_hit:
+    mode_banner:
+      tokens:
+        title: WERE YOU LISTENING TO ME
+        detail: OR LOOKING AT THE WOMAN IN THE RED DRESS
+      expire: 3s

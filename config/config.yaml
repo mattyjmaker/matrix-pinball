@@ -15,8 +15,15 @@
 # and ConfigFile.save() discards comments.
 # ---------------------------------------------------------------------------
 
+# Unwired playfield features, on the virtual platform. See that file's header.
+config: playfield_pending.yaml
+
 hardware:
-    platform: fast
+    # fast drives everything wired. virtual carries the features in
+    # playfield_pending.yaml that are not built or wired yet, so the full rules
+    # load on the real machine. `mpf -X` still forces everything onto
+    # smart_virtual.
+    platform: fast, virtual
 
 mpf:
     report_crashes: never
@@ -54,19 +61,104 @@ fast:
             model: FP-PWR-0007
 
 machine:
-  # TESTING: running the machine with a single ball. Raise this to the real
-  # ball count when the rules need multiball, and raise the trough fill in
-  # virtual_platform_start_active_switches below to match. The trough is the
-  # 8-ball PBL-100-0016-00, so 8 is the physical ceiling (7 until the trough 1
-  # opto is fitted). balls_installed drives attract-mode ball search: MPF
-  # searches when 0 < balls known < balls_installed, so a wrong value here
-  # either never searches or searches constantly.
-  balls_installed: 1
+  # Seven balls: the Act I rules put up to six in play (docs/11-rules-act-1.md).
+  # The trough is the 8-ball PBL-100-0016-00, but only seven positions are
+  # switched until the trough 1 opto is fitted, so an 8th ball would sit
+  # uncounted. Raise to 8 with that opto, together with the trough fill in
+  # virtual_platform_start_active_switches below. balls_installed drives
+  # attract-mode ball search: MPF searches when 0 < balls known <
+  # balls_installed, so the machine must physically hold this many balls or
+  # it searches constantly.
+  balls_installed: 7
   # min_balls is left at the MPF default of 1: the number that must be
   # accounted for before a game will start.
 
 modes:
   - base
+  - act_select
+  - act_one
+  - trinity_lock
+  - trinity_mb
+  - sentinel_gate
+  - sentinel_mb
+  - ch1_trinity_escape
+  - ch2_red_pill
+  - ch2_unplugged
+  - ch3_construct
+  - ch4_rescue_lock
+  - ch4_rescue_mb
+  - the_one
+
+# Per-player state the rules and the HUD share. See docs/11-rules-act-1.md.
+player_vars:
+  act:
+    initial_value: I
+    value_type: str
+  objective:
+    initial_value: ""
+    value_type: str
+  # Next chapter in film order; 5 once all four have been played.
+  chapter_next:
+    initial_value: 1
+    value_type: int
+  mission_ready:
+    initial_value: 0
+    value_type: int
+  freed_trinity:
+    initial_value: 0
+    value_type: int
+  freed_apoc:
+    initial_value: 0
+    value_type: int
+  freed_mouse:
+    initial_value: 0
+    value_type: int
+  freed_tank:
+    initial_value: 0
+    value_type: int
+  freed_switch:
+    initial_value: 0
+    value_type: int
+  freed_dozer:
+    initial_value: 0
+    value_type: int
+  freed_count:
+    initial_value: 0
+    value_type: int
+  the_one_lit:
+    initial_value: 0
+    value_type: int
+  # 0 until The One starts, then its stage (1 to 4). Survives ball end.
+  the_one_stage:
+    initial_value: 0
+    value_type: int
+  the_one_progress:
+    initial_value: 0
+    value_type: int
+  balls_locked:
+    initial_value: 0
+    value_type: int
+  oracle_lit:
+    initial_value: 0
+    value_type: int
+  # Multiballs waiting for the running one to end, comma-separated.
+  mb_pending:
+    initial_value: ""
+    value_type: str
+  rescue_mb_starting:
+    initial_value: 0
+    value_type: int
+
+settings:
+  the_one_threshold:
+    label: FREED names to light The One
+    sort: 100
+    values:
+      4: "4"
+      5: "5"
+      6: "6"
+    key_type: int
+    default: 4
 
 
 switches:
@@ -170,26 +262,34 @@ switches:
   s_emp_trigger:
     number: bottom32-13
     tags: playfield_active
+  # events_when_activated is the logical layer the modes listen to. Keep
+  # the event names when renumbering a switch.
   s_emp_target_1:
     number: bottom32-9
     tags: playfield_active
+    events_when_activated: emp_target_1_hit, emp_target_hit
   s_emp_target_2:
     number: bottom32-10
     tags: playfield_active
+    events_when_activated: emp_target_2_hit, emp_target_hit
   s_emp_target_3:
     number: bottom32-11
     tags: playfield_active
+    events_when_activated: emp_target_3_hit, emp_target_hit
   s_emp_target_4:
     number: bottom32-12
     tags: playfield_active
+    events_when_activated: emp_target_4_hit, emp_target_hit
   s_kickback_target:
     number: bottom32-8
     tags: playfield_active
+    events_when_activated: kickback_target_hit
 
   # Ammo Target
   s_ammo_target:
     number: bottom32-20
     tags: playfield_active
+    events_when_activated: ammo_target_hit
   s_ammo_rollover:
     number: bottom32-21
     tags: playfield_active
@@ -253,11 +353,8 @@ playfields:
 # starts with balls already in it and the start button works straight away.
 # Ignored on real hardware.
 #
-# TESTING: one switch = one ball, matching machine: balls_installed: 1 above.
-# Keep the two in step. For a full trough, list all seven currently defined
-# switches: s_trough2, s_trough3, s_trough4, s_trough5, s_trough6, s_trough7,
-# s_trough8. MPF counts active ball_switches and ignores their position, so
-# which one is listed does not matter.
+# One switch = one ball, matching machine: balls_installed: 7 above. Keep the
+# two in step. MPF counts active ball_switches and ignores their position.
 #
 # Every name must resolve to a switch defined above or MPF hard-errors with
 # CFE-Smart_Virtual_Platform-1. The key also sets raw hardware state, which MPF
@@ -265,7 +362,7 @@ playfields:
 # INACTIVE. When s_trough1 and s_trough_jam are fitted, add s_trough1 here only
 # if it is redefined as NO; leave s_trough_jam out either way, since a jam is
 # not the normal resting state.
-virtual_platform_start_active_switches: s_trough2
+virtual_platform_start_active_switches: s_trough2, s_trough3, s_trough4, s_trough5, s_trough6, s_trough7, s_trough8
 
 
 flippers:

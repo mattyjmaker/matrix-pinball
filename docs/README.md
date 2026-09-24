@@ -25,6 +25,7 @@ This is a condensed review of the whole **Mission Pinball Framework** documentat
 | [08-this-machine.md](08-this-machine.md) | **This cabinet PC:** what's installed where, the `pinball` launch commands, changes made to the repo, and the remaining to-do list. |
 | [09-parts-inventory.md](09-parts-inventory.md) | **Physical parts** from The Matrix BOM spreadsheet: each part marked as owned, ordered or planned, grouped by playfield area; also measurements and a rough coil/switch count for the config. |
 | [10-dropbox-design-files.md](10-dropbox-design-files.md) | **The user's Matrix Dropbox folder:** what's in it (VPX table versions, playfield DXF/CNC files, STLs, audio, art, invoices), how to list and download from it, and the rules prototype taken from the Matrix v1.7 VPX script. |
+| [11-rules-act-1.md](11-rules-act-1.md) | **Act I rules (movie 1), as implemented:** chapter modes, the kept VPX multiballs, the FREED roster, The One wizard and the act select, with every timer and score; the mode map, the pending-hardware layer and how to run the tests. |
 
 Each file ends with the list of source doc pages it was drawn from.
 

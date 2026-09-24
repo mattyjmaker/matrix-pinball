@@ -1,8 +1,35 @@
 #config_version=6
 
+# Always-on playfield rules from the VPX prototype, plus the score for the
+# lanes and spinners. Runs on every ball, in every act.
+# See docs/11-rules-act-1.md, section 3. Scores are placeholders at the VPX's
+# scale until the rules are balanced.
+
 mode:
   start_events: ball_starting
   priority: 100
+
+# --- Agents -----------------------------------------------------------------
+# Hit a raised Agent: "Agent Kill". All three down: "Agents Down". The Agents
+# Coming scoop raises them again.
+
+event_player:
+  balldevice_bd_cypher_scoop_ball_entered{device.drop_target_banks.agents.complete}: agents_coming
+  balldevice_bd_cypher_scoop_ball_entered{not device.drop_target_banks.agents.complete}: cypher_scoop_award
+  agents_coming: agents_raise
+  # The Ammo Lock gives its ball back on the next Ammo target hit.
+  ammo_target_hit{device.ball_devices.bd_ammo_lock.balls > 0}: ammo_release
+  # Oracle: the four EMP standups light it, the Deja Vu VUK collects it.
+  logicblock_oracle_standups_complete: oracle_lit
+  balldevice_bd_dejavu_vuk_ball_entered{current_player.oracle_lit == 1}: oracle_collect
+  oracle_collect: oracle_standups_reset
+
+random_event_player:
+  oracle_collect:
+    events:
+      - oracle_award_small
+      - oracle_award_medium
+      - oracle_award_large
 
 variable_player:
   s_inlane_left_outer_active:
@@ -13,3 +40,79 @@ variable_player:
     score: 100
   s_inlane_right_outer_active:
     score: 100
+  spinner_hit:
+    score: 100
+  drop_target_agent_1_down:
+    score: 10000
+  drop_target_agent_2_down:
+    score: 10000
+  drop_target_agent_3_down:
+    score: 10000
+  drop_target_bank_agents_down:
+    score: 50000
+  agents_coming:
+    score: 50000
+  cypher_scoop_award:
+    score: 5000
+  balldevice_bd_dejavu_vuk_ball_entered:
+    score: 2570
+  multiball_lock_ammo_save_lock_locked_ball:
+    score: 15861
+  oracle_lit:
+    oracle_lit:
+      action: set
+      int: 1
+  oracle_collect:
+    oracle_lit:
+      action: set
+      int: 0
+  oracle_award_small:
+    score: 25000
+  oracle_award_medium:
+    score: 75000
+  oracle_award_large:
+    score: 150000
+
+accruals:
+  oracle_standups:
+    events:
+      - emp_target_1_hit
+      - emp_target_2_hit
+      - emp_target_3_hit
+      - emp_target_4_hit
+    reset_events: oracle_standups_reset
+    disable_on_complete: false
+
+# --- Ammo Lock drain save (VPX) ---------------------------------------------
+# One ball locks behind the Ammo Lock and a new ball is served. The next Ammo
+# target hit releases it as a two-ball play, or, if the last ball on the
+# playfield drains, it comes back instead of the ball ending.
+# Chapter 4 uses the same device for Morpheus's lock, so this one stands down
+# while that chapter's lock phase runs.
+
+multiball_locks:
+  ammo_save_lock:
+    lock_devices: bd_ammo_lock
+    balls_to_lock: 1
+    locked_ball_counting_strategy: physical_only
+    empty_lock_devices_on_ball_end: true
+    enable_events: mode_base_started, mode_ch4_rescue_lock_stopped
+    disable_events: mode_ch4_rescue_lock_started
+
+multiballs:
+  ammo_release:
+    ball_count: 1
+    ball_count_type: add
+    ball_locks: bd_ammo_lock
+    shoot_again: 0
+    start_events: ammo_release
+
+ball_saves:
+  ammo_drain_save:
+    active_time: 0
+    balls_to_save: 1
+    only_last_ball: true
+    auto_launch: true
+    ball_locks: bd_ammo_lock
+    enable_events: multiball_lock_ammo_save_lock_locked_ball
+    disable_events: ammo_release, mode_ch4_rescue_lock_started

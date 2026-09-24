@@ -1,0 +1,48 @@
+#config_version=6
+
+# Sentinel gate (VPX): four hits across the Sentinel entrance targets open the
+# gate ("Hit the Sentinel!"). A ball into the Sentinel VUK while it is open
+# requests Sentinel Multiball. The gate closes when that multiball ends.
+# See docs/11-rules-act-1.md, section 6.
+
+mode:
+  start_events: act_one_features_start
+  stop_events: act_one_features_stop, act_one_complete
+  priority: 250
+
+counters:
+  sentinel_entrance:
+    count_events: sentinel_entrance_hit
+    count_complete_value: 4
+    events_when_complete: sentinel_opened
+    start_enabled: true
+    reset_events: mode_sentinel_mb_stopped
+    enable_events: mode_sentinel_mb_stopped
+
+event_player:
+  sentinel_opened: sentinel_gate_open
+  balldevice_bd_sentinel_vuk_ball_entered{current_player.sentinel_open==1}: request_sentinel_mb, sentinel_requested
+  mode_sentinel_mb_stopped: sentinel_gate_close
+
+variable_player:
+  mode_sentinel_gate_started:
+    sentinel_open:
+      action: set
+      int: 0
+  sentinel_opened:
+    score: 100000
+    sentinel_open:
+      action: set
+      int: 1
+  sentinel_requested:
+    sentinel_open:
+      action: set
+      int: 0
+
+widget_player:
+  sentinel_opened:
+    mode_banner:
+      tokens:
+        title: HIT THE SENTINEL
+        detail: SENTINEL VUK STARTS MULTIBALL
+      expire: 3s
