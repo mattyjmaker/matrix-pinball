@@ -9,6 +9,10 @@ Status (2026-09-24):
 - Agreed with the user: Act I is movie 1; the four VPX prototype multiballs
   stay; the new chapter modes are mashed up with them; the machine may be
   filled with as many balls as the design needs.
+- Agreed with the user (second round): chapters play in film order, with an
+  act select before play starts so a player can skip straight to a later act
+  (section 5); The One lights at 4 FREED names; The One runs until the EMP is
+  hit; Sentinel Multiball is 3 balls plus an add-a-ball.
 - Everything else is a proposal, marked where it matters. Shot names are
   logical names. The ramps, wireforms and upper playfield are not built yet
   (see 08-this-machine.md), so which physical switch each shot uses is
@@ -26,6 +30,8 @@ it goes on screen.
 ## 1. Structure at a glance
 
 ```
+  Act select (before the first ball): Act I, or skip straight to a later act
+                                        |
             always on: Agents, Ammo Lock drain save, Deja Vu, Oracle, kickback
                                         |
   Mission Drop scoop starts the next chapter, in film order
@@ -36,7 +42,7 @@ it goes on screen.
                                         |
   Each chapter and multiball completed lights one name in the FREED roster
                                         |
-            six names FREED -> The One (Act I wizard) -> Act II
+            four names FREED -> The One (Act I wizard) -> Act II
 ```
 
 The five modes from the planning discussion map onto this as four chapters
@@ -77,7 +83,7 @@ start condition that does not need a subway.
 | Chapters 1 and 3 | 1 |
 | Trinity Multiball | 3 |
 | Red Pill: Unplugged Multiball | 3 |
-| Sentinel Multiball | 4 (proposed; the VPX does not state a count) |
+| Sentinel Multiball | 3, rising to 4 with its add-a-ball |
 | Rescue Morpheus | 3, rising to 5 |
 | The One | 2, rising to 6 |
 
@@ -109,11 +115,13 @@ count predictable, and keeps to the one-video-at-a-time rule in the README.
   the scoop starts the next chapter.
   - Assumption, not confirmed: the drop sits in front of the scoop and blocks
     it. If it does not, the drop lights the scoop instead.
-- Chapters run in **film order** (proposed). Act I is a story, so the order is
-  the point, and it keeps the clip sequence and the rules simple.
+- Chapters run in **film order** (agreed). Act I is a story, so the order is
+  the point, and it keeps the clip sequence and the rules simple. The way to
+  skip content is the act select (section 5), not chapter choice.
 - A chapter is **played** when it ends. It is **completed** when its goal was
   met. Only completion lights a roster name. An unfinished chapter can be
-  replayed from the Mission Drop after Chapter 4, before The One.
+  replayed from the Mission Drop after Chapter 4, including after The One is
+  lit.
 - Each chapter sets `objective` on the HUD to its current goal.
 
 ### Chapter 1: Trinity's Escape (film: opening, room 303 to the phone booth)
@@ -184,7 +192,30 @@ Lock, then a three-stage multiball. Merges the VPX Morpheus Rescue lock.
 - Completion (the Helicopter super jackpot) lights **TANK**, who loads the
   weapons program in the film.
 
-## 5. The two standalone multiballs
+## 5. Act select
+
+Agreed with the user: acts play in order, but a player can skip ahead before
+play starts.
+
+- **When:** on each player's first ball, before the ball is served. The
+  player picks with the flippers and confirms with start. No input in 10 s
+  (proposed) means Act I. Per player rather than per game, so players of
+  different skill can share a game.
+- **Choices:** only acts that have rules. Until Act II exists the select is
+  skipped entirely, so the game starts in Act I with no screen in the way.
+- **Skipping an act:** the player starts at the chosen act with `act` set to
+  match. Everything in the skipped acts is forfeited: its chapters, its
+  multiballs, its FREED names and its wizard. No compensation award is
+  proposed; skipping is for players who want the later content, and handing
+  out the skipped points would make it the best scoring choice.
+- **MPF (to verify when implementing):** a mode started on `ball_starting`
+  for ball 1 with `use_wait_queue: true` holds the ball start until the choice
+  is made. The docs name `use_wait_queue` as the way a mode holds a queue
+  event; using it on `ball_starting` with a ball-number condition has not
+  been tried here. `queue_relay_player` on `ball_starting` is the documented
+  fallback.
+
+## 6. The two standalone multiballs
 
 ### Trinity Multiball (VPX, unchanged in principle)
 
@@ -198,7 +229,12 @@ Lock, then a three-stage multiball. Merges the VPX Morpheus Rescue lock.
 
 - Four hits across the Sentinel entrance targets open the gate and raise the
   Sentinel ("Hit the Sentinel!"). A ball into the Sentinel VUK starts the
-  multiball. 4 balls, proposed.
+  multiball. **3 balls** (agreed).
+- **Add-a-ball** (agreed; placement proposed): during the multiball, hit all
+  three Sentinel Boss standups (the rectangular one and the two squares) to
+  light it, then shoot the Sentinel VUK to collect it. Once per multiball, so
+  it peaks at 4 balls. The standups and VUK are already part of the Sentinel
+  Boss hardware in 09-parts-inventory.md, so it needs no extra parts.
 - Balls release via the Deja Vu VUK, as in the VPX. The Sentinel closes when
   the multiball ends.
 - Completion lights **DOZER**.
@@ -206,7 +242,7 @@ Lock, then a three-stage multiball. Merges the VPX Morpheus Rescue lock.
 The roster pairings for SWITCH, APOC and DOZER are for gameplay only and have
 no link to the film. TRINITY, MOUSE and TANK follow the film.
 
-## 6. FREED roster
+## 7. FREED roster
 
 The six names already on the base HUD, and what lights each:
 
@@ -225,11 +261,10 @@ counter of completions against the threshold below lights The One. An
 `achievement_group`'s all-complete event (the TAF Mansion Awards pattern)
 would only cover a threshold of 6.
 
-**Wizard threshold (proposed):** an operator setting from 4 to 6 names,
-default 6. Six is a full clear of Act I, which may prove long on a homebrew
-layout. Tune it after playtesting.
+**Wizard threshold: 4 names** (agreed). Kept as an operator setting from 4
+to 6, so it can be raised for experienced players without a code change.
 
-## 7. The One (Act I wizard)
+## 8. The One (Act I wizard)
 
 Lit when the roster threshold is met. Starts at the Mission Drop scoop.
 
@@ -242,25 +277,33 @@ Lit when the roster threshold is met. Starts at the Mission Drop scoop.
 
 - Neo dies without the flippers going dead. Disabling the flippers in
   multiball throws balls away and feels like a fault, not a story beat.
-- The EMP sets `act` to `II` and Act II starts. If the balls drop to one before
-  the EMP, the wizard ends and the player's roster resets for a replay (to be
-  decided).
+- **The One runs until the EMP is hit** (agreed). It does not end when the
+  multiball drops to one ball; play carries on single-ball with the current
+  stage's shots still lit.
+- It also survives ball end (interpretation of the agreed rule, to confirm):
+  the stage and its progress are stored per player and resume on that
+  player's next ball, so the mode is `stop_on_ball_end: true` with its state
+  in player variables. The stage's extra balls are served again when it
+  resumes. If the game ends first, Act I stays incomplete.
+- While The One runs, chapters and the standalone multiballs are off, so the
+  one-multiball rule in section 2 holds.
+- The EMP sets `act` to `II` and Act II starts.
 - The sub build-ups here are what the audio plan in 08-this-machine.md was
   sized for. The shaker needs its driver wired and checked first.
 
-## 8. HUD variables used
+## 9. HUD variables used
 
 | Variable | Set by |
 | --- | --- |
 | `act` | `I` at game start, `II` after the EMP |
 | `objective` | Each chapter, multiball and wizard stage |
 | `balls_locked` | Trinity Ramp lock count |
-| `freed_*` | Section 6 |
+| `freed_*` | Section 7 |
 
 The trace readout (`trace_readout.gd`) suits the hurry-up clocks: Chapter 1's
 phone, and The Chase's Sentinel timer.
 
-## 9. Film clips (proposed names)
+## 10. Film clips (proposed names)
 
 These are not added to `gmc/video/manifest.txt` yet, because
 `tools/check_video.py` exits non-zero for every listed clip that is missing.
@@ -287,7 +330,7 @@ Add each clip to the manifest when it is cut.
 Keep them short and inset during play, full screen only for intros, as the
 README's clip rules say.
 
-## 10. Suggested build order
+## 11. Suggested build order
 
 Only the lower third, the EMP targets, the Ammo target and the kickback
 target have switch numbers today. So build what the virtual platform can
@@ -301,10 +344,12 @@ exercise first, with the keyboard standing in for unwired switches:
 4. Raise the ball count, then Trinity Multiball, Chapter 2, Sentinel
    Multiball and Chapter 4.
 5. The One.
+6. The act select, once Act II has rules to select.
 
-## 11. Open decisions
+## 12. Open decisions
 
-- Film order versus free choice of chapter at the Mission Drop.
-- Whether The One resets the roster if it fails before the EMP.
-- The wizard threshold default (section 6).
-- Sentinel Multiball's ball count.
+- Whether The One resuming on a later ball matches what was meant by "until
+  the EMP is hit" (section 8).
+- The act select timeout and whether it defaults to Act I or to the player's
+  last choice (section 5).
+- Whether the Mission Drop sits in front of its scoop (section 4).
