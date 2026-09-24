@@ -31,3 +31,15 @@ sentinel_attack
 subway_smith
 neo_resurrects
 emp_fire
+
+# Crew portrait loops: an AI image-to-video clip of each FREED roster name,
+# made with tools/make_portrait_loop.sh (see README.md, "Crew portrait loops").
+# Not yet made or wired to a widget_player entry.
+portrait_trinity
+portrait_tank
+portrait_dozer
+portrait_switch
+portrait_apoc
+portrait_mouse
+portrait_niobe
+portrait_link

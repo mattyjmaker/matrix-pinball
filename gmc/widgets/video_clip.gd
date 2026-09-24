@@ -23,6 +23,10 @@ extends MPFVideoPlayer
 ## Played when the requested clip is missing, so a gap is visible on the display
 ## rather than silent. Leave empty to show nothing.
 @export var fallback_clip: String = ""
+## Loop the clip until the widget is removed. A `loop` token overrides this for
+## one play. Give a looping clip's widget_player entry an `expire`, or it never
+## leaves the stage.
+@export var loop_clip: bool = false
 
 var _owner_scene: Node
 
@@ -42,11 +46,24 @@ func _exit_tree() -> void:
 
 ## Called by MPFSceneBase.action_update when the widget is played or updated.
 func update(settings: Dictionary, kwargs: Dictionary = {}) -> void:
+	var tokens: Dictionary = settings.get("tokens", {})
 	var requested = kwargs.get(
 		token_name,
-		settings.get("tokens", {}).get(token_name, settings.get(token_name, ""))
+		tokens.get(token_name, settings.get(token_name, ""))
 	)
+	loop = _is_true(kwargs.get("loop", tokens.get("loop", loop_clip)))
 	play_clip(str(requested))
+
+## Tokens can arrive over BCP as a bool, a number or a string such as "True".
+static func _is_true(value) -> bool:
+	match typeof(value):
+		TYPE_BOOL:
+			return value
+		TYPE_INT, TYPE_FLOAT:
+			return value != 0
+		TYPE_STRING, TYPE_STRING_NAME:
+			return str(value).strip_edges().to_lower() in ["true", "yes", "on", "1"]
+	return false
 
 func play_clip(clip_name: String) -> void:
 	if clip_name.is_empty():
