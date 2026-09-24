@@ -1,41 +1,44 @@
 # Act I Rules: The Matrix (1999)
 
-Design for the first act of the game. Act I is the first film. This is a
-rules design, not an implementation: nothing here is in `config/` or
-`modes/` yet.
+Rules for the first act of the game. Act I is the first film. These rules are
+implemented in `config/` and `modes/` and covered by the tests in `tests/`
+(section 11). Every number below is the value in the code.
 
 Status (2026-09-24):
 
 - Agreed with the user: Act I is movie 1; the four VPX prototype multiballs
-  stay; the new chapter modes are mashed up with them; the machine may be
-  filled with as many balls as the design needs.
+  stay, mashed up with the new chapter modes; the machine may be filled with
+  as many balls as the design needs.
 - Agreed with the user (second round): chapters play in film order, with an
-  act select before play starts so a player can skip straight to a later act
-  (section 5); The One lights at 4 FREED names; The One runs until the EMP is
-  hit; Sentinel Multiball is 3 balls plus an add-a-ball.
-- Agreed with the user (third round): The One resumes across ball end; the
-  act select waits 30 s and then starts Act I; the Mission Drop smart drop
-  sits in front of the scoop.
-- Everything else is a proposal, marked where it matters. Shot names are
-  logical names. The ramps, wireforms and upper playfield are not built yet
-  (see 08-this-machine.md), so which physical switch each shot uses is
-  decided when the ball paths are final.
-- Scoring values are left out on purpose. They get balanced once the modes
-  run. Where a value is quoted it is the VPX prototype's, for scale.
+  act select before play starts so a player can skip straight to a later act;
+  The One lights at 4 FREED names; The One runs until the EMP is hit; Sentinel
+  Multiball is 3 balls plus an add-a-ball.
+- Agreed with the user (third round): The One resumes across ball end; the act
+  select waits 30 s and then starts Act I; the Mission Drop smart drop sits in
+  front of the scoop.
+- Decided during the build, not yet reviewed by the user: every timer, count
+  and score below, the jackpot counts that complete Trinity and Sentinel
+  Multiball, and that a lit The One takes the Mission scoop ahead of a chapter
+  replay. Each is marked "(build)" where it first appears.
+- Scores are placeholders at the VPX prototype's scale, for balancing once the
+  machine is playable.
+- Shot names are logical. The ramps, wireforms and upper playfield are not
+  built yet (see 08-this-machine.md), so the switches behind each shot are
+  placeholders on the virtual platform (section 11).
 
 Sources: the VPX v1.7 rules summary in 10-dropbox-design-files.md
 (user-provided), the feature list in 09-parts-inventory.md (user-provided),
-MPF 0.80 behaviour from 04-game-logic-and-mechs.md (official docs,
-summarised). Film scene references are from recall of the film and have not
-been checked against a script; check any quoted line against the clip before
-it goes on screen.
+MPF 0.80 behaviour from 04-game-logic-and-mechs.md (official docs, summarised)
+and the MPF 0.80.0 source. Film scene references are from recall of the film
+and have not been checked against a script; check any quoted line against the
+clip before it goes on screen.
 
 ## 1. Structure at a glance
 
 ```
   Act select (before the first ball): Act I, or skip straight to a later act
                                         |
-            always on: Agents, Ammo Lock drain save, Deja Vu, Oracle, kickback
+            always on: Agents, Ammo Lock drain save, Deja Vu, Oracle
                                         |
   Mission Drop scoop starts the next chapter, in film order
      Ch1 Trinity's Escape -> Ch2 Red Pill -> Ch3 The Construct -> Ch4 Rescue Morpheus
@@ -48,9 +51,8 @@ it goes on screen.
             four names FREED -> The One (Act I wizard) -> Act II
 ```
 
-The five modes from the planning discussion map onto this as four chapters
-plus the wizard. Of the four VPX multiballs, two stay as standalone features
-and two are merged into chapters:
+Of the four VPX multiballs, two stay as standalone features and two are merged
+into chapters:
 
 | VPX multiball | In Act I |
 | --- | --- |
@@ -61,25 +63,20 @@ and two are merged into chapters:
 
 Why merge those two: the Human Pod and Morpheus Rescue locks were subways in
 the VPX (`HumanPodSubway`, `LeftSubwayCatch`), and neither subway appears in
-the physical feature list in 09-parts-inventory.md. The chapters give them a
-start condition that does not need a subway.
+the physical feature list in 09-parts-inventory.md.
 
 ## 2. Ball count
 
-- The trough is the 8-ball PBL-100-0016-00, so 8 is the physical ceiling.
-- Only 7 can be counted until the trough 1 opto is fitted. Deduction, not
-  tested: an 8th ball would sit in an unswitched position, MPF would count one
-  ball missing, and it would ball-search. So **load 7 now, 8 once the trough 1
-  opto is in**.
-- The design needs at most **6 balls in play** (The One, final stage). That is
-  the VPX's ceiling too. The rest are the spare for a physically held lock
-  plus margin.
-- All locks use MPF's `virtual_only` counting, which the docs call "usually the
-  best option for modern machines": a lock counts per player whatever is
-  physically in the device, so one player cannot steal another's lock.
-- Raising `balls_installed` and the virtual trough seed in
-  `config/config.yaml` is a separate change, made together, when multiball
-  implementation starts.
+- `balls_installed: 7`. The trough is the 8-ball PBL-100-0016-00, but only
+  seven positions are switched until the trough 1 opto is fitted; an 8th ball
+  would sit uncounted and MPF would ball-search for it. **The machine must
+  physically hold 7 balls**, or attract mode searches constantly. Raise to 8
+  with the opto.
+- At most **6 balls in play** (The One).
+- Locks use MPF's `virtual_only` counting (the docs call it "usually the best
+  option for modern machines"): a lock counts per player whatever is
+  physically in the device, so one player cannot steal another's lock. The
+  Ammo drain save is the exception (section 3).
 
 | Feature | Balls in play |
 | --- | --- |
@@ -92,165 +89,153 @@ start condition that does not need a subway.
 
 ### Stacking rule
 
-**One multiball at a time.** A lock completed during another multiball stays
-lit and starts when the running one ends. The Mission Drop scoop does not
-start a chapter during a multiball. This extends the VPX rule that Human Pod
-multiball cannot start during Trinity or Sentinel multiball, keeps the ball
-count predictable, and keeps to the one-video-at-a-time rule in the README.
+**One multiball at a time.** A multiball whose lock completes during another
+one waits in the player's queue (`mb_pending`) and starts when the running one
+ends. The Mission scoop does not start a chapter during a multiball. A queued
+multiball survives ball end, except Rescue Morpheus, which ends with its
+chapter.
 
 ## 3. Always-on features (base mode)
 
-| Feature | Rule | Source |
+| Feature | Rule | Score |
 | --- | --- | --- |
-| Agents (3 pop-ups) | Hit a raised Agent: "Agent Kill". All three down: "Agents Down". | VPX |
-| Agents Coming scoop (Cypher) | Re-raises the Agents when all three are down ("Agents are Coming"), otherwise a small award. | VPX |
-| Ammo Lock | Holds one ball as a drain save. The next hit, or a drain with no other ball in play, releases it. | VPX |
-| Deja Vu VUK and ramp | "Deja vu" award and re-kick. Used as a lead-in in Chapter 4. | VPX |
-| Oracle | Mystery award (proposed): completing the EMP standups lights it, and the Deja Vu VUK collects it. | Proposed |
-| Kickback | Left outlane save, relit by the kickback target. | Hardware (auto-fire assembly, `s_kickback_target`) |
+| Agents (3 pop-ups) | Hit a raised Agent: "Agent Kill". All three down: "Agents Down". Raised at the start of every ball. | 10,000 each, 50,000 all down |
+| Agents Coming scoop (Cypher) | All three Agents down: raises them ("Agents are Coming"). Otherwise a small award. | 50,000 or 5,000 |
+| Ammo Lock | Holds one ball as a drain save and serves a new one. The next Ammo target hit releases it as two-ball play; if the last ball on the playfield drains first, the held ball comes back instead of the ball ending. Physical counting, and emptied at ball end. Stands down during Chapter 4's lock phase. | 15,861 per lock |
+| Deja Vu VUK | "Deja vu" award. | 2,570 |
+| Oracle (build) | The four EMP standups, in any order, light it; the Deja Vu VUK collects a random award. | 25,000, 75,000 or 150,000 |
+| Lanes and spinners | Inlanes and every spinner. | 100 |
+
+Not yet modelled: the kickback and the Real World mini flipper. Both tie a FAST
+switch to a coil through a hardware rule, and their coils are not wired yet
+(`config/playfield_pending.yaml`, last comment).
 
 ## 4. Chapters
 
 ### Starting a chapter
 
-- The **Mission Drop** area (1-bank smart drop, standup, open-back scoop)
-  starts chapters. Knocking the smart drop down lights "Mission Ready", and
-  the scoop starts the next chapter.
-  - Confirmed by the user: the smart drop sits in front of the scoop, so the
-    scoop is only reachable once the drop is down. The drop is reset (raised)
-    when a chapter starts, so each chapter has to be earned again.
-- Chapters run in **film order** (agreed). Act I is a story, so the order is
-  the point, and it keeps the clip sequence and the rules simple. The way to
-  skip content is the act select (section 5), not chapter choice.
-- A chapter is **played** when it ends. It is **completed** when its goal was
-  met. Only completion lights a roster name. An unfinished chapter can be
-  replayed from the Mission Drop after Chapter 4, including after The One is
-  lit.
-- Each chapter sets `objective` on the HUD to its current goal.
+- The Mission Drop smart drop sits in front of the Mission scoop. Knocking it
+  down (5,000) lights "Mission Ready".
+- Every ball into the scoop is held while the controller decides. With
+  Mission Ready and no chapter or multiball running, it starts the next
+  chapter, raises the drop again and releases the ball after 2 s (Chapter 2
+  keeps it for the pill choice). Otherwise it pays 10,000 and releases the
+  ball after 0.75 s.
+- Chapters run in **film order**. A chapter is **played** when it ends,
+  including by the ball draining; it is **completed** when its goal was met,
+  and only completion frees a crew member.
+- After Chapter 4 has been played, the scoop replays the first chapter not yet
+  completed. Once The One is lit, the scoop starts The One instead (build).
+- Each chapter sets `objective` on the HUD to its current goal. Between
+  chapters the controller sets it to "KNOCK DOWN THE MISSION DROP: <next>" or
+  "SHOOT THE MISSION SCOOP: <next>".
 
 ### Chapter 1: Trinity's Escape (film: opening, room 303 to the phone booth)
 
 Single-ball hurry-up. The truck is the clock.
 
-1. **Rooftops:** three ramp shots, one per jump between buildings. Any ramp
-   counts.
-2. **The phone:** the Deja Vu VUK lights as the ringing phone. Its value counts
-   down from the moment the third jump lands. Reach it before it runs out.
-- Timer expires: the truck hits and the chapter ends, played but not
-  completed.
-- Completion lights **TRINITY**.
-- Fits the hardware already on the board: the timer and hurry-up are pure
-  logic, so this is the easiest chapter to prove out on the virtual platform
-  first.
+1. **Rooftops:** three ramp shots, any ramps, inside 40 s (build). 50,000 per
+   jump.
+2. **The phone:** the Deja Vu VUK, inside 20 s (build). Pays 250,000 plus
+   25,000 per second left.
+
+- Either timer running out: the truck wins, played but not completed.
+- Completion frees **TRINITY**.
 
 ### Chapter 2: Red Pill (film: the pills, waking in the pod, unplugged)
 
-Choice, then multiball. Merges the VPX Human Pod "Unplugged" multiball.
-
-1. **The choice:** the scoop holds the ball (`ball_holds:`, so the ball is
-   still in play) while Morpheus offers the pills. Left flipper: blue. Right
-   flipper: red. No input in 10 s means red.
-   - **Blue:** "The story ends." A small award and the chapter ends, played
-     but not completed.
-   - **Red:** the pod clip, then **Unplugged Multiball**.
-2. **Unplugged Multiball**, 3 balls (VPX Human Pod count), with a ball save.
-   - Jackpots: the Real World ramp (the ship pulls Neo out of the water).
-   - Super jackpot: all three Real World standups on the upper mini-playfield.
-- Completion (super jackpot collected) lights **APOC**.
+1. **The choice:** the scoop keeps the ball. Left flipper: blue. Right flipper:
+   red. No input in 10 s (build): red.
+   - **Blue:** "The story ends." 5,000, and the chapter ends, played but not
+     completed.
+   - **Red:** Unplugged Multiball.
+2. **Unplugged Multiball:** 3 balls, 20 s ball save (build).
+   - Jackpot: the Real World ramp, 100,000.
+   - Super jackpot: all three Real World standups, 500,000, once.
+- The super jackpot frees **APOC**. The chapter ends when the multiball does.
 
 ### Chapter 3: The Construct (film: the Construct, the dojo, the jump)
 
-Single-ball skill mode in three timed rounds. Tank loads each program.
+Single-ball skill mode in three timed rounds (build: 30 s, 30 s, 20 s). A
+round lost on time still moves to the next one.
 
-1. **"I know kung fu":** all five Matrix Team drop targets down inside the
-   time.
-2. **Sparring:** combos. Alternate left-side and right-side shots
-   (Morpheus's attack from each side). A set number of combos wins the round.
-3. **The jump program:** the Real World ramp to the mini-playfield. Hit a
-   standup with the mini flipper to make the jump.
-   - Miss: "Everybody falls the first time." The round still counts, at a
-     lower award.
-- Bonus: **the Woman in the Red Dress.** One random lit shot walks across the
-  playfield during rounds 2 and 3. Following her raises an Agent. Hitting that
-  Agent before the round ends pays a bonus.
-- Completion (rounds 1 and 2 won) lights **MOUSE**, who wrote the Woman in the
-  Red Dress program.
+1. **"I know kung fu":** all five Matrix Team drops. 150,000.
+2. **Sparring:** 4 combos, 50,000 each and 200,000 for the round. A combo is a
+   shot from the other side of the playfield to the last one; two shots from
+   the same side do not count.
+3. **The jump program:** the Real World ramp, then any Real World standup.
+   300,000. Time out: "Everybody falls the first time", 100,000.
+
+- **The Woman in the Red Dress** (rounds 2 and 3): she starts on the Trinity
+  Ramp and moves to the next ramp every 3 s (build). Shooting the ramp she is
+  on raises the middle Agent; hitting it before the round ends pays 200,000.
+- Winning rounds 1 and 2 frees **MOUSE**, who wrote the Woman in the Red Dress
+  program. The jump does not affect completion.
 
 ### Chapter 4: Rescue Morpheus (film: deja vu to the helicopter)
 
-Lock, then a three-stage multiball. Merges the VPX Morpheus Rescue lock.
+1. **Deja vu:** the Deja Vu VUK plays the black cat and lights the Ammo Lock.
+2. **"Guns. Lots of guns.":** lock three balls at the Ammo Lock, 50,000 each
+   ("Two balls left", "One more ball"). The lock holds one ball physically;
+   the count is virtual.
+3. **Multiball:** 3 balls, 20 s ball save, released from the Ammo Lock (build).
 
-1. **Deja vu (lead-in):** the Deja Vu VUK plays the black cat and Cypher's
-   betrayal as the intro, and lights the Ammo Lock for locking.
-2. **"Guns. Lots of guns.":** lock three balls in the Ammo Lock (VPX Morpheus
-   Rescue: "Two balls left!", "One more ball!"). `virtual_only` counting.
-   Only one ball is held physically, as in the VPX.
-3. **Multiball**, three stages:
-
-| Stage | Balls | Goal | Film |
+| Stage | Balls | Goal | Score |
 | --- | --- | --- | --- |
-| Lobby | 3 | Hit the guards: every EMP standup and Agent, each a jackpot | Lobby shootout |
-| Rooftop | 4 (add a ball) | "Dodge this": hit a raised Agent inside the time after a Trinity Ramp shot | Rooftop and bullet-dodge |
-| Helicopter | 5 (add a ball) | The Sentinel magnet catches a ball (Neo catches Morpheus) for the super jackpot | Helicopter rescue |
+| Lobby | 3 | Every guard: the four EMP standups and the three Agents (raised again whenever all three are down) | 75,000 per guard |
+| Rooftop | 4 (add a ball) | Trinity Ramp lights "Dodge this" for 10 s; hit an Agent while it is lit | 250,000 |
+| Helicopter | 5 (add a ball) | A ball over the Sentinel magnet is caught (Neo catches Morpheus); the magnet lets go after 2 s | 1,000,000 |
 
-- Completion (the Helicopter super jackpot) lights **TANK**, who loads the
-  weapons program in the film.
+- The Helicopter catch frees **TANK**, who loads the weapons program in the
+  film. The chapter ends when the multiball does.
+- A drain during the lock phase ends the chapter, played.
 
 ## 5. Act select
 
-Agreed with the user: acts play in order, but a player can skip ahead before
-play starts.
+Acts play in order, but a player can skip ahead before play starts.
 
-- **When:** on each player's first ball, before the ball is served. The
-  player picks with the flippers and confirms with start. No input in **30 s**
-  (agreed; long on purpose) starts Act I. Per player rather than per game, so players of
-  different skill can share a game.
-- **Choices:** only acts that have rules. Until Act II exists the select is
-  skipped entirely, so the game starts in Act I with no screen in the way.
-- **Skipping an act:** the player starts at the chosen act with `act` set to
-  match. Everything in the skipped acts is forfeited: its chapters, its
-  multiballs, its FREED names and its wizard. No compensation award is
-  proposed; skipping is for players who want the later content, and handing
-  out the skipped points would make it the best scoring choice.
-- **MPF (to verify when implementing):** a mode started on `ball_starting`
-  for ball 1 with `use_wait_queue: true` holds the ball start until the choice
-  is made. The docs name `use_wait_queue` as the way a mode holds a queue
-  event; using it on `ball_starting` with a ball-number condition has not
-  been tried here. `queue_relay_player` on `ball_starting` is the documented
-  fallback.
+- On each player's first ball, before the ball is served, the select holds
+  `ball_starting`. Flippers step through the acts; start confirms. While it is
+  up, start does not add a player. No confirmation in **30 s** starts Act I.
+- Only acts with rules are offered (`AVAILABLE_ACTS` in
+  `modes/act_select/code/act_select.py`). With one act the mode steps straight
+  out, so today the game starts in Act I with no screen.
+- Skipping an act forfeits everything in it: its chapters, multiballs, FREED
+  names and wizard. No compensation award.
+- An Act II player gets the base mode only until Act II has rules.
 
 ## 6. The two standalone multiballs
 
-### Trinity Multiball (VPX, unchanged in principle)
+Both run whenever Act I's features are on, which is every Act I ball except
+while The One runs.
 
-- The Trinity Ramp lock (Stern ball lock assembly) locks three balls. The
-  third starts a 3-ball multiball. "Trinity Bonus" jackpots on the Trinity
-  Ramp.
-- Completion (a set number of jackpots, to be tuned) lights **SWITCH**.
-- The HUD's power station cells (`balls_locked`) show this lock's count.
+### Trinity Multiball (VPX)
 
-### Sentinel Multiball (VPX, unchanged in principle)
+- The Trinity Ramp lock takes three balls, 10,000 each. The HUD's power
+  station cells (`balls_locked`) show the count.
+- The third lock requests a 3-ball multiball, 20 s ball save, released from
+  the lock. "Trinity Bonus" jackpots on the Trinity Ramp, 150,000.
+- Three jackpots (build) free **SWITCH**.
 
-- Four hits across the Sentinel entrance targets open the gate and raise the
-  Sentinel ("Hit the Sentinel!"). A ball into the Sentinel VUK starts the
-  multiball. **3 balls** (agreed).
-- **Add-a-ball** (agreed; placement proposed): during the multiball, hit all
-  three Sentinel Boss standups (the rectangular one and the two squares) to
-  light it, then shoot the Sentinel VUK to collect it. Once per multiball, so
-  it peaks at 4 balls. The standups and VUK are already part of the Sentinel
-  Boss hardware in 09-parts-inventory.md, so it needs no extra parts.
-- Balls release via the Deja Vu VUK, as in the VPX. The Sentinel closes when
-  the multiball ends.
-- Completion lights **DOZER**.
+### Sentinel Multiball (VPX)
+
+- Four hits across the two Sentinel entrance targets open the gate ("Hit the
+  Sentinel!", 100,000). A ball into the Sentinel VUK while it is open requests
+  the multiball: 3 balls, 20 s ball save.
+- Jackpots on the Sentinel ramp and the boss target, 150,000. Three jackpots
+  (build) free **DOZER**.
+- **Add-a-ball**, once per multiball: hit the two entrance targets and the boss
+  target to light it, then shoot the Sentinel VUK. 10 s save on the added ball.
+  Peaks at 4 balls.
+- The gate closes and the hit count resets when the multiball ends. Both also
+  reset at ball end, so the four hits and the VUK shot must come on one ball.
 
 The roster pairings for SWITCH, APOC and DOZER are for gameplay only and have
 no link to the film. TRINITY, MOUSE and TANK follow the film.
 
 ## 7. FREED roster
 
-The six names already on the base HUD, and what lights each:
-
-| Name | Player variable | Lit by |
+| Name | Player variable | Freed by |
 | --- | --- | --- |
 | TRINITY | `freed_trinity` | Chapter 1 |
 | APOC | `freed_apoc` | Chapter 2 |
@@ -259,102 +244,139 @@ The six names already on the base HUD, and what lights each:
 | SWITCH | `freed_switch` | Trinity Multiball |
 | DOZER | `freed_dozer` | Sentinel Multiball |
 
-In MPF each name is an achievement, and its completion sets the matching
-`freed_*` variable, which the HUD's `roster_entry.gd` already reads. A
-counter of completions against the threshold below lights The One. An
-`achievement_group`'s all-complete event (the TAF Mansion Awards pattern)
-would only cover a threshold of 6.
-
-**Wizard threshold: 4 names** (agreed). Kept as an operator setting from 4
-to 6, so it can be raised for experienced players without a code change.
+- Each name pays 250,000 once and adds one to `freed_count`. The HUD's
+  `roster_entry.gd` reads the `freed_*` variables.
+- **The One lights at 4 names** (500,000). The operator setting
+  `the_one_threshold` takes 4, 5 or 6.
 
 ## 8. The One (Act I wizard)
 
-Lit when the roster threshold is met. Starts at the Mission Drop scoop.
+Starts from the Mission scoop once lit. While it runs, chapters, Trinity lock
+and the Sentinel gate are off.
 
-| Stage | Balls | Goal | Film |
+| Stage | Balls | Goal | Score |
 | --- | --- | --- | --- |
-| 1. Subway | 2 | Beat Smith: every Agent hit a set number of times | Subway fight |
-| 2. The Chase | 4, then 6 | A lit "phone" shot moves around the playfield. Each one reached is a jackpot. A Sentinel timer runs on the trace readout while the sub and shaker build up. | City chase and the Sentinel breach |
-| 3. Room 303 | 6 | Timer expiry or the last phone ends the chase. The magnet takes a ball and every shot goes dark for about 5 s ("Neo dies"), with a ball save covering every drain. Then all shots relight at super jackpot value. | Neo is killed and comes back |
-| 4. EMP | any | The Sentinel VUK fires the EMP: collect the total, then the flashers and the EMP area light show | The EMP is fired |
+| 1. Subway | 2 | Beat Smith: 6 Agent hits (build). Each Agent rises again 1 s after it drops. | 100,000 per hit |
+| 2. The Chase | 4, then 6 after 2 phones | The phone rings on one ramp and moves to the next every 5 s; the HUD names the ramp. Reach 4 phones before the 60 s Sentinel timer runs out (build). The timer running out also moves on. | 500,000 per phone |
+| 3. Room 303 | 6 | The magnet takes a ball and every shot goes dark for 5 s ("Neo dies"); an 8 s ball save covers every drain. Then 6 balls again, and every ramp is a super jackpot. 3 light the EMP (build). | 1,000,000 per super jackpot |
+| 4. EMP | any | The Sentinel gate opens; the Sentinel VUK fires the EMP | 5,000,000 |
 
-- Neo dies without the flippers going dead. Disabling the flippers in
-  multiball throws balls away and feels like a fault, not a story beat.
-- **The One runs until the EMP is hit** (agreed). It does not end when the
-  multiball drops to one ball; play carries on single-ball with the current
-  stage's shots still lit.
-- It also survives ball end (agreed):
-  the stage and its progress are stored per player and resume on that
-  player's next ball, so the mode is `stop_on_ball_end: true` with its state
-  in player variables. The stage's extra balls are served again when it
-  resumes. If the game ends first, Act I stays incomplete.
-- While The One runs, chapters and the standalone multiballs are off, so the
-  one-multiball rule in section 2 holds.
-- The EMP sets `act` to `II` and Act II starts.
-- The sub build-ups here are what the audio plan in 08-this-machine.md was
-  sized for. The shaker needs its driver wired and checked first.
+- **Runs until the EMP is hit.** It carries on single-ball when the multiball
+  drops to one ball, and it survives ball end: the stage and its progress are
+  stored per player (`the_one_stage`, `the_one_progress`) and resume on that
+  player's next ball, with that stage's balls served again. A resumed Chase
+  restarts its 60 s timer. If the game ends first, Act I stays incomplete.
+- The flippers stay live when Neo dies. Disabling them in multiball throws
+  balls away and feels like a fault, not a story beat.
+- The EMP sets `act` to `II`, ends Act I and leaves the remaining balls in play
+  under the base mode.
+- The sub build-ups and shaker in 08-this-machine.md were sized for this
+  mode. The shaker is not wired yet, so the mode drives neither.
 
 ## 9. HUD variables used
 
 | Variable | Set by |
 | --- | --- |
-| `act` | `I` at game start, `II` after the EMP |
-| `objective` | Each chapter, multiball and wizard stage |
+| `act` | `I` at game start (`player_vars:`), the act select, `II` after the EMP |
+| `objective` | Each chapter, multiball, wizard stage, the act select and the controller between chapters |
 | `balls_locked` | Trinity Ramp lock count |
 | `freed_*` | Section 7 |
 
-The trace readout (`trace_readout.gd`) suits the hurry-up clocks: Chapter 1's
-phone, and The Chase's Sentinel timer.
+Callouts use the `mode_banner` widget (`gmc/widgets/mode_banner.tscn`), a
+title and detail line over the centre stage, fed by `widget_player` tokens.
+Anything that changes while it is on screen, such as the phone's ramp or the
+act select countdown, goes on the objective line instead, because MPF does not
+substitute event arguments into widget tokens.
 
-## 10. Film clips (proposed names)
+## 10. Film clips
 
-These are not added to `gmc/video/manifest.txt` yet, because
-`tools/check_video.py` exits non-zero for every listed clip that is missing.
-Add each clip to the manifest when it is cut.
+The modes play these through the `video_clip` widget. They are listed in
+`gmc/video/manifest.txt`, so `tools/check_video.py` reports each one missing
+until it is cut. Every clip entry has an `expire`, so a missing clip leaves the
+stage after that time instead of blocking it.
 
 | Clip | Used for |
 | --- | --- |
-| `trinity_room_303` | Chapter 1 intro |
-| `phone_booth_truck` | Chapter 1 complete or failed |
+| `trinity_room_303` | Chapter 1 start |
+| `phone_booth_truck` | Chapter 1 failed |
 | `pills_choice` | Chapter 2 choice |
 | `pod_wake` | Unplugged Multiball start |
-| `kung_fu_load` | Chapter 3 intro |
+| `kung_fu_load` | Chapter 3 start |
 | `jump_program` | Chapter 3 round 3 |
-| `deja_vu_cat` | Chapter 4 lead-in |
+| `deja_vu_cat` | Chapter 4 start |
 | `lots_of_guns` | Chapter 4 lock lit |
 | `lobby_shootout` | Chapter 4 multiball start |
 | `helicopter_catch` | Chapter 4 complete |
 | `trinity_mb_intro` | Trinity Multiball start |
 | `sentinel_attack` | Sentinel Multiball start |
-| `subway_smith` | The One, stage 1 |
-| `neo_resurrects` | The One, stage 3 |
-| `emp_fire` | The One, stage 4 |
+| `subway_smith` | The One start |
+| `neo_resurrects` | The One, Room 303 |
+| `emp_fire` | The EMP |
 
-Keep them short and inset during play, full screen only for intros, as the
-README's clip rules say.
+## 11. Implementation
 
-## 11. Suggested build order
+### Modes
 
-Only the lower third, the EMP targets, the Ammo target and the kickback
-target have switch numbers today. So build what the virtual platform can
-exercise first, with the keyboard standing in for unwired switches:
+| Mode | Priority | Starts on | Logic |
+| --- | --- | --- | --- |
+| `base` | 100 | every ball | YAML |
+| `act_one` | 200 | every ball while `act` is `I` | `code/act_one.py`: chapter order, Mission scoop, multiball queue, roster, The One resume |
+| `trinity_lock`, `sentinel_gate` | 250 | `act_one_features_start` | YAML |
+| `ch1_trinity_escape`, `ch2_red_pill`, `ch3_construct`, `ch4_rescue_lock` | 300 | `start_ch1` to `start_ch4` from `act_one` | YAML |
+| `ch2_unplugged`, `ch4_rescue_mb` | 310 | `start_unplugged_mb`, `start_rescue_mb` | YAML |
+| `trinity_mb`, `sentinel_mb` | 320 | `start_trinity_mb`, `start_sentinel_mb` | YAML |
+| `the_one` | 400 | `start_the_one_mb` | `code/the_one.py` |
+| `act_select` | 1000 | `ball_starting` on ball 1 | `code/act_select.py` |
 
-1. Base mode: shots under logical names, the Agents and Ammo Lock logic, the
-   roster achievement group, `act` and `objective`.
-2. The Mission Drop chapter framework, then Chapter 1 (single ball, timer
-   only).
-3. Chapter 3 (single ball).
-4. Raise the ball count, then Trinity Multiball, Chapter 2, Sentinel
-   Multiball and Chapter 4.
-5. The One.
-6. The act select, once Act II has rules to select.
+Multiballs never start themselves: a lock posts `request_<name>_mb` and
+`act_one` posts `start_<name>_mb` when nothing else is running. Chapters post
+`chN_completed` for the roster and `chN_ended` when played.
 
-## 12. Open decisions
+### Hardware layers
 
-None outstanding on the rules. Still to settle during implementation:
+- **Logical events.** Every playfield switch posts a logical event through
+  `events_when_activated` (for example `trinity_ramp_hit`, `ramp_hit`,
+  `left_shot_hit`, `emp_target_1_hit`). The modes listen to those and to MPF's
+  device events (`drop_target_…`, `balldevice_…_ball_entered`), never to raw
+  switch names, so rewiring a feature changes no rules.
+- **Pending hardware.** Everything not yet built or wired is in
+  `config/playfield_pending.yaml`, on the `virtual` platform, which
+  `hardware: platform: fast, virtual` loads alongside FAST. MPF configures every
+  switch before any platform reports initial states, so the virtual platform
+  never touches FAST switches (MPF 0.80.0 source,
+  `core/switch_controller.py`). To bring a feature online, move its entries to
+  `config/config.yaml`, give them FAST numbers and delete `platform: virtual`.
+- Assumptions to check when each feature is built, all marked `TODO` in that
+  file: the Trinity lock has three switched positions; the Ammo Lock holds one
+  ball; the Sentinel gate is a held coil; which ramps count as left and right
+  for the sparring combos (Trinity and Deja Vu left, Real World and Sentinel
+  right).
 
-- Scoring values, once the modes run.
-- The MPF mechanism for holding the first ball during the act select
-  (section 5), which has not been tried here.
-- Shot-to-switch assignments, once the ramps and upper playfield are built.
+### Testing
+
+MPF's machine test framework runs the real config on the smart_virtual
+platform with no hardware or Godot:
+
+    python -m unittest discover -s tests -t .
+
+53 tests at the time of writing. They cover every chapter, both standalone
+multiballs, the multiball queue, the roster threshold, The One (including
+resuming after a drain and the EMP) and the act select, plus spot checks of
+the scores and timers in this document (`tests/test_scoring.py` and the
+chapter tests). Not every score above has its own test. They need MPF 0.80
+installed (see the README).
+
+For hands-on play, `mpf both -X` with the keyboard: section "Keyboard" in the
+README lists the keys added for these rules.
+
+## 12. Still to verify
+
+- **Booting on the real FAST hardware** with the virtual platform alongside.
+  Verified here only on smart_virtual (the tests, and `mpf game -X -b` booting
+  to attract with no errors in the log). The FAST platform cannot start in this
+  container.
+- **The display.** `mode_banner.tscn` loads and instantiates in Godot 4.7.2
+  headless, but has not been seen on screen; the fonts in that checkout were
+  Git LFS pointers.
+- **Scoring balance**, once the machine is playable.
+- The hardware assumptions in section 11.
