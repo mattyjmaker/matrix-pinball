@@ -44,6 +44,48 @@ One widget serves every clip. Pass the name as a token:
           tokens:
             clip: agent_smith_intro
 
+Add `loop: true` to the tokens to loop a clip until the widget is removed. The
+widget's `expire` is then what ends it:
+
+    widget_player:
+      crew_freed:
+        video_clip:
+          expire: 6s
+          tokens:
+            clip: portrait_trinity
+            loop: true
+
+## Crew portrait loops
+
+`portrait_<name>` clips are short "living portraits" of the FREED roster: a
+film still animated with an AI image-to-video tool (breathing, a blink, a
+slight head turn), then looped.
+
+1. **Pick the still.** Sharp, front-facing, neutral expression, plain
+   background, hands out of frame (AI video deforms hands).
+2. **Generate.** Keep the motion prompt small, for example: "static camera,
+   subtle breathing, slow blink, slight head tilt, no camera movement". Five
+   seconds is enough. If the tool lets you set the last frame, set it to the
+   same still for a seamless loop.
+3. **Convert.** This crops to a 480x640 head-and-shoulders frame, applies one
+   shared green grade so the eight read as a set, plays the clip forward then
+   backward so it loops without a jump, and encodes to Theora:
+
+       tools/make_portrait_loop.sh ~/Downloads/trinity_ai.mp4 trinity
+
+   That writes `portrait_trinity.ogv` here. Pass `--crop W:H:X:Y` if the
+   centre crop cuts the face, `--no-pingpong` if the tool already matched the
+   last frame to the first, and `--no-grade` to keep the source colour. Run the
+   script with `--help` for every option. Needs ffmpeg built with libtheora.
+
+Check each AI video service's terms before uploading film stills. They
+generally require you to hold rights to what you upload, and some block
+recognisable people. The clips are derived from the film, so like the rest of
+this folder they stay out of version control.
+
+Theora decodes on the CPU. One portrait at a time is the safe use. Several
+looping at once is untested on the cabinet PC.
+
 ## Testing without the library
 
 `gmc/slides/attract/assets/matrixrain.ogv` is tracked in the repo and is a valid
