@@ -226,9 +226,17 @@ follows; until then each element shows its authored placeholder.
 | `balls_locked` | int | How many power station cells are lit |
 | `freed_trinity`, `freed_tank`, … | bool | Lights that name in the FREED roster |
 
-The Act I modes set all of these (docs/11-rules-act-1.md, section 9). Their
-callouts use `gmc/widgets/mode_banner.tscn`, a title and detail line over the
-centre stage that reads the `title` and `detail` tokens from `widget_player`.
+The Act I modes set all of these (docs/11-rules-act-1.md, section 9).
+
+#### Stage widgets
+
+The modes draw on the centre stage with five widgets in `gmc/widgets/`:
+`countdown` (a hurry-up clock that churns and locks like the trace readout),
+`chapter_card`, `mode_banner`, `pill_choice` and `act_select`. The zones they
+use, and the rules for adding more, are in docs/11-rules-act-1.md, section 9.
+In short: a mode's widgets are cleared when it stops, so a mode's ending is
+shown by a mode that keeps running, and a clock on screen is changed with
+`action: update`.
 
 #### The trace readout
 
