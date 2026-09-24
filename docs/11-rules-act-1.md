@@ -13,6 +13,9 @@ Status (2026-09-24):
   act select before play starts so a player can skip straight to a later act
   (section 5); The One lights at 4 FREED names; The One runs until the EMP is
   hit; Sentinel Multiball is 3 balls plus an add-a-ball.
+- Agreed with the user (third round): The One resumes across ball end; the
+  act select waits 30 s and then starts Act I; the Mission Drop smart drop
+  sits in front of the scoop.
 - Everything else is a proposal, marked where it matters. Shot names are
   logical names. The ramps, wireforms and upper playfield are not built yet
   (see 08-this-machine.md), so which physical switch each shot uses is
@@ -113,8 +116,9 @@ count predictable, and keeps to the one-video-at-a-time rule in the README.
 - The **Mission Drop** area (1-bank smart drop, standup, open-back scoop)
   starts chapters. Knocking the smart drop down lights "Mission Ready", and
   the scoop starts the next chapter.
-  - Assumption, not confirmed: the drop sits in front of the scoop and blocks
-    it. If it does not, the drop lights the scoop instead.
+  - Confirmed by the user: the smart drop sits in front of the scoop, so the
+    scoop is only reachable once the drop is down. The drop is reset (raised)
+    when a chapter starts, so each chapter has to be earned again.
 - Chapters run in **film order** (agreed). Act I is a story, so the order is
   the point, and it keeps the clip sequence and the rules simple. The way to
   skip content is the act select (section 5), not chapter choice.
@@ -198,8 +202,8 @@ Agreed with the user: acts play in order, but a player can skip ahead before
 play starts.
 
 - **When:** on each player's first ball, before the ball is served. The
-  player picks with the flippers and confirms with start. No input in 10 s
-  (proposed) means Act I. Per player rather than per game, so players of
+  player picks with the flippers and confirms with start. No input in **30 s**
+  (agreed; long on purpose) starts Act I. Per player rather than per game, so players of
   different skill can share a game.
 - **Choices:** only acts that have rules. Until Act II exists the select is
   skipped entirely, so the game starts in Act I with no screen in the way.
@@ -280,7 +284,7 @@ Lit when the roster threshold is met. Starts at the Mission Drop scoop.
 - **The One runs until the EMP is hit** (agreed). It does not end when the
   multiball drops to one ball; play carries on single-ball with the current
   stage's shots still lit.
-- It also survives ball end (interpretation of the agreed rule, to confirm):
+- It also survives ball end (agreed):
   the stage and its progress are stored per player and resume on that
   player's next ball, so the mode is `stop_on_ball_end: true` with its state
   in player variables. The stage's extra balls are served again when it
@@ -348,8 +352,9 @@ exercise first, with the keyboard standing in for unwired switches:
 
 ## 12. Open decisions
 
-- Whether The One resuming on a later ball matches what was meant by "until
-  the EMP is hit" (section 8).
-- The act select timeout and whether it defaults to Act I or to the player's
-  last choice (section 5).
-- Whether the Mission Drop sits in front of its scoop (section 4).
+None outstanding on the rules. Still to settle during implementation:
+
+- Scoring values, once the modes run.
+- The MPF mechanism for holding the first ball during the act select
+  (section 5), which has not been tried here.
+- Shot-to-switch assignments, once the ramps and upper playfield are built.
