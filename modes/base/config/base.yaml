@@ -107,6 +107,23 @@ multiballs:
     shoot_again: 0
     start_events: ammo_release
 
+# The Act I finale. It plays here because the_one and act_one both stop on
+# the EMP, and MPF clears a mode's widgets when it stops.
+widget_player:
+  the_one_emp:
+    video_clip:
+      tokens:
+        clip: emp_fire
+      expire: 8s
+  act_one_complete:
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT I COMPLETE
+        title: HE IS THE ONE
+        goal: ACT II
+      expire: 6s
+
 ball_saves:
   ammo_drain_save:
     active_time: 0

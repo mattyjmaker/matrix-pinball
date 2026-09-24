@@ -69,14 +69,51 @@ widget_player:
         title: SUPER JACKPOT
         detail: HE IS THE ONE
       expire: 2s
-  the_one_stage_4_started:
-    mode_banner:
+  the_one_stage_1_started:
+    chapter_card:
+      key: the_one_card
+      priority: 10
       tokens:
-        title: FIRE THE EMP
-        detail: SENTINEL VUK
+        kicker: THE ONE  STAGE 1
+        title: THE SUBWAY
+        goal: "BEAT SMITH: HIT THE AGENTS"
       expire: 4s
-  the_one_emp:
-    video_clip:
+  the_one_stage_2_started:
+    countdown:
+      key: the_one_clock
+      priority: 10
       tokens:
-        clip: emp_fire
-      expire: 8s
+        label: SENTINELS INBOUND
+        event: the_one_chase_tick
+        seconds: "60"
+    chapter_card:
+      key: the_one_card
+      priority: 10
+      tokens:
+        kicker: THE ONE  STAGE 2
+        title: THE CHASE
+        goal: "REACH THE RINGING PHONE"
+      expire: 4s
+  the_one_stage_3_started:
+    countdown:
+      key: the_one_clock
+      action: remove
+    chapter_card:
+      key: the_one_card
+      priority: 10
+      tokens:
+        kicker: THE ONE  STAGE 3
+        title: ROOM 303
+        goal: "EVERY RAMP IS A SUPER JACKPOT"
+      expire: 4s
+  the_one_stage_4_started:
+    chapter_card:
+      key: the_one_card
+      priority: 10
+      tokens:
+        kicker: THE ONE  STAGE 4
+        title: THE EMP
+        goal: "SENTINEL VUK"
+      expire: 4s
+# The EMP's clip and the Act I finale are in base.yaml: this mode and act_one
+# both stop on the EMP, which would clear them.

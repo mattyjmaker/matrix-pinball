@@ -48,6 +48,13 @@ widget_player:
       tokens:
         clip: deja_vu_cat
       expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT I  CHAPTER 4
+        title: RESCUE MORPHEUS
+        goal: "DEJA VU: SHOOT THE DEJA VU VUK"
+      expire: 5s
   ch4_lock_lit:
     video_clip:
       tokens:

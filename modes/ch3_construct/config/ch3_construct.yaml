@@ -217,12 +217,37 @@ variable_player:
       action: set
       int: 0
 
+# The missed-jump callout is in act_one.yaml: this mode stops half a second
+# after the last round, which would clear it.
 widget_player:
   mode_ch3_construct_started:
     video_clip:
       tokens:
         clip: kung_fu_load
       expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT I  CHAPTER 3
+        title: THE CONSTRUCT
+        goal: "I KNOW KUNG FU: ALL 5 MATRIX TEAM TARGETS"
+      expire: 5s
+    countdown:
+      key: ch3_clock
+      priority: 10
+      tokens:
+        label: ROUND 1  KUNG FU
+        event: timer_ch3_round_tick
+        seconds: "30"
+  ch3_sparring_started:
+    countdown:
+      key: ch3_clock
+      action: update
+      tokens:
+        label: ROUND 2  SPARRING
+        event: timer_ch3_round_tick
+        seconds: "30"
+        total: "30"
   ch3_kung_fu_won:
     mode_banner:
       tokens:
@@ -234,12 +259,18 @@ widget_player:
       tokens:
         clip: jump_program
       expire: 5s
-  ch3_jump_missed:
-    mode_banner:
+    countdown:
+      key: ch3_clock
+      action: update
       tokens:
-        title: EVERYBODY FALLS THE FIRST TIME
-        detail: ""
-      expire: 3s
+        label: ROUND 3  JUMP PROGRAM
+        event: timer_ch3_round_tick
+        seconds: "20"
+        total: "20"
+  ch3_done:
+    countdown:
+      key: ch3_clock
+      action: remove
   ch3_woman_here_hit:
     mode_banner:
       tokens:

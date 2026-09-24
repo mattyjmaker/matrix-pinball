@@ -9,14 +9,16 @@ mode:
   priority: 1000
   code: act_select.ActSelect
 
+# Played on the first act_select_show; later ones find the key already on
+# screen and do nothing, while the clock counts from the event's `seconds`.
+# MPF removes it when the mode stops.
 widget_player:
   act_select_show:
-    mode_banner:
+    act_select:
       key: act_select
+      priority: 10
       tokens:
-        title: SELECT YOUR ACT
-        detail: FLIPPERS CHANGE, START CONFIRMS
-  mode_act_select_stopped:
-    mode_banner:
-      key: act_select
-      action: remove
+        label: STARTING IN ACT I IN
+        event: act_select_show
+        arg: seconds
+        seconds: "30"

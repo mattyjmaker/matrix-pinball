@@ -77,7 +77,6 @@ class TheOne(Mode):
     def _set_stage(self, stage):
         self.player["the_one_stage"] = stage
         self.player["the_one_progress"] = 0
-        self.machine.events.post("the_one_stage_{}_started".format(stage))
         self._enter_stage(stage)
 
     def _enter_stage(self, stage):
@@ -85,6 +84,9 @@ class TheOne(Mode):
         self.delay.clear()
         self.player["objective"] = OBJECTIVES[stage]
         progress = self.player["the_one_progress"]
+        # Posted on a fresh stage and on resuming it next ball, so the display
+        # shows the stage card and clock either way.
+        self.machine.events.post("the_one_stage_{}_started".format(stage), progress=progress)
 
         if stage == 1:
             self.machine.events.post("agents_raise")
@@ -95,6 +97,7 @@ class TheOne(Mode):
             else:
                 self.machine.events.post("the_one_mb_chase")
             self.player["the_one_timer"] = CHASE_SECONDS
+            self.machine.events.post("the_one_chase_tick", ticks=CHASE_SECONDS)
             self._move_phone()
             self.delay.add(ms=1000, callback=self._chase_tick, name="chase_tick")
         elif stage == 3:
@@ -129,6 +132,8 @@ class TheOne(Mode):
 
     def _chase_tick(self):
         self.player["the_one_timer"] -= 1
+        # The display's countdown clock counts from this event.
+        self.machine.events.post("the_one_chase_tick", ticks=max(self.player["the_one_timer"], 0))
         if self.player["the_one_timer"] <= 0:
             self.machine.events.post("the_one_chase_timeout")
             self._set_stage(3)

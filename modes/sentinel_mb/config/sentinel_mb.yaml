@@ -66,6 +66,13 @@ widget_player:
       tokens:
         clip: sentinel_attack
       expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: MULTIBALL
+        title: SENTINEL
+        goal: SENTINEL RAMP AND BOSS FOR JACKPOTS
+      expire: 4s
   sentinel_add_a_ball_lit:
     mode_banner:
       tokens:

@@ -1,0 +1,164 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_widget.gd" id="1_widget"]
+[ext_resource type="PackedScene" path="res://assets/parts/countdown_clock.tscn" id="2_clock"]
+[ext_resource type="Theme" uid="uid://ccb1am66a2yg0" path="res://assets/themes/ui-code.tres" id="3_code"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_blue"]
+bg_color = Color(0.22, 0.5, 1, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+shadow_color = Color(0.22, 0.5, 1, 0.45)
+shadow_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_red"]
+bg_color = Color(0.95, 0.2, 0.18, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+shadow_color = Color(0.95, 0.2, 0.18, 0.45)
+shadow_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_scrim"]
+bg_color = Color(0, 0.03, 0.01, 0.9)
+
+[node name="PillChoice" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_widget")
+
+[node name="Scrim" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 890.0
+offset_top = 220.0
+offset_right = 1670.0
+offset_bottom = 980.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_scrim")
+
+[node name="Clock" parent="." instance=ExtResource("2_clock")]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 890.0
+offset_top = 220.0
+offset_right = 1670.0
+offset_bottom = 450.0
+
+[node name="Choice" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 910.0
+offset_top = 470.0
+offset_right = 1650.0
+offset_bottom = 970.0
+mouse_filter = 2
+theme_override_constants/separation = 28
+
+[node name="Heading" type="Label" parent="Choice"]
+layout_mode = 2
+theme = ExtResource("3_code")
+theme_override_colors/font_color = Color(0.85, 1, 0.88, 1)
+theme_override_font_sizes/font_size = 56
+text = "RED PILL OR BLUE PILL"
+horizontal_alignment = 1
+
+[node name="Pills" type="HBoxContainer" parent="Choice"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 40
+
+[node name="Blue" type="VBoxContainer" parent="Choice/Pills"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 14
+
+[node name="Pill" type="Panel" parent="Choice/Pills/Blue"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_blue")
+
+[node name="Name" type="Label" parent="Choice/Pills/Blue/Pill"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_code")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 44
+text = "BLUE PILL"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Label" parent="Choice/Pills/Blue"]
+layout_mode = 2
+theme = ExtResource("3_code")
+theme_override_colors/font_color = Color(0.55, 0.75, 1, 1)
+theme_override_font_sizes/font_size = 34
+text = "< LEFT FLIPPER"
+horizontal_alignment = 1
+
+[node name="Outcome" type="Label" parent="Choice/Pills/Blue"]
+layout_mode = 2
+theme = ExtResource("3_code")
+theme_override_colors/font_color = Color(0.5, 1, 0.6, 0.8)
+theme_override_font_sizes/font_size = 30
+text = "THE STORY ENDS"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Red" type="VBoxContainer" parent="Choice/Pills"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 14
+
+[node name="Pill" type="Panel" parent="Choice/Pills/Red"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_red")
+
+[node name="Name" type="Label" parent="Choice/Pills/Red/Pill"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_code")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 44
+text = "RED PILL"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Label" parent="Choice/Pills/Red"]
+layout_mode = 2
+theme = ExtResource("3_code")
+theme_override_colors/font_color = Color(1, 0.55, 0.5, 1)
+theme_override_font_sizes/font_size = 34
+text = "RIGHT FLIPPER >"
+horizontal_alignment = 1
+
+[node name="Outcome" type="Label" parent="Choice/Pills/Red"]
+layout_mode = 2
+theme = ExtResource("3_code")
+theme_override_colors/font_color = Color(0.5, 1, 0.6, 0.8)
+theme_override_font_sizes/font_size = 30
+text = "SEE HOW DEEP THE RABBIT HOLE GOES"
+horizontal_alignment = 1
+autowrap_mode = 2
