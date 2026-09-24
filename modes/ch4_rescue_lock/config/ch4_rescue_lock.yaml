@@ -1,0 +1,67 @@
+#config_version=6
+
+# Chapter 4: Rescue Morpheus, lock phase (merges the VPX Morpheus Rescue lock).
+#   Deja vu: the Deja Vu VUK plays the black cat and lights the Ammo Lock.
+#   "Guns. Lots of guns.": lock three balls at the Ammo Lock (virtual count;
+#   the lock holds one ball physically). The third starts ch4_rescue_mb.
+# The base mode's Ammo drain save stands down while this runs.
+# See docs/11-rules-act-1.md, section 4.
+
+mode:
+  start_events: start_ch4
+  stop_events: mode_ch4_rescue_mb_started
+  priority: 300
+
+multiball_locks:
+  rescue_lock:
+    lock_devices: bd_ammo_lock
+    balls_to_lock: 3
+    locked_ball_counting_strategy: virtual_only
+    enable_events: ch4_lock_lit
+    reset_count_for_current_player_events: mode_ch4_rescue_lock_started
+
+event_player:
+  balldevice_bd_dejavu_vuk_ball_entered{current_player.ch4_lock_lit==0}: ch4_lock_lit
+  multiball_lock_rescue_lock_full: request_rescue_mb
+
+variable_player:
+  mode_ch4_rescue_lock_started:
+    objective:
+      action: set
+      string: "DEJA VU: SHOOT THE DEJA VU VUK"
+    ch4_lock_lit:
+      action: set
+      int: 0
+  ch4_lock_lit:
+    ch4_lock_lit:
+      action: set
+      int: 1
+    objective:
+      action: set
+      string: "GUNS. LOTS OF GUNS: LOCK 3 AT THE AMMO LOCK"
+  multiball_lock_rescue_lock_locked_ball:
+    score: 50000
+
+widget_player:
+  mode_ch4_rescue_lock_started:
+    video_clip:
+      tokens:
+        clip: deja_vu_cat
+      expire: 6s
+  ch4_lock_lit:
+    video_clip:
+      tokens:
+        clip: lots_of_guns
+      expire: 5s
+  multiball_lock_rescue_lock_locked_ball{total_balls_locked==1}:
+    mode_banner:
+      tokens:
+        title: BALL LOCKED
+        detail: TWO BALLS LEFT
+      expire: 2s
+  multiball_lock_rescue_lock_locked_ball{total_balls_locked==2}:
+    mode_banner:
+      tokens:
+        title: BALL LOCKED
+        detail: ONE MORE BALL
+      expire: 2s

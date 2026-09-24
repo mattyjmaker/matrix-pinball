@@ -1,0 +1,46 @@
+#config_version=6
+
+# Trinity Multiball (VPX): 3 balls, released from the Trinity lock. "Trinity
+# Bonus" jackpots on the Trinity Ramp. Three jackpots free SWITCH.
+# See docs/11-rules-act-1.md, section 6.
+
+mode:
+  start_events: start_trinity_mb
+  stop_events: multiball_trinity_ended
+  priority: 320
+
+multiballs:
+  trinity:
+    ball_count: 3
+    ball_count_type: total
+    ball_locks: bd_trinity_lock
+    shoot_again: 20s
+    start_events: mode_trinity_mb_started
+
+counters:
+  trinity_jackpots:
+    count_events: trinity_ramp_hit
+    count_complete_value: 3
+    events_when_complete: trinity_mb_completed
+    start_enabled: true
+
+variable_player:
+  mode_trinity_mb_started:
+    objective:
+      action: set
+      string: "TRINITY MULTIBALL: TRINITY RAMP FOR JACKPOTS"
+  trinity_ramp_hit:
+    score: 150000
+
+widget_player:
+  mode_trinity_mb_started:
+    video_clip:
+      tokens:
+        clip: trinity_mb_intro
+      expire: 6s
+  trinity_ramp_hit:
+    mode_banner:
+      tokens:
+        title: TRINITY BONUS
+        detail: JACKPOT
+      expire: 2s

@@ -1,0 +1,30 @@
+#config_version=6
+
+# Act I (the first film). The sequencing lives in code/act_one.py; this file
+# holds the Mission scoop and the scores the controller's events pay.
+# See docs/11-rules-act-1.md.
+
+mode:
+  start_events: ball_started{current_player.act=="I"}
+  stop_events: act_one_complete
+  priority: 200
+  code: act_one.ActOne
+
+ball_holds:
+  # Every ball into the Mission scoop is held while the controller decides
+  # what it starts, then released by `mission_release`.
+  mission_hold:
+    hold_devices: bd_mission_scoop
+    balls_to_hold: 1
+    enable_events: mode_act_one_started
+    release_all_events: mission_release
+
+variable_player:
+  drop_target_mission_drop_down:
+    score: 5000
+  mission_scoop_award:
+    score: 10000
+  crew_freed:
+    score: 250000
+  the_one_lit:
+    score: 500000

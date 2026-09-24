@@ -1,0 +1,60 @@
+#config_version=6
+
+# Chapter 2: Unplugged Multiball (the VPX Human Pod multiball), started by the
+# red pill. 3 balls. Jackpots on the Real World ramp; the super jackpot is all
+# three Real World standups. The super jackpot frees APOC.
+# See docs/11-rules-act-1.md, section 4.
+
+mode:
+  start_events: start_unplugged_mb
+  stop_events: multiball_unplugged_ended
+  events_when_stopped: ch2_ended
+  priority: 310
+
+multiballs:
+  unplugged:
+    ball_count: 3
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: mode_ch2_unplugged_started
+
+accruals:
+  ch2_super_jackpot:
+    events:
+      - real_world_1_hit
+      - real_world_2_hit
+      - real_world_3_hit
+    events_when_complete: ch2_super_jackpot
+    start_enabled: true
+
+event_player:
+  ch2_super_jackpot: ch2_completed
+
+variable_player:
+  mode_ch2_unplugged_started:
+    objective:
+      action: set
+      string: "UNPLUGGED: REAL WORLD RAMP FOR JACKPOTS"
+  real_world_ramp_hit:
+    score: 100000
+  ch2_super_jackpot:
+    score: 500000
+
+widget_player:
+  mode_ch2_unplugged_started:
+    video_clip:
+      tokens:
+        clip: pod_wake
+      expire: 8s
+  real_world_ramp_hit:
+    mode_banner:
+      tokens:
+        title: JACKPOT
+        detail: THE SHIP PULLS YOU OUT
+      expire: 2s
+  ch2_super_jackpot:
+    mode_banner:
+      tokens:
+        title: SUPER JACKPOT
+        detail: APOC FREED
+      expire: 3s

@@ -1,0 +1,82 @@
+#config_version=6
+
+# The One: the Act I wizard. Stage logic in code/the_one.py; this file holds
+# its multiballs, ball save and scores. The Act I controller starts it from
+# the Mission scoop once enough crew are FREED, and restarts it on the
+# player's next ball until the EMP is fired.
+# See docs/11-rules-act-1.md, section 8.
+
+mode:
+  start_events: start_the_one_mb
+  stop_events: act_one_complete
+  priority: 400
+  code: the_one.TheOne
+
+multiballs:
+  the_one_subway:
+    ball_count: 2
+    ball_count_type: total
+    shoot_again: 15s
+    start_events: the_one_mb_subway
+  the_one_chase:
+    ball_count: 4
+    ball_count_type: total
+    shoot_again: 15s
+    start_events: the_one_mb_chase
+  the_one_chase_full:
+    ball_count: 6
+    ball_count_type: total
+    shoot_again: 15s
+    start_events: the_one_mb_chase_full
+  the_one_room_303:
+    ball_count: 6
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: the_one_mb_room_303
+
+ball_saves:
+  # Covers every drain while the shots are dark in Room 303.
+  the_one_dark:
+    active_time: 8s
+    balls_to_save: -1
+    auto_launch: true
+    enable_events: the_one_dark
+
+variable_player:
+  the_one_agent_hit:
+    score: 100000
+  the_one_phone_reached:
+    score: 500000
+  the_one_super_jackpot:
+    score: 1000000
+  the_one_emp:
+    score: 5000000
+
+widget_player:
+  the_one_started:
+    video_clip:
+      tokens:
+        clip: subway_smith
+      expire: 8s
+  the_one_dark:
+    video_clip:
+      tokens:
+        clip: neo_resurrects
+      expire: 8s
+  the_one_super_jackpot:
+    mode_banner:
+      tokens:
+        title: SUPER JACKPOT
+        detail: HE IS THE ONE
+      expire: 2s
+  the_one_stage_4_started:
+    mode_banner:
+      tokens:
+        title: FIRE THE EMP
+        detail: SENTINEL VUK
+      expire: 4s
+  the_one_emp:
+    video_clip:
+      tokens:
+        clip: emp_fire
+      expire: 8s

@@ -1,0 +1,80 @@
+#config_version=6
+
+# Sentinel Multiball (VPX): 3 balls. Jackpots on the Sentinel ramp and the
+# boss target; three jackpots free DOZER.
+# Add-a-ball, once per multiball: hit all three Sentinel Boss standups to light
+# it, then shoot the Sentinel VUK. Peaks at 4 balls.
+# See docs/11-rules-act-1.md, section 6.
+
+mode:
+  start_events: start_sentinel_mb
+  stop_events: multiball_sentinel_ended
+  priority: 320
+
+multiballs:
+  sentinel:
+    ball_count: 3
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: mode_sentinel_mb_started
+    add_a_ball_events: sentinel_add_a_ball
+    add_a_ball_shoot_again: 10s
+
+accruals:
+  sentinel_add_a_ball_targets:
+    events:
+      - sentinel_left_hit
+      - sentinel_right_hit
+      - sentinel_boss_hit
+    events_when_complete: sentinel_add_a_ball_lit
+    start_enabled: true
+
+counters:
+  sentinel_jackpots:
+    count_events: sentinel_jackpot
+    count_complete_value: 3
+    events_when_complete: sentinel_mb_completed
+    start_enabled: true
+
+event_player:
+  sentinel_ramp_hit: sentinel_jackpot
+  sentinel_boss_hit: sentinel_jackpot
+  balldevice_bd_sentinel_vuk_ball_entered{current_player.sentinel_aab_lit==1}: sentinel_add_a_ball
+
+variable_player:
+  mode_sentinel_mb_started:
+    objective:
+      action: set
+      string: "SENTINEL MULTIBALL: SENTINEL RAMP AND BOSS FOR JACKPOTS"
+    sentinel_aab_lit:
+      action: set
+      int: 0
+  sentinel_jackpot:
+    score: 150000
+  sentinel_add_a_ball_lit:
+    sentinel_aab_lit:
+      action: set
+      int: 1
+  sentinel_add_a_ball:
+    sentinel_aab_lit:
+      action: set
+      int: 0
+
+widget_player:
+  mode_sentinel_mb_started:
+    video_clip:
+      tokens:
+        clip: sentinel_attack
+      expire: 6s
+  sentinel_add_a_ball_lit:
+    mode_banner:
+      tokens:
+        title: ADD-A-BALL LIT
+        detail: SHOOT THE SENTINEL VUK
+      expire: 3s
+  sentinel_jackpot:
+    mode_banner:
+      tokens:
+        title: JACKPOT
+        detail: ""
+      expire: 2s

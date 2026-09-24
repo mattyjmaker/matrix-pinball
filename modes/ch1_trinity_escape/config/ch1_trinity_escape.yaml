@@ -1,0 +1,76 @@
+#config_version=6
+
+# Chapter 1: Trinity's Escape. Single-ball hurry-up; the truck is the clock.
+#   Rooftops: three ramp shots, any ramps, inside 40 s.
+#   The phone: the Deja Vu VUK, its value counting down for 20 s.
+# Completion frees TRINITY. See docs/11-rules-act-1.md, section 4.
+
+mode:
+  start_events: start_ch1
+  stop_events: ch1_completed, ch1_failed
+  events_when_stopped: ch1_ended
+  priority: 300
+
+counters:
+  ch1_jumps:
+    count_events: ramp_hit
+    count_complete_value: 3
+    events_when_complete: ch1_rooftops_done
+    start_enabled: true
+
+timers:
+  ch1_rooftops:
+    start_value: 40
+    end_value: 0
+    direction: down
+    start_running: true
+    control_events:
+      - event: ch1_rooftops_done
+        action: stop
+  ch1_phone:
+    start_value: 20
+    end_value: 0
+    direction: down
+    control_events:
+      - event: ch1_rooftops_done
+        action: start
+
+event_player:
+  timer_ch1_rooftops_complete: ch1_failed
+  timer_ch1_phone_complete: ch1_failed
+  balldevice_bd_dejavu_vuk_ball_entered{device.timers.ch1_phone.running}: ch1_phone_answered
+  ch1_phone_answered: ch1_completed
+
+variable_player:
+  mode_ch1_trinity_escape_started:
+    objective:
+      action: set
+      string: "ROOFTOPS: MAKE 3 RAMP JUMPS"
+  logicblock_ch1_jumps_hit:
+    score: 50000
+  ch1_rooftops_done:
+    objective:
+      action: set
+      string: "THE PHONE: SHOOT THE DEJA VU VUK"
+  # The phone pays more the sooner it is answered.
+  ch1_phone_answered:
+    score:
+      int: 250000 + device.timers.ch1_phone.ticks * 25000
+
+widget_player:
+  mode_ch1_trinity_escape_started:
+    video_clip:
+      tokens:
+        clip: trinity_room_303
+      expire: 8s
+  ch1_completed:
+    mode_banner:
+      tokens:
+        title: TRINITY FREED
+        detail: SHE MADE THE CALL
+      expire: 3s
+  ch1_failed:
+    video_clip:
+      tokens:
+        clip: phone_booth_truck
+      expire: 6s

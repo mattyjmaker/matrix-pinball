@@ -1,0 +1,43 @@
+#config_version=6
+
+# Trinity lock (VPX): the Trinity Ramp lock takes three balls. The third
+# requests Trinity Multiball, which the Act I controller starts now or queues
+# behind a running multiball. Runs whenever Act I's features are on, which is
+# every Act I ball except while The One runs.
+# See docs/11-rules-act-1.md, section 6.
+
+mode:
+  start_events: act_one_features_start
+  stop_events: act_one_features_stop, act_one_complete
+  priority: 250
+
+multiball_locks:
+  trinity_lock:
+    lock_devices: bd_trinity_lock
+    balls_to_lock: 3
+    locked_ball_counting_strategy: virtual_only
+    enable_events: mode_trinity_lock_started
+    reset_count_for_current_player_events: multiball_trinity_started
+
+event_player:
+  multiball_lock_trinity_lock_full: request_trinity_mb
+
+variable_player:
+  multiball_lock_trinity_lock_locked_ball:
+    score: 10000
+    # Drives the power station cells on the HUD.
+    balls_locked:
+      action: set
+      int: total_balls_locked
+  multiball_trinity_started:
+    balls_locked:
+      action: set
+      int: 0
+
+widget_player:
+  multiball_lock_trinity_lock_locked_ball:
+    mode_banner:
+      tokens:
+        title: TRINITY LOCK
+        detail: BALL LOCKED
+      expire: 2s
