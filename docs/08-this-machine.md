@@ -46,6 +46,34 @@ Not yet recorded, and worth adding here as they are decided: LED and lamp
 wiring, opto power and signal, ground and earth bonding, and whether any
 sub-loom uses a different scheme.
 
+### Cabinet flipper opto boards (user, 2026-09-25)
+
+Two FAST **FP-SWI-7003-1** boards are installed in the cabinet, one on each
+side, for opto flipper buttons. The part number is not on FAST's published
+part list or product pages (user checked), so the user believes it was a trial
+board that was never released. Treat it as undocumented: its pinout, header
+types and compatibility with the Neuron-generation Cabinet I/O are unknown.
+
+- Blocker: no housings on hand that fit the boards' headers. The header
+  family (pin count, pitch) is not yet identified.
+- One board per side keeps the buttons on separate Cabinet I/O headers, which
+  matches the config: `s_left_flipper` on the left header (`cab-8` to
+  `cab-15`) and `s_right_flipper` on the right (`cab-16` to `cab-23`). The
+  exact input depends on which board channel each button's opto uses, and
+  whether the opto reads NO or NC is unknown until the switch test.
+- Before connecting a board to the Cabinet I/O, get its pinout from FAST
+  support or trace it and bench-test it on a separate supply, so 12 V cannot
+  reach a switch input.
+- Opto power: the left and right Cabinet I/O switch headers each have their
+  own always-on 12 V output (user, 2026-09-25). Power each side's opto board
+  from its own header's 12 V instead of J11 (SHAKER PWR), which keeps the
+  optos off the shaker supply and keeps each side's wiring local. The
+  pin's current rating is not known here; check it in FAST's Cabinet I/O
+  manual. That 12 V pin sits in the same connector as the switch inputs,
+  so check pin 1 orientation before plugging in.
+- Fallback: the owned Stern 500-6890-01 leaf switches wire straight to the
+  Cabinet I/O headers with no board and need no config change.
+
 ### Audio wiring (decided 2026-09-23, not yet installed)
 
 Current chain (user): NUC headphone out -> Fosi MC101 RCA line input -> the
@@ -151,7 +179,17 @@ Open items:
 - [ ] Read the labels on the two existing backbox Mean Wells to confirm they
       are the RSP-500-48 and LRS-150-12.
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
-      assigning it a Cabinet I/O driver.
+      assigning it a Cabinet I/O driver. It is installed in the cabinet, not
+      yet wired (user, 2026-09-25). Retailers list the replacement motor for
+      JJP shaker kits (041-5029-04) as 12 V DC, 3100 RPM; its current is not
+      published, so read the fitted motor's label or measure its winding
+      resistance (stall current is roughly 12 V / R). Planned wiring: motor +
+      to Cabinet I/O J11 (SHAKER PWR, 12 V), motor - to a Cabinet I/O driver,
+      diode across the motor with the band to +12 V. The flipper optos take
+      12 V from the side switch headers, not J11 (see "Cabinet flipper opto
+      boards"). Still run the shaker hard once while watching the flipper
+      buttons in the switch test, since both likely come from the board's J3
+      12 V input (unverified).
 - [ ] Decide the sub's mounting position and enclosure in the cabinet.
 
 ## Installed software
@@ -235,6 +273,16 @@ Logs go to `~/matrix-pinball/logs/`.
       headers; the coin door header J4 is `cab-0` to `cab-7`. The board's 8
       drivers (`cab-0` to `cab-7`) are still unconfigured, so no knocker or
       button lamps yet.
+- [ ] Fit the knocker in the cabinet (user wants it there, 2026-09-25): the
+      owned WPC assembly B-10686-1 with an AE-23-800 coil. Per FAST's Cabinet
+      I/O wiring page, the board takes 12 V and 48 V on J3 from the Smart
+      Power Filter Board's J10 (4-pin), and a knocker wires from 48 V on the
+      board to one coil lug and from the other lug to a Cabinet I/O driver,
+      with a diode across the coil, band to the 48 V side. The diode must be
+      a 1N4004 or 1N4007, not a 1N4001 (50 V). Check that the assembly's coil
+      already has one. MPF 0.80 has no `knockers:` device (not in its
+      `config_spec.yaml`), so the knocker is a plain entry under `coils:`
+      fired by `coil_player`. Nothing in the Act I rules fires it yet.
 - [ ] Check whether the Cabinet I/O's **NET cable** is plugged into the I/O loop. If it isn't, it won't appear in `mpf hardware scan` and the config's `order: 1` for `cab` is wrong — every other board's order shifts.
 - [ ] **Install Godot 4.7.2 on this machine.** `project.godot` is now tagged
       `4.7`, but the editor here is still 4.6.3, which will warn that the

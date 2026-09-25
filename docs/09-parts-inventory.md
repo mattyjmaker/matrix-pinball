@@ -102,10 +102,11 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 | Red start button (500-6388-44) | 1 | HAVE (Feb 2023) |
 | Cabinet flipper buttons, transparent green, with spring | 2 | HAVE (Feb 2023) |
 | Double flip switch assembly 500-6890-01 (EOS/double-stack cabinet switches) | 2 | HAVE |
+| FAST FP-SWI-7003-1 flipper opto board (not on FAST's published part list; undocumented) | 2 | HAVE, installed one per cabinet side (user, 2026-09-25). See 08-this-machine.md. |
 | Nylon pal nuts (button nuts) | 2 | HAVE |
 | Williams/Bally complete tilt mechanism (A-15361) | 1 | HAVE (Feb 2023) |
 | Knocker assembly WPC/WPC-95 (B-10686-1, coil AE-23-800) + strike plate | 1 | HAVE (Feb 2023) |
-| Shaker motor assembly (JJP, PBL-100-0092-00) | 1 | HAVE (Feb 2023) |
+| Shaker motor assembly (JJP, PBL-100-0092-00) | 1 | HAVE (Feb 2023). Installed in the cabinet, not yet wired (user, 2026-09-25). |
 
 ## Flippers, slings and posts
 
