@@ -6,6 +6,7 @@ SHOTS = {
     "s_left_lock_ramp": ("left_lock_ramp_hit", "ramp_hit", "left_shot_hit"),
     "s_middle_loop_ramp": ("middle_loop_ramp_hit", "ramp_hit", "left_shot_hit"),
     "s_right_loop_ramp": ("right_loop_ramp_hit", "ramp_hit", "right_shot_hit"),
+    "s_backboard_ramp": ("backboard_ramp_hit", "ramp_hit", "right_shot_hit"),
     "s_left_lock_spinner": ("spinner_hit",),
     "s_middle_loop_spinner": ("spinner_hit",),
     "s_right_loop_spinner": ("spinner_hit",),
@@ -52,9 +53,9 @@ class TestShots(MatrixTestCase):
     def test_every_ramp_is_a_ramp_shot(self):
         self.start_matrix_game()
         self.mock_event("ramp_hit")
-        for ramp in ("left_lock", "middle_loop", "right_loop"):
+        for ramp in ("left_lock", "middle_loop", "right_loop", "backboard"):
             self.ramp(ramp)
-        self.assertEventCalled("ramp_hit", 3)
+        self.assertEventCalled("ramp_hit", 4)
 
     def ramp(self, name):
         self.hit_and_release_switch("s_{}_ramp".format(name))

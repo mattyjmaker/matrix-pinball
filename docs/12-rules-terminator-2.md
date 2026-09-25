@@ -53,8 +53,9 @@ The vocabulary, as the user described the playfield:
 | --- | --- |
 | `left_lock_ramp`, `left_lock` | The left ramp, whose return path to the flippers has a post that rises to hold balls. The count is ramp entries while the post is up, assumed full at three |
 | `middle_loop_ramp`, `middle_loop_vuk` | The middle loop ramp and the VUK it pairs with |
-| `right_loop_ramp` | The right loop ramp, up to the upper playfield. The only ramp up there |
-| `upper` | The upper playfield: three standups (`upper_target_1..3`) and a mini left flipper |
+| `right_loop_ramp` | The loop on the far right: up and in front of the backboard, onto the upper playfield from the left |
+| `backboard_ramp` | Next to the platform toy: up into the backboard and behind it, out at the top left of the upper playfield |
+| `upper` | The upper playfield: three standups (`upper_target_1..3`) and a mini left flipper. Both the right loop ramp and the backboard ramp feed it |
 | `platform` | The toy: two targets on a rising platform (`platform_target_1..2`), two front targets that lower and rise to block the path (`platform_gate`), a magnet (`platform_magnet`), and a subway under the raised platform to the middle loop VUK. `bd_platform_vuk` stands in for the subway until the toy is built |
 | `popups`, `popup_scoop` | Three pop-up drop targets and the scoop that raises them |
 | `mode_drop`, `mode_scoop` | The 1-bank smart drop and the scoop behind it that starts a game's modes |
@@ -64,13 +65,9 @@ The vocabulary, as the user described the playfield:
 | `kickback_target` | Relights the left outlane kickback |
 | Flippers | Left, right, upper right, and the upper playfield's left. The upper two are not modelled yet (hardware rules, pending wiring) |
 
-Two consequences for the rules, both already applied to Act I:
-
-- **Three ramps, not four.** The VPX's Sentinel ramp does not exist. Where a
-  rule wanted it, the right loop ramp is used, and the ramp-walking features
-  walk three ramps.
-- **Two platform targets, not one boss target.** Rules that wanted the boss
-  target take either platform target (`platform_target_hit`).
+One consequence for the rules, already applied to Act I: there are two
+platform targets, not one boss target, so rules that wanted the boss target
+take either platform target (`platform_target_hit`).
 
 Still modelled provisionally, marked `TODO(hardware)` in
 `config/playfield_pending.yaml`: the left lock's three count switches (the
@@ -135,7 +132,8 @@ scoring and story meaning change.
 | `mode_drop`, `mode_scoop` | Mission Drop + Mission scoop | Perimeter Drop + Command scoop | Breaching the next objective; starts each chapter |
 | `left_lock_ramp`, `left_lock` | Trinity Ramp and lock | Future War Ramp and lock | Sarah's recurring flash-forward: surviving Hunter-Killer sorties |
 | `middle_loop_ramp`, `middle_loop_vuk` | Deja Vu Ramp + VUK | Displacement Ramp + VUK | Time-displacement arrivals (both Terminators arrive naked in a lightning field) |
-| `right_loop_ramp`, `upper_target_1..3` | Real World Ramp + standups | Pescadero Ramp + Ward standups | Escaping the mental hospital. Also the ramp T-1000 Multiball jackpots use, as Sentinel Multiball does |
+| `right_loop_ramp`, `upper_target_1..3` | Real World Ramp + standups | Pescadero Ramp + Ward standups | Escaping the mental hospital |
+| `backboard_ramp` | Sentinel Ramp | T-1000 Ramp | The T-1000's pursuit; the ramp beside the toy |
 | `platform` (gate, two targets, magnet, VUK/subway) | Sentinel Boss toy | T-1000 toy (Cruiser targets = gate, Semi Grille = platform targets, T-1000 magnet, T-1000 VUK) | The T-1000's pursuit by cruiser and tanker truck |
 | `popups`, `popup_scoop` | Agents + Agents Coming scoop | Endoskeletons + Assembly Line scoop | Skynet's mass-produced units |
 | `right_outlane_lock` + target | Ammo Lock + target | Arsenal Lock + target | The gun-store arsenal montage; same drain-save mechanic |
@@ -244,11 +242,10 @@ Judgment Day runs, mirroring Trinity/Sentinel Multiball's availability rule.
 - Four hits across the two Cruiser targets open the way ("It's found you!",
   100,000). A ball into the T-1000 VUK while it is open requests the
   multiball: 3 balls, 20 s ball save.
-- Jackpots on the right loop ramp (there is no ramp into the toy; this
-  mirrors Sentinel Multiball) and either Semi Grille target, 150,000. Three
-  jackpots (proposed) save **SKYNET** (meaning Skynet's agent was driven off,
-  a temporary win, not its final defeat, which is reserved for the wizard
-  mode).
+- Jackpots on the T-1000 Ramp (the backboard ramp) and either Semi Grille
+  target, 150,000. Three jackpots (proposed) save **SKYNET** (meaning
+  Skynet's agent was driven off, a temporary win, not its final defeat, which
+  is reserved for the wizard mode).
 - Add-a-ball, once per multiball: hit the two Cruiser targets and a Semi
   Grille target to light it, then shoot the T-1000 VUK. 10 s save on the
   added ball. Peaks at 4 balls.
@@ -279,7 +276,7 @@ War lock and the T-1000 gate are off, mirroring The One's exclusivity rule.
 
 | Stage | Balls | Goal | Score |
 | --- | --- | --- | --- |
-| 1. Freeway | 2 | The right loop ramp, 6 hits (proposed) as the tanker chase spills onto the freeway | 100,000 per hit |
+| 1. Freeway | 2 | The T-1000 Ramp (backboard ramp), 6 hits (proposed) as the tanker chase spills onto the freeway | 100,000 per hit |
 | 2. Steel Mill Arrival | 4 | Either Semi Grille target knocks the T-1000 down; it gets back up 1 s later, mirroring the Agent-rise timing in The One | 500,000 per hit |
 | 3. Molten Steel | 6 | The T-1000 magnet catch pushes it toward the vat; every ramp becomes a super jackpot while it is down | 1,000,000 per super jackpot |
 | 4. Self-Sacrifice | any | The four Launch Site standups, in sequence, as the T-800 lowers itself into the steel to destroy the last chip | 5,000,000 |

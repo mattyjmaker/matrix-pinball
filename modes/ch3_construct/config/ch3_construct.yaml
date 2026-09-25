@@ -137,11 +137,16 @@ shots:
     profile: ch3_woman
     enable_events: ch3_sparring_started
     disable_events: ch3_done
+  ch3_woman_4:
+    hit_events: backboard_ramp_hit
+    profile: ch3_woman
+    enable_events: ch3_sparring_started
+    disable_events: ch3_done
 
 shot_groups:
-  # She walks the three ramps: left lock, middle loop, right loop.
+  # She walks the four ramps: left lock, middle loop, right loop, backboard.
   ch3_woman:
-    shots: ch3_woman_1, ch3_woman_2, ch3_woman_3
+    shots: ch3_woman_1, ch3_woman_2, ch3_woman_3, ch3_woman_4
     rotate_right_events: timer_ch3_walk_tick{ticks > 0}
 
 event_player:

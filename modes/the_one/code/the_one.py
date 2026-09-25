@@ -15,9 +15,9 @@ multiball drops to one ball. See docs/11-rules-act-1.md, section 8.
 from mpf.core.mode import Mode
 
 SUBWAY_HITS = 6
-# The three ramps, by their hardware names; PHONE_NAMES has what the Matrix
+# The four ramps, by their hardware names; PHONE_NAMES has what the Matrix
 # calls them on screen.
-PHONES = ("left_lock_ramp", "middle_loop_ramp", "right_loop_ramp")
+PHONES = ("left_lock_ramp", "middle_loop_ramp", "right_loop_ramp", "backboard_ramp")
 PHONES_NEEDED = 4
 # The Chase starts at 4 balls and goes to 6 after this many phones.
 PHONES_FOR_SIX_BALLS = 2
@@ -31,6 +31,7 @@ PHONE_NAMES = {
     "left_lock_ramp": "TRINITY RAMP",
     "middle_loop_ramp": "DEJA VU RAMP",
     "right_loop_ramp": "REAL WORLD RAMP",
+    "backboard_ramp": "SENTINEL RAMP",
 }
 
 OBJECTIVES = {

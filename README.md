@@ -181,11 +181,11 @@ a device or a drop target stays down.
 | `e` | Left lock ramp (Trinity Ramp) | | `j` | Right outlane lock (Ammo Lock, toggle) |
 | `r` | Middle loop ramp (Deja Vu Ramp) | | `l` | Right outlane lock target (Ammo target) |
 | `t` | Right loop ramp (Real World Ramp) | | `s` / `5` | Platform gate left / right (Sentinel entrance targets) |
-| `y` | Platform target 1 (Sentinel boss target) | | `6` | Platform magnet (Sentinel magnet) |
+| `y` | Backboard ramp (Sentinel Ramp) | | `6` | Platform magnet (Sentinel magnet) |
 | `2` `3` `4` | Pop-ups 1 to 3 (Agents, toggle) | | `0` `9` `8` `7` | Outlanes and inlanes |
 
 The trough keys are `x c v b n m k`. The five-bank and three-bank drops, upper
-playfield standups, platform target 2 and pop area standups have no key; use
+playfield standups, platform targets and pop area standups have no key; use
 MPF Monitor (`pinball-monitor`) for those. The Godot editor's MPF tab rewrites
 `gmc/gmc.cfg` in full, so check this section survives an editor save.
 

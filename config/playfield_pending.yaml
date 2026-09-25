@@ -88,11 +88,15 @@ switches:
     number: v-popup-scoop
     platform: virtual
 
-  # Ramps. Three: the left lock ramp, the middle loop ramp and the right loop
-  # ramp up to the upper playfield. Each has a "made" switch at the top and a
-  # spinner. (The Matrix design's Trinity, Deja Vu and Real World ramps; the
-  # "Sentinel ramp" in the VPX does not exist on this playfield, there is no
-  # ramp into the platform toy.)
+  # Ramps. Four, each with a "made" switch at the top:
+  #   left lock ramp    the left ramp, with the lock post on its return
+  #   middle loop ramp  the middle loop
+  #   right loop ramp   the loop on the far right, up and in front of the
+  #                     backboard onto the upper playfield from the left
+  #   backboard ramp    next to the platform toy, up into the backboard and
+  #                     behind it, out at the top left of the upper playfield
+  # The first three have spinners; the backboard ramp has an opto set.
+  # (The Matrix design's Trinity, Deja Vu, Real World and Sentinel ramps.)
   s_left_lock_ramp:               # was s_trinity_ramp
     number: v-left-lock-ramp
     platform: virtual
@@ -113,7 +117,7 @@ switches:
     platform: virtual
     tags: playfield_active
     events_when_activated: spinner_hit
-  s_right_loop_ramp:              # was s_real_world_ramp (and s_sentinel_ramp)
+  s_right_loop_ramp:              # was s_real_world_ramp
     number: v-right-loop-ramp
     platform: virtual
     tags: playfield_active
@@ -123,9 +127,14 @@ switches:
     platform: virtual
     tags: playfield_active
     events_when_activated: spinner_hit
+  s_backboard_ramp:               # was s_sentinel_ramp
+    number: v-backboard-ramp
+    platform: virtual
+    tags: playfield_active
+    events_when_activated: backboard_ramp_hit, ramp_hit, right_shot_hit
 
   # Upper playfield: three standups and a mini left flipper (the "Real
-  # World" playfield). The right loop ramp feeds it.
+  # World" playfield). Both the right loop ramp and the backboard ramp feed it.
   s_upper_target_1:               # was s_real_world_1
     number: v-upper-target-1
     platform: virtual

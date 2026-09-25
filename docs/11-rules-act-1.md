@@ -168,7 +168,7 @@ round lost on time still moves to the next one.
    300,000. Time out: "Everybody falls the first time", 100,000.
 
 - **The Woman in the Red Dress** (rounds 2 and 3): she starts on the Trinity
-  Ramp and moves to the next of the three ramps every 3 s (build). Shooting the ramp she is
+  Ramp and moves to the next ramp every 3 s (build). Shooting the ramp she is
   on raises the middle Agent; hitting it before the round ends pays 200,000.
 - Winning rounds 1 and 2 frees **MOUSE**, who wrote the Woman in the Red Dress
   program. The jump does not affect completion.
@@ -223,9 +223,8 @@ while The One runs.
 - Four hits across the two Sentinel entrance targets open the gate ("Hit the
   Sentinel!", 100,000). A ball into the Sentinel VUK while it is open requests
   the multiball: 3 balls, 20 s ball save.
-- Jackpots on the right loop ramp (the VPX's Sentinel ramp; there is no ramp
-  into the toy) and either boss target, 150,000. Three jackpots (build) free
-  **DOZER**.
+- Jackpots on the Sentinel ramp (the backboard ramp, next to the toy) and
+  either boss target, 150,000. Three jackpots (build) free **DOZER**.
 - **Add-a-ball**, once per multiball: hit the two entrance targets and a boss
   target to light it, then shoot the Sentinel VUK. 10 s save on the added ball.
   Peaks at 4 balls.
@@ -378,9 +377,9 @@ Multiballs never start themselves: a lock posts `request_<name>_mb` and
 | Trinity lock | left lock | `bd_left_lock`, `c_left_lock_post` |
 | Deja Vu Ramp | middle loop ramp | `middle_loop_ramp_hit`, `ramp_hit`, `left_shot_hit` |
 | Deja Vu VUK | middle loop VUK | `bd_middle_loop_vuk` |
-| Real World Ramp | right loop ramp, up to the upper playfield | `right_loop_ramp_hit`, `ramp_hit`, `right_shot_hit` |
+| Real World Ramp | right loop ramp: the far right loop, up and in front of the backboard onto the upper playfield | `right_loop_ramp_hit`, `ramp_hit`, `right_shot_hit` |
 | Real World standups | upper playfield targets | `upper_target_N_hit`, `upper_target_hit` |
-| Sentinel ramp | none: there is no ramp into the toy. The right loop ramp takes its place in the rules | |
+| Sentinel ramp | backboard ramp: next to the toy, up into and behind the backboard, out at the top left of the upper playfield | `backboard_ramp_hit`, `ramp_hit`, `right_shot_hit` |
 | Sentinel entrance targets | platform gate (two front targets that lower and rise) | `platform_gate_left_hit`, `platform_gate_right_hit`, `platform_gate_hit`, diverter `platform_gate` |
 | Sentinel boss target | platform targets (two, on the rising platform) | `platform_target_1_hit`, `platform_target_2_hit`, `platform_target_hit` |
 | Sentinel VUK | platform VUK | `bd_platform_vuk` (see its TODO: the real toy has a subway to the middle loop VUK) |
@@ -406,11 +405,7 @@ Multiballs never start themselves: a lock posts `request_<name>_mb` and
   in for the toy's subway to the middle loop VUK; the platform gate is a held
   coil whose energised state is not yet known; which ramps count as left and
   right for the sparring combos (left lock and middle loop left, right loop
-  right).
-- **Three ramps, not four.** The VPX had a Sentinel ramp; this playfield has
-  no ramp into the toy. Where the rules said Sentinel ramp they now use the
-  right loop ramp (Sentinel Multiball jackpots), and the ramp-walking
-  features (the Woman in the Red Dress, The Chase) walk three ramps.
+  and backboard right).
 
 ### Testing
 

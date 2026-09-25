@@ -404,7 +404,7 @@ class TestSentinelMultiball(ActOneTestCase):
         self.confirm_playfield()
         self.assertBallsInPlay(4)
         # A platform target is a jackpot: three have been scored with the ramp.
-        self.ramp("right_loop")
+        self.ramp("backboard")
         self.assertPlayerVarEqual(1, "freed_dozer")
 
     def test_gate_closes_when_multiball_ends(self):
