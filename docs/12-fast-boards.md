@@ -26,7 +26,7 @@ has to be checked on the machine.
 | Playfield Interchange Board | FP-PWR-0030 | 1 | Rear of playfield | None (passive) | None needed | Not recorded |
 | I/O 1616 | FP-I/O-1616 | 2 | Playfield back; playfield middle | NET loop | One declared (`top16`); **the second is missing** | Partly wired |
 | I/O 3208 | FP-I/O-3208 | 1 | Playfield | NET loop | `bottom32` | Flippers and lower third wired |
-| Cabinet I/O | **FP-I/O-0024 expected; silkscreen not yet read** (the repo previously said FP-CAB-0001) | 1 | Cabinet | NET loop | `cab` | Mounted, not wired |
+| Cabinet I/O | **FP-I/O-0024-5** (silkscreen, photo 2026-09-25; the repo previously said FP-CAB-0001) | 1 | Cabinet | NET loop | `cab` | Mounted, not wired; NET cables not plugged in |
 | Expansion board, 256 LEDs | FP-EXP-0081 | 1 | Not installed | EXP bus | Not configured | Not wired |
 | Expansion board, 128 LEDs + 4 servos | FP-EXP-0071 | 1 | Not installed | EXP bus | Not configured | Not wired |
 | Opto flipper switch board | FP-SWI-7083-1 (silkscreen, photo 2026-09-25) | 2 | Cabinet, one per side | Switch-level only | None | Blocked: no matching housings |
@@ -41,8 +41,11 @@ It was previously misrecorded as FP-SWI-7003-1. See section 3.9.
 Record each result in 08-this-machine.md with the date. Items 1 to 3 block the
 first boot on FAST hardware.
 
-1. **Cabinet I/O part number.** Read the full number printed on the board,
-   including the revision suffix (for example `FP-I/O-0024-4`).
+1. **Cabinet I/O part number. Done 2026-09-25: FP-I/O-0024-5** (user photo).
+   The config's `FP-I/O-0024` is correct. Revision -5 is newer than FAST's
+   documentation; see section 3.6 for what differs. The same photo shows no
+   cables in either NET jack, so the board is not in the loop yet, and
+   `order: 1` in the config is wrong until it is. The background:
    - MPF 0.80 compares the model each board reports over the loop with the
      `model:` in `io_loop:` and stops with an `AssertionError` if they differ
      (`mpf/platforms/fast/communicators/net_neuron.py`, `_process_nn`).
@@ -52,11 +55,6 @@ first boot on FAST hardware.
      were built for commercial partners with different pinouts, and that
      revision -4 is the only one sold publicly. FAST's own MPF log example
      shows a cabinet board reporting `FP-I/O-0024-3`. (Official)
-   - The config now says `FP-I/O-0024`. If the board reads FP-CAB-0001, change
-     it back, and do not use the pinouts in section 3.6: they are for the
-     0024 only.
-   - If the revision is -3 or older, J10 is an 11-pin header with a different
-     pinout. Use the board's own labels.
 2. **Loop order.** Trace the cables from the Neuron's NODE OUT through each
    board's IN and OUT and back to the Neuron's IN. Record which physical board
    is 1, 2, 3 and 4. Also record the full part number and revision of both
@@ -257,8 +255,9 @@ Official: [product page](https://fastpinball.com/products/ioboards/3208/).
 Official: [product page](https://fastpinball.com/products/ioboards/cabinet/),
 [wiring guide](https://fastpinball.com/wiring/neuron/cabinet-ioboard/).
 
-This section applies only if the board is an FP-I/O-0024 (see check 1 in
-section 2).
+This machine's board is **FP-I/O-0024-5** (silkscreen, user photo
+2026-09-25). FAST's pages document revisions up to -4, so section 3.6.1 lists
+what the -5 board shows and where it differs.
 
 - 24 switch inputs and 8 drivers.
 - Needs Neuron firmware v2.13 or newer. Not compatible with the Nano.
@@ -277,7 +276,9 @@ knocker driver.
 | 5 (shared) | D5 | TTL output on J10, shares its control line with L5 | 20 mA |
 | **7** | **D1** on J2 | Standard high-current driver, the only one on the board. MOSFET Q4, IRL540NSTRLPBF. | Same as a playfield I/O driver |
 
-**Pinouts** (pin 1 first):
+**Pinouts** (pin 1 first), as FAST documents them for revision -4. On this
+machine's -5 board, J9 is printed CABINET B, J10 is J11, and J11 (SHAKER PWR)
+is J12; J1 is printed CABINET A. See section 3.6.1.
 
 | Pin | J1 CABINET LEFT | J9 CABINET RIGHT | J4 COIN DOOR | J10 BILL/CARD/TICKET (rev -4) |
 | --- | --- | --- | --- | --- |
@@ -335,15 +336,49 @@ a meter:
   its own ground pin; the side headers only offer the switch return G.
 - **Cabinet expansion board:** FAST says it can take power from J11.
 
+#### 3.6.1 Revision -5 as fitted (User-provided photo, 2026-09-25)
+
+The photo shows the component side from the front. Pin labels on the lower
+headers are printed under the header bodies and are only partly legible, so
+anything below marked Unverified needs a closer photo or a meter.
+
+| FAST -4 docs | This -5 board | Status |
+| --- | --- | --- |
+| J1 CABINET LEFT | J1 **CABINET A**, 13 pins labelled 8, 9, 10, 11, 12, 13, 14, 15, G, 5V, L2, L3, V+ | Same pinout, new name |
+| J9 CABINET RIGHT | **CABINET B**, 13 pins; legible labels run 16 up to 23, then G, from the right-hand end | Designator not legible. Pin order matches -4 as far as readable; L4, L5, 5V and V+ labels not legible (Unverified) |
+| J4 COIN DOOR | J4, 13 pins, inside a bracket marked COIN DOOR | Pin labels not visible (Unverified) |
+| (none) | **J8**, 5 pins, also inside the COIN DOOR bracket, below J4 | **Not in FAST's docs.** Function and pinout Unknown |
+| J10 BILL/CARD/TICKET | **J11** BILL/CARD/TICKET, 13 pins; labels end 23, 22, 21 at the right-hand end | Designator changed. Pins 1 to 3 (S21 to S23) match -4 as far as readable |
+| J11 SHAKER PWR | **J12** SHAKER PWR, 3-pin with K printed at the right-hand end | Designator changed. The polarity of the other two pins is not legible; confirm with a meter before wiring |
+| J2 KNOCKER | J2, labelled H2, TG, K, D1 from left to right | Same pins. D1 (driver 7) is at the right-hand end |
+| J3 TO FILTER BOARD | J3, labelled H2, TG, G, 12 from left to right | Same pins |
+| J6, J7 NODE IN / OUT | J7 (upper) and J6 (lower) RJ45 | IN and OUT labels not visible; FAST -4 has J6 IN and J7 OUT (Unverified for -5) |
+
+Other features visible on the -5 board and not described by FAST:
+- **Fuses F1 to F3 and F5 to F7:** six small fuses, each beside one of the
+  driver transistors (Q1 to Q8 area). Six fuses match the six low-current
+  drivers L0 to L5, but that mapping and their rating are Unverified.
+- **F4 and F8:** larger parts marked `050` / `30`. F4 is near J3 and the
+  knocker MOSFET Q4; F8 is near pads marked `5V` and `12V`. Their rating and
+  function are Unverified.
+- **LEDs:** D1 labelled EXT PWR, plus D3 STATUS, D4 LINK and D5 ACTIVE.
+- **Test points:** NET, 12V, VCC, 3V3 and GND.
+- **Unpopulated positions:** a row of pads marked GND, CK, LD, DO, DI; a
+  single-row header position J5; and a 2x5 header J9 (programming on other
+  FAST I/O boards). Their functions are Unknown.
+
+Worth asking FAST for the -5 pinout sheet, covering J4, J8 and J12 polarity
+in particular, before wiring the coin door and the shaker.
+
 **MPF numbering for this machine** (`io_loop` name `cab`). These are FAST's
 recommended defaults (see 02-hardware.md, "FAST 0024 cabinet I/O board
 recipe") and are not yet switch-tested:
 
 | Device | Number | Header and pin |
 | --- | --- | --- |
-| `s_left_flipper` | `cab-8` | J1 pin 1 |
-| `s_start` | `cab-10` | J1 pin 3 |
-| `s_right_flipper` | `cab-16` | J9 pin 1 |
+| `s_left_flipper` | `cab-8` | J1 CABINET A, pin 1 |
+| `s_start` | `cab-10` | J1 CABINET A, pin 3 |
+| `s_right_flipper` | `cab-16` | CABINET B, pin 1 |
 | Knocker (planned) | `cab-7` | J2, D1 |
 
 ### 3.7 Expansion board, 256 LEDs (FP-EXP-0081)
@@ -489,10 +524,12 @@ Other FAST rules that apply here (Official):
 
 Ordered by impact.
 
-1. **The Cabinet I/O model in the config was very likely wrong.** It said
-   `FP-CAB-0001`. The board sold publicly is the FP-I/O-0024, and MPF 0.80
-   aborts on a mismatch. The config now says `FP-I/O-0024`. Confirm it
-   against the silkscreen (check 1).
+1. **The Cabinet I/O model in the config was wrong, and is now fixed.** It
+   said `FP-CAB-0001`; the board reads FP-I/O-0024-5, and MPF 0.80 aborts on
+   a mismatch. The config now says `FP-I/O-0024`. Separately, the board is
+   not yet cabled into the loop, so its `order: 1` is wrong until it is.
+   Revision -5 also has a header (J8) and designator changes that FAST does
+   not document (section 3.6.1).
 2. **The second 1616 is missing from `io_loop:`.** This was already known.
    It still needs the real loop order (check 2).
 3. **The knocker and the shaker are both planned on the Cabinet I/O, but it

@@ -33,10 +33,11 @@ fast:
     debug: false      # change to true to see full NET serial communication in the log. Search for `[NET]`
     controller: neuron
     io_loop:
-            # TODO(hardware): model must match what the board reports, or MPF
-            # 0.80 aborts at startup (it does not alias FP-CAB-0001 and
-            # FP-I/O-0024). FAST's public Cabinet I/O is the FP-I/O-0024; read
-            # the silkscreen to confirm. See docs/12-fast-boards.md, section 2.
+            # Silkscreen reads FP-I/O-0024-5 (photo, 2026-09-25). MPF 0.80
+            # ignores the revision suffix but aborts if the model differs from
+            # what the board reports; it does not alias FP-CAB-0001.
+            # TODO(hardware): the board's NET cables were not plugged in at
+            # that date. Until it is in the loop, order: 1 is wrong.
             cab:
                 model: FP-I/O-0024
                 order: 1
@@ -173,8 +174,9 @@ switches:
   # (cab-0 .. cab-7; the knocker driver D1 on J2 is cab-7).
   # Header layout per FAST's pinout (pin 1 = lowest input):
   #   coin door (J4)            cab-0  .. cab-7
-  #   cabinet left (J1)         cab-8  .. cab-15
-  #   cabinet right (J9)        cab-16 .. cab-23 (21-23 also on J10)
+  #   CABINET A (J1)            cab-8  .. cab-15
+  #   CABINET B                 cab-16 .. cab-23 (21-23 also on BILL/CARD/TICKET)
+  # (FAST's docs call A and B "left" and "right"; the -5 board prints A and B.)
   # Full pinouts: docs/12-fast-boards.md, section 3.6.
   # TODO(hardware): these three numbers are the recommended defaults, not yet
   # confirmed against this machine. After wiring, verify each one in the MPF

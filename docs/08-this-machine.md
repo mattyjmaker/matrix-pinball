@@ -10,7 +10,7 @@ This is the production cabinet PC, and it is also used for development. Set up o
 ### Boards installed (user, 2026-09-20)
 - **Backbox:** the FAST Smart Power Filter Board (FP-PWR-0007, the "big capacitor board") + the Neuron.
 - **Playfield:** I/O 1616 at the back, the FAST Playfield Interchange Board (FP-PWR-0030, passive — no MPF config needed), the I/O 3208 (flippers and the lower third are primarily wired to it), and the second I/O 1616 in the middle.
-- **Cabinet:** the Cabinet I/O **is installed, but not yet wired** (user, 2026-09-20). Its part number has not been read off the board. FAST's public Cabinet I/O is the FP-I/O-0024, and the config now uses that model; the repo previously said FP-CAB-0001. See 12-fast-boards.md, section 2, check 1.
+- **Cabinet:** the Cabinet I/O **is installed, but not yet wired** (user, 2026-09-20). Its silkscreen reads **FP-I/O-0024-5** (user photo, 2026-09-25), which confirms the config's `FP-I/O-0024`; the repo previously said FP-CAB-0001. In the same photo neither RJ45 jack has a cable, so the board is not yet in the I/O loop. Revision -5 is newer than FAST's documentation (-4); see 12-fast-boards.md, section 3.6.
 
 Per-board pinouts, FAST's wiring rules and the checks still to do on the machine are in 12-fast-boards.md.
 
@@ -91,7 +91,7 @@ From the silkscreen (user-provided photo):
 
 Planned wiring, one board per Cabinet I/O side header (4 wires):
 
-| Opto board J1 | Cabinet I/O left (J1) | Cabinet I/O right (J9) |
+| Opto board J1 | Cabinet I/O CABINET A (J1, left) | Cabinet I/O CABINET B (right) |
 | --- | --- | --- |
 | 1 SW1 | pin 1, `cab-8` | pin 1, `cab-16` |
 | 2 SW2 | pin 2, `cab-9` | pin 2, `cab-17` |
@@ -105,7 +105,7 @@ Planned wiring, one board per Cabinet I/O side header (4 wires):
 - The board's GND is both its supply return and the reference for its
   switch outputs, so it must share ground with the switch inputs. Taking
   12 V and ground from the same header as the inputs does that with no
-  question about separate grounds. FAST's guide suggests J11 for opto power
+  question about separate grounds. FAST's guide suggests SHAKER PWR (J11 in FAST's docs, J12 on this -5 board) for opto power
   instead. FAST publishes no current rating for the side header's 12 V and G
   pins (Unverified), so measure the board's current draw on the bench first.
 - The start button (`cab-10`, left header pin 3) also needs pin 9 (G). The
@@ -246,10 +246,10 @@ Open items:
       JJP shaker kits (041-5029-04) as 12 V DC, 3100 RPM; its current is not
       published, so read the fitted motor's label or measure its winding
       resistance (stall current is roughly 12 V / R). Planned wiring: motor +
-      to Cabinet I/O J11 (SHAKER PWR, 12 V), motor - to driver 7 (J2 D1) if
+      to Cabinet I/O SHAKER PWR (J12 on this -5 board, 12 V; confirm polarity with a meter), motor - to driver 7 (J2 D1) if
       the shaker gets it,
       diode across the motor with the band to +12 V. The flipper optos take
-      12 V from the side switch headers, not J11 (see "Cabinet flipper opto
+      12 V from the side switch headers, not SHAKER PWR (see "Cabinet flipper opto
       boards"). Still run the shaker hard once while watching the flipper
       buttons in the switch test, since both likely come from the board's J3
       12 V input (unverified).
@@ -329,9 +329,14 @@ Logs go to `~/matrix-pinball/logs/`.
       number reads the wrong input silently. Verify in the service-mode switch
       test once the board is wired.
 - [ ] **Do the board checks in 12-fast-boards.md, section 2.** The most
-      important are the Cabinet I/O part number (MPF 0.80 aborts if the
-      `model:` does not match the board), the physical loop order, and the
-      Neuron firmware version (v2.13 or newer is needed for the Cabinet I/O).
+      important are the physical loop order and the Neuron firmware version
+      (v2.13 or newer is needed for the Cabinet I/O). The Cabinet I/O part
+      number is done: FP-I/O-0024-5 (2026-09-25).
+- [ ] **Plug the Cabinet I/O into the I/O loop before the first boot on FAST
+      hardware.** Its NET jacks were empty in the 2026-09-25 photo. The config
+      lists it at `order: 1`, so with it out of the loop MPF will find a
+      different board model in position 1 and abort. Either cable it in, or
+      remove `cab` from `io_loop:` and renumber the other boards until it is.
 - [ ] **48 V enable.** The Smart Power Filter Board's software 48 V enable is
       not released (FAST, as fetched 2026-09-25), so 48 V flows only while its
       J8 (ENA IN) pins 1 and 3 are closed. Wire the coin door interlock to J8
@@ -339,7 +344,7 @@ Logs go to `~/matrix-pinball/logs/`.
       for testing.
 - [ ] **Add the second 1616 to `io_loop:` in `config/config.yaml`.** The config declares only three boards (`cab`, `top16`, `bottom32`) but two 1616s are installed. Until the fourth entry exists — with `order:` values matching the real daisy-chain order out of the Neuron — switch and driver numbers will land on the wrong boards.
 - [ ] Run `mpf hardware scan` to confirm the board models and loop order match the config (`FP-I/O-0024`, `FP-I/O-1616` ×2, `FP-I/O-3208`, `FP-EXP-2000` + `FP-PWR-0007`). This is the fastest way to get the true `order:` values.
-- [ ] Wire the Cabinet I/O (FP-I/O-0024 expected). It's mounted but unwired.
+- [ ] Wire the Cabinet I/O (FP-I/O-0024-5). It's mounted but unwired.
       Pinouts are in 12-fast-boards.md, section 3.6. None of its 13-pin
       headers are keyed. The config
       now assumes the side flipper buttons and start button land on the

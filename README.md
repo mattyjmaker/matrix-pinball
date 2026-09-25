@@ -391,18 +391,18 @@ now configured against the `cab` board, so the side flipper buttons and the
 start button work once the board is wired. The board has 24 switch inputs
 (`cab-0` to `cab-23`) and 8 drivers (`cab-0` to `cab-7`).
 
-The config declares it as `FP-I/O-0024`, the model FAST sells publicly. The
-part number on the board itself has not been read yet. MPF 0.80 stops at
-startup if the `model:` does not match what the board reports, and it does not
-treat `FP-CAB-0001` as the same board. See `docs/12-fast-boards.md` for the
+The board's silkscreen reads `FP-I/O-0024-5` (photo, 2026-09-25), and the
+config declares `FP-I/O-0024`. MPF 0.80 ignores the revision suffix, but stops
+at startup if the `model:` does not match what the board reports, and it does
+not treat `FP-CAB-0001` as the same board. See `docs/12-fast-boards.md` for the
 pinouts and the checks to do. The numbers in the config follow FAST's recommended
 cabinet recipe and are **not yet confirmed on this machine**:
 
 | Device | Number | Header |
 | --- | --- | --- |
-| `s_left_flipper` | `cab-8` | J1 cabinet left, pin 1 (`cab-8` to `cab-15`) |
-| `s_start` | `cab-10` | J1 cabinet left, pin 3 |
-| `s_right_flipper` | `cab-16` | J9 cabinet right, pin 1 (`cab-16` to `cab-23`) |
+| `s_left_flipper` | `cab-8` | J1 CABINET A, pin 1 (`cab-8` to `cab-15`) |
+| `s_start` | `cab-10` | J1 CABINET A, pin 3 |
+| `s_right_flipper` | `cab-16` | CABINET B, pin 1 (`cab-16` to `cab-23`) |
 
 MPF only range-checks these against the 24 inputs the board reports, so a
 wrong-but-in-range number will not raise an error. Confirm each one in the
