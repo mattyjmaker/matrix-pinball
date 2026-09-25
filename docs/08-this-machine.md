@@ -264,6 +264,16 @@ Logs go to `~/matrix-pinball/logs/`.
       headers; the coin door header J4 is `cab-0` to `cab-7`. The board's 8
       drivers (`cab-0` to `cab-7`) are still unconfigured, so no knocker or
       button lamps yet.
+- [ ] Fit the knocker in the cabinet (user wants it there, 2026-09-25): the
+      owned WPC assembly B-10686-1 with an AE-23-800 coil. Per FAST's Cabinet
+      I/O wiring page, the board takes 12 V and 48 V on J3 from the Smart
+      Power Filter Board's J10 (4-pin), and a knocker wires from 48 V on the
+      board to one coil lug and from the other lug to a Cabinet I/O driver,
+      with a diode across the coil, band to the 48 V side. The diode must be
+      a 1N4004 or 1N4007, not a 1N4001 (50 V). Check that the assembly's coil
+      already has one. MPF 0.80 has no `knockers:` device (not in its
+      `config_spec.yaml`), so the knocker is a plain entry under `coils:`
+      fired by `coil_player`. Nothing in the Act I rules fires it yet.
 - [ ] Check whether the Cabinet I/O's **NET cable** is plugged into the I/O loop. If it isn't, it won't appear in `mpf hardware scan` and the config's `order: 1` for `cab` is wrong — every other board's order shifts.
 - [ ] **Install Godot 4.7.2 on this machine.** `project.godot` is now tagged
       `4.7`, but the editor here is still 4.6.3, which will warn that the
