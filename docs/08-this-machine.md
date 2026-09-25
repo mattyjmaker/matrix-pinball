@@ -46,6 +46,27 @@ Not yet recorded, and worth adding here as they are decided: LED and lamp
 wiring, opto power and signal, ground and earth bonding, and whether any
 sub-loom uses a different scheme.
 
+### Cabinet flipper opto boards (user, 2026-09-25)
+
+Two FAST **FP-SWI-7003-1** boards are installed in the cabinet, one on each
+side, for opto flipper buttons. The part number is not on FAST's published
+part list or product pages (user checked), so the user believes it was a trial
+board that was never released. Treat it as undocumented: its pinout, header
+types and compatibility with the Neuron-generation Cabinet I/O are unknown.
+
+- Blocker: no housings on hand that fit the boards' headers. The header
+  family (pin count, pitch) is not yet identified.
+- One board per side keeps the buttons on separate Cabinet I/O headers, which
+  matches the config: `s_left_flipper` on the left header (`cab-8` to
+  `cab-15`) and `s_right_flipper` on the right (`cab-16` to `cab-23`). The
+  exact input depends on which board channel each button's opto uses, and
+  whether the opto reads NO or NC is unknown until the switch test.
+- Before connecting a board to the Cabinet I/O, get its pinout from FAST
+  support or trace it and bench-test it on a separate supply, so 12 V cannot
+  reach a switch input.
+- Fallback: the owned Stern 500-6890-01 leaf switches wire straight to the
+  Cabinet I/O headers with no board and need no config change.
+
 ### Audio wiring (decided 2026-09-23, not yet installed)
 
 Current chain (user): NUC headphone out -> Fosi MC101 RCA line input -> the
