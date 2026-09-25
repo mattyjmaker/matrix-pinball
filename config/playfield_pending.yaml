@@ -15,8 +15,11 @@
 # To bring a feature online: move its entries into config.yaml, give each
 # switch and coil its real FAST number, and delete the `platform: virtual`
 # line. Keep the switch names and `events_when_activated:` lines as they are.
-# The modes listen to those logical events (for example `trinity_ramp_hit`),
-# never to switch names, so the rules do not change when the wiring does.
+# Those events name the hardware, not the theme (`ramp_1_hit`, not
+# `trinity_ramp_hit`). modes/matrix_shots re-posts each one under its Matrix
+# name and the rules listen to those, so the rules change neither when the
+# wiring does nor when a second game is added. The full table is in
+# modes/matrix_shots/config/matrix_shots.yaml.
 #
 # Numbers here are placeholders. They only need to be unique.
 #
@@ -72,11 +75,12 @@ switches:
 
   # Ramps. Each needs a "made" switch at the top; the parts list has
   # spinners on three of them and an opto set on the Sentinel ramp.
+  # Numbered in this order: 1 Trinity, 2 Deja Vu, 3 Real World, 4 Sentinel.
   s_trinity_ramp:
     number: v-trinity-ramp
     platform: virtual
     tags: playfield_active
-    events_when_activated: trinity_ramp_hit, ramp_hit, left_shot_hit
+    events_when_activated: ramp_1_hit, ramp_hit, left_shot_hit
   s_trinity_spinner:
     number: v-trinity-spinner
     platform: virtual
@@ -86,7 +90,7 @@ switches:
     number: v-dejavu-ramp
     platform: virtual
     tags: playfield_active
-    events_when_activated: dejavu_ramp_hit, ramp_hit, left_shot_hit
+    events_when_activated: ramp_2_hit, ramp_hit, left_shot_hit
   s_dejavu_spinner:
     number: v-dejavu-spinner
     platform: virtual
@@ -96,7 +100,7 @@ switches:
     number: v-real-world-ramp
     platform: virtual
     tags: playfield_active
-    events_when_activated: real_world_ramp_hit, ramp_hit, right_shot_hit
+    events_when_activated: ramp_3_hit, ramp_hit, right_shot_hit
   s_real_world_spinner:
     number: v-real-world-spinner
     platform: virtual
@@ -106,48 +110,48 @@ switches:
     number: v-sentinel-ramp
     platform: virtual
     tags: playfield_active
-    events_when_activated: sentinel_ramp_hit, ramp_hit, right_shot_hit
+    events_when_activated: ramp_4_hit, ramp_hit, right_shot_hit
 
   # Real World upper mini-playfield: three standups.
   s_real_world_1:
     number: v-real-world-1
     platform: virtual
     tags: playfield_active
-    events_when_activated: real_world_1_hit, real_world_target_hit
+    events_when_activated: upper_target_1_hit, upper_target_hit
   s_real_world_2:
     number: v-real-world-2
     platform: virtual
     tags: playfield_active
-    events_when_activated: real_world_2_hit, real_world_target_hit
+    events_when_activated: upper_target_2_hit, upper_target_hit
   s_real_world_3:
     number: v-real-world-3
     platform: virtual
     tags: playfield_active
-    events_when_activated: real_world_3_hit, real_world_target_hit
+    events_when_activated: upper_target_3_hit, upper_target_hit
 
-  # Sentinel Boss: the two square standups are the entrance targets, the
-  # rectangular one is the boss target.
+  # Sentinel Boss toy, behind the gate: the two square standups are the
+  # entrance targets, the rectangular one is the main target.
   s_sentinel_left:
     number: v-sentinel-left
     platform: virtual
     tags: playfield_active
-    events_when_activated: sentinel_left_hit, sentinel_entrance_hit
+    events_when_activated: gate_left_target_hit, gate_entrance_hit
   s_sentinel_right:
     number: v-sentinel-right
     platform: virtual
     tags: playfield_active
-    events_when_activated: sentinel_right_hit, sentinel_entrance_hit
+    events_when_activated: gate_right_target_hit, gate_entrance_hit
   s_sentinel_boss:
     number: v-sentinel-boss
     platform: virtual
     tags: playfield_active
-    events_when_activated: sentinel_boss_hit
-  # Magnet grab switch: a ball is over the Sentinel magnet.
+    events_when_activated: gate_main_target_hit
+  # Magnet grab switch: a ball is over the magnet.
   s_sentinel_magnet:
     number: v-sentinel-magnet
     platform: virtual
     tags: playfield_active
-    events_when_activated: sentinel_magnet_hit
+    events_when_activated: magnet_hit
   s_sentinel_vuk:
     number: v-sentinel-vuk
     platform: virtual

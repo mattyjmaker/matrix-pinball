@@ -346,6 +346,7 @@ stage after that time instead of blocking it.
 | Mode | Priority | Starts on | Logic |
 | --- | --- | --- | --- |
 | `base` | 100 | every ball | YAML |
+| `matrix_shots` | 150 | every ball | YAML: physical switch events to Matrix shot names |
 | `act_one` | 200 | every ball while `act` is `I` | `code/act_one.py`: chapter order, Mission scoop, multiball queue, roster, The One resume |
 | `trinity_lock`, `sentinel_gate` | 250 | `act_one_features_start` | YAML |
 | `ch1_trinity_escape`, `ch2_red_pill`, `ch3_construct`, `ch4_rescue_lock` | 300 | `start_ch1` to `start_ch4` from `act_one` | YAML |
@@ -360,11 +361,20 @@ Multiballs never start themselves: a lock posts `request_<name>_mb` and
 
 ### Hardware layers
 
-- **Logical events.** Every playfield switch posts a logical event through
-  `events_when_activated` (for example `trinity_ramp_hit`, `ramp_hit`,
-  `left_shot_hit`, `emp_target_1_hit`). The modes listen to those and to MPF's
-  device events (`drop_target_…`, `balldevice_…_ball_entered`), never to raw
-  switch names, so rewiring a feature changes no rules.
+- **Physical events.** Every playfield switch posts a physical event through
+  `events_when_activated` that names the hardware, not the theme
+  (`ramp_1_hit`, `upper_target_1_hit`, `gate_entrance_hit`, `pop_target_1_hit`,
+  plus the already neutral `ramp_hit`, `left_shot_hit`, `right_shot_hit`,
+  `spinner_hit`).
+- **Matrix events.** `modes/matrix_shots` (priority 150, every ball)
+  re-posts each physical event under its Matrix name (`trinity_ramp_hit`,
+  `real_world_1_hit`, `sentinel_entrance_hit`, `emp_target_1_hit`), and the
+  modes listen to those and to MPF's device events (`drop_target_…`,
+  `balldevice_…_ball_entered`), never to raw switch names. Rewiring a feature
+  changes no rules, and a second game adds its own shot mode over the same
+  physical events (docs/12-rules-terminator-2.md, section 1). The full
+  table is in `modes/matrix_shots/config/matrix_shots.yaml` and
+  `tests/test_shots.py` checks every row.
 - **Pending hardware.** Everything not yet built or wired is in
   `config/playfield_pending.yaml`, on the `virtual` platform, which
   `hardware: platform: fast, virtual` loads alongside FAST. MPF configures every

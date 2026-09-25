@@ -152,8 +152,12 @@ or Godot, and play through every chapter, multiball and wizard stage.
 on the real machine: those switches never close and those coils do nothing
 until the feature is wired. To bring one online, move its entries into
 `config/config.yaml`, give them FAST numbers and delete `platform: virtual`.
-Keep each switch's `events_when_activated:` line: the modes listen to those
-logical events (for example `trinity_ramp_hit`), never to switch names.
+Keep each switch's `events_when_activated:` line. Those events name the
+hardware (`ramp_1_hit`, `pop_target_1_hit`), and `modes/matrix_shots`
+re-posts each one under its Matrix name (`trinity_ramp_hit`,
+`emp_target_1_hit`), which is what the rules listen to. Nothing listens to
+switch names, and a second game gets its own shot mode over the same
+physical events (`docs/12-rules-terminator-2.md`, section 1).
 
 ### Keyboard
 

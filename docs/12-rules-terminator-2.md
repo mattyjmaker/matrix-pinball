@@ -6,9 +6,10 @@ between Matrix and Terminator 2, the physical shot mapping needed to run a
 second ruleset on one playfield, and the full Terminator 2 rule set in the
 same depth as `docs/11-rules-act-1.md`.
 
-Status (2026-09-25): this is a planning document, not yet implemented. Three
-points are confirmed with the user; everything else below is a proposal
-pending review, marked "(proposed)" where it matters most.
+Status (2026-09-25): a planning document. Section 1, the hardware refactor,
+is implemented; nothing else is. The points below are confirmed with the
+user; everything else is a proposal pending review, marked "(proposed)"
+where it matters most.
 
 Confirmed with the user:
 
@@ -21,8 +22,8 @@ Confirmed with the user:
   Terminator 2 goes straight into its own chapter structure, because T2 has
   only one film's worth of rules so far, exactly as Act select today "steps
   straight out" when only Act I has rules (section 5 of docs/11).
-- This session's deliverable is this design document only. No code or config
-  changes are made here.
+- The section 1 refactor goes first, before any T2 mode; Game Select times
+  out after 15 s and defaults to Matrix.
 
 Film references are from recall of Terminator 2: Judgment Day (1991, dir.
 James Cameron) and cover only its well-known, widely documented plot beats
@@ -31,36 +32,59 @@ confrontation, the Cyberdyne raid, the steel mill finale). No specific
 dialogue is quoted here; any line put on screen should be checked against the
 film before use, exactly as docs/11 already asks for Matrix clips.
 
-## 1. Required prerequisite: de-couple hardware from theme
+## 1. Prerequisite, done: hardware de-coupled from theme
 
-This is the one piece of real engineering work this plan depends on, and it
-also touches the existing Matrix code.
+Agreed with the user (2026-09-25) and implemented in the same commit series
+as this document. Before it, each playfield switch's `events_when_activated`
+carried the Matrix name (`trinity_ramp_hit`, `sentinel_ramp_hit`) and the
+modes listened to those names directly, which a second ruleset could not
+share.
 
-Today, per docs/11 section 11, each playfield switch's `events_when_activated`
-already carries the Matrix name (`trinity_ramp_hit`, `sentinel_ramp_hit`, and
-so on), and `act_one`'s modes listen to those names directly. That is fine for
-one ruleset. It does not work for two: a second ruleset cannot listen for
-`trinity_ramp_hit` without a hidden dependency on Matrix's name for a shot it
-calls something else.
+What was done:
 
-Proposed fix, needed before any T2 mode is built:
+1. Every switch's `events_when_activated` in `config/config.yaml` and
+   `config/playfield_pending.yaml` now names the hardware. A rename only; no
+   device, wiring or coil rule changed. Events that already named the
+   hardware (`ramp_hit`, `left_shot_hit`, `right_shot_hit`, `spinner_hit`,
+   `kickback_target_hit`) were left as they were.
+2. A new YAML mode, `modes/matrix_shots` (priority 150, every ball), re-posts
+   each physical event under its Matrix name through `event_player`. No
+   chapter, multiball or wizard file changed: they still listen to
+   `trinity_ramp_hit` and the rest, which now arrive from `matrix_shots`
+   instead of the switch. The full table is in that file.
+3. `tests/test_shots.py` checks that every switch posts its physical events,
+   that no switch posts a Matrix name, and that every physical event reaches
+   its Matrix name in a running game. The 66 existing tests pass unchanged.
 
-1. Rename every shared switch's `events_when_activated` in `config/config.yaml`
-   (and `config/playfield_pending.yaml`) to a physical, theme-neutral name,
-   for example `ramp_1_hit` instead of `trinity_ramp_hit`, `vuk_1_ball_entered`
-   instead of `deja_vu_vuk_active`. This is a rename only; no device, wiring or
-   coil rule changes.
-2. Each ruleset's modes subscribe to the physical event and re-post their own
-   themed event for their own scoring and display layer (`act_one` posts
-   `trinity_ramp_hit` from `ramp_1_hit`; a T2 mode posts `future_war_ramp_hit`
-   from the same `ramp_1_hit`).
-3. Only one ruleset's modes are ever running at a time (Game Select gates
-   which set loads), so both can react to the same physical event with no
-   conflict.
+| Physical event | Switch | Matrix name |
+| --- | --- | --- |
+| `ramp_1_hit` to `ramp_4_hit` | Trinity, Deja Vu, Real World, Sentinel ramps, in that order | `trinity_ramp_hit`, `dejavu_ramp_hit`, `real_world_ramp_hit`, `sentinel_ramp_hit` |
+| `upper_target_N_hit`, `upper_target_hit` | The three upper mini-playfield standups | `real_world_N_hit`, `real_world_target_hit` |
+| `gate_left_target_hit`, `gate_right_target_hit`, `gate_entrance_hit` | The two square standups at the gate | `sentinel_left_hit`, `sentinel_right_hit`, `sentinel_entrance_hit` |
+| `gate_main_target_hit` | The rectangular standup behind the gate | `sentinel_boss_hit` |
+| `magnet_hit` | The magnet grab switch | `sentinel_magnet_hit` |
+| `pop_target_N_hit`, `pop_target_hit` | The four standups in the pop bumper area | `emp_target_N_hit`, `emp_target_hit` |
+| `lock_2_target_hit` | The standup beside the single-ball lock | `ammo_target_hit` |
 
-This is a real refactor of the existing Act I config and is worth doing as its
-own piece of work before T2 rule-writing starts, not folded silently into the
-first T2 commit.
+T2's shot mode (`t2_shots`, section 13) is the same file shape with the
+section 4 names on the right-hand side, and Game Select starts one or the
+other.
+
+What was deliberately left Matrix-named, and what it means for T2:
+
+- **Switch names** (`s_trinity_ramp`, `s_emp_target_1`) are wiring labels.
+  Nothing in the rules listens to them; only the tests and the keyboard map
+  in `gmc/gmc.cfg` use them. Renaming them buys nothing.
+- **Device names** (`bd_trinity_lock`, `bd_sentinel_vuk`, `sentinel_gate`,
+  `sentinel_magnet`, the `agents` and `matrix_team` drop banks, `mission_drop`)
+  stay, and so do the MPF device events built from them
+  (`balldevice_bd_sentinel_vuk_ball_entered`, `drop_target_bank_agents_down`,
+  `sentinel_gate_open`, `sentinel_magnet_grab`). Renaming these means
+  touching coils, ball devices, the keyboard map and most of the tests. T2's
+  modes will reference these device names directly, exactly as Act I's do,
+  and the Matrix name of a device is no more of a problem for T2 than the
+  Matrix name of a switch. Revisit only if a third game ever makes the
+  inconsistency worth the churn.
 
 ## 2. Game Select
 
@@ -323,6 +347,7 @@ quoted in this document.
 | --- | --- | --- | --- |
 | `game_select` | 2000 | before `act_select`, once per game | `code/game_select.py` |
 | `base` | 100 | every ball, both games | YAML, with T2/Matrix HUD panels gated on `game_choice` |
+| `matrix_shots` (exists) / `t2_shots` | 150 | every ball of the chosen game | YAML: physical switch events to that game's shot names (section 1) |
 | `t2_main` | 200 | every ball while `game_choice` is `t2` | `code/t2_main.py`: chapter order, Command scoop, multiball queue, roster, Judgment Day resume |
 | `future_war_lock`, `t1000_gate` | 250 | `t2_features_start` | YAML |
 | `t2_ch1_arrival`, `t2_ch2_pescadero`, `t2_ch3_dyson`, `t2_ch4_raid` | 300 | `start_ch1` to `start_ch4` from `t2_main` | YAML |
@@ -336,13 +361,12 @@ existing `act_one`/`the_one` code is a direct template for `t2_main`/
 
 ## 14. Still to decide
 
-- **The section 1 hardware refactor** is the one item that must be settled
-  and built before any T2 mode can be written; everything else in this
-  document assumes it is done.
-- **Game Select's timeout and default** (proposed 15 s, default to Matrix):
-  confirm with the user.
+- **The section 1 hardware refactor** is done (agreed 2026-09-25).
+- **Game Select's timeout and default**: agreed with the user (2026-09-25),
+  15 s, defaulting to Matrix.
 - **Whether `base` is one slide with conditional panels or two slides**
-  (`base_matrix`, `base_t2`): a display decision, not covered here.
+  (`base_matrix`, `base_t2`): still open. This is an either/or and needs a
+  pick, not a yes.
 - **Scores throughout are placeholders**, at the same scale as Act I's
   placeholders, for balancing once both games are playable.
 - **All proposed timer lengths** (marked "(proposed)" above) need the same
