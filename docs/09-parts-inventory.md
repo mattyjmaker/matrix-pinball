@@ -106,7 +106,7 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 | Nylon pal nuts (button nuts) | 2 | HAVE |
 | Williams/Bally complete tilt mechanism (A-15361) | 1 | HAVE (Feb 2023) |
 | Knocker assembly WPC/WPC-95 (B-10686-1, coil AE-23-800) + strike plate | 1 | HAVE (Feb 2023) |
-| Shaker motor assembly (JJP, PBL-100-0092-00) | 1 | HAVE (Feb 2023) |
+| Shaker motor assembly (JJP, PBL-100-0092-00) | 1 | HAVE (Feb 2023). Installed in the cabinet, not yet wired (user, 2026-09-25). |
 
 ## Flippers, slings and posts
 

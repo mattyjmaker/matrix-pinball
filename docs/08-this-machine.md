@@ -172,7 +172,15 @@ Open items:
 - [ ] Read the labels on the two existing backbox Mean Wells to confirm they
       are the RSP-500-48 and LRS-150-12.
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
-      assigning it a Cabinet I/O driver.
+      assigning it a Cabinet I/O driver. It is installed in the cabinet, not
+      yet wired (user, 2026-09-25). Retailers list the replacement motor for
+      JJP shaker kits (041-5029-04) as 12 V DC, 3100 RPM; its current is not
+      published, so read the fitted motor's label or measure its winding
+      resistance (stall current is roughly 12 V / R). Planned wiring: motor +
+      to Cabinet I/O J11 (SHAKER PWR, 12 V), motor - to a Cabinet I/O driver,
+      diode across the motor with the band to +12 V. J11 is also the FAST-
+      recommended 12 V source for the flipper optos, so with both wired, run
+      the shaker hard while watching the flipper buttons in the switch test.
 - [ ] Decide the sub's mounting position and enclosure in the cabinet.
 
 ## Installed software
