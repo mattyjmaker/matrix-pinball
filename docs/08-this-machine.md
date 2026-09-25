@@ -64,6 +64,13 @@ types and compatibility with the Neuron-generation Cabinet I/O are unknown.
 - Before connecting a board to the Cabinet I/O, get its pinout from FAST
   support or trace it and bench-test it on a separate supply, so 12 V cannot
   reach a switch input.
+- Opto power: the left and right Cabinet I/O switch headers each have their
+  own always-on 12 V output (user, 2026-09-25). Power each side's opto board
+  from its own header's 12 V instead of J11 (SHAKER PWR), which keeps the
+  optos off the shaker supply and keeps each side's wiring local. The
+  pin's current rating is not known here; check it in FAST's Cabinet I/O
+  manual. That 12 V pin sits in the same connector as the switch inputs,
+  so check pin 1 orientation before plugging in.
 - Fallback: the owned Stern 500-6890-01 leaf switches wire straight to the
   Cabinet I/O headers with no board and need no config change.
 
@@ -178,9 +185,11 @@ Open items:
       published, so read the fitted motor's label or measure its winding
       resistance (stall current is roughly 12 V / R). Planned wiring: motor +
       to Cabinet I/O J11 (SHAKER PWR, 12 V), motor - to a Cabinet I/O driver,
-      diode across the motor with the band to +12 V. J11 is also where FAST suggests
-      taking 12 V for the flipper optos, so with both wired, run
-      the shaker hard while watching the flipper buttons in the switch test.
+      diode across the motor with the band to +12 V. The flipper optos take
+      12 V from the side switch headers, not J11 (see "Cabinet flipper opto
+      boards"). Still run the shaker hard once while watching the flipper
+      buttons in the switch test, since both likely come from the board's J3
+      12 V input (unverified).
 - [ ] Decide the sub's mounting position and enclosure in the cabinet.
 
 ## Installed software
