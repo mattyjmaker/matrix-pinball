@@ -178,8 +178,8 @@ Open items:
       published, so read the fitted motor's label or measure its winding
       resistance (stall current is roughly 12 V / R). Planned wiring: motor +
       to Cabinet I/O J11 (SHAKER PWR, 12 V), motor - to a Cabinet I/O driver,
-      diode across the motor with the band to +12 V. J11 is also the FAST-
-      recommended 12 V source for the flipper optos, so with both wired, run
+      diode across the motor with the band to +12 V. J11 is also where FAST suggests
+      taking 12 V for the flipper optos, so with both wired, run
       the shaker hard while watching the flipper buttons in the switch test.
 - [ ] Decide the sub's mounting position and enclosure in the cabinet.
 
