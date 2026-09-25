@@ -38,7 +38,7 @@ widget_player:
       tokens:
         clip: future_war_flash
       expire: 6s
-    chapter_card:
+    t2_card:
       priority: 10
       tokens:
         kicker: MULTIBALL
@@ -46,7 +46,7 @@ widget_player:
         goal: FUTURE WAR RAMP FOR JACKPOTS
       expire: 4s
   left_lock_ramp_hit:
-    mode_banner:
+    t2_banner:
       tokens:
         title: RESISTANCE BONUS
         detail: JACKPOT

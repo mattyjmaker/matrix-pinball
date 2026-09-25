@@ -148,7 +148,7 @@ widget_player:
         clip: t800_farewell
       expire: 8s
   t2_complete:
-    chapter_card:
+    t2_card:
       priority: 10
       tokens:
         kicker: JUDGMENT DAY AVERTED

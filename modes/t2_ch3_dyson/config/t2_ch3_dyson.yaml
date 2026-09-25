@@ -92,14 +92,14 @@ widget_player:
       tokens:
         clip: dyson_spared
       expire: 6s
-    chapter_card:
+    t2_card:
       priority: 10
       tokens:
         kicker: THE CHOICE
         title: DYSON LISTENS
         goal: ALL 5 LAB TARGETS IN 30 SECONDS
       expire: 5s
-    countdown:
+    t2_countdown:
       key: t2_ch3_clock
       priority: 10
       tokens:
@@ -107,10 +107,10 @@ widget_player:
         event: timer_t2_ch3_bypass_tick
         seconds: "30"
   t2_ch3_bypass_done:
-    countdown:
+    t2_countdown:
       key: t2_ch3_clock
       action: remove
-    mode_banner:
+    t2_banner:
       tokens:
         title: WE ARE IN
         detail: DYSON KNOWS THE WAY

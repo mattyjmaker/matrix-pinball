@@ -117,7 +117,7 @@ variable_player:
 
 widget_player:
   mode_t2_ch4_raid_mb_started:
-    chapter_card:
+    t2_card:
       key: t2_ch4_stage_card
       priority: 10
       tokens:
@@ -130,7 +130,7 @@ widget_player:
       tokens:
         clip: cyberdyne_firefight
       expire: 6s
-    chapter_card:
+    t2_card:
       key: t2_ch4_stage_card
       priority: 10
       tokens:
@@ -139,7 +139,7 @@ widget_player:
         goal: FUTURE WAR RAMP, THEN HIT AN ENDOSKELETON
       expire: 4s
   t2_ch4_escape_started:
-    chapter_card:
+    t2_card:
       key: t2_ch4_stage_card
       priority: 10
       tokens:
@@ -148,12 +148,12 @@ widget_player:
         goal: CATCH THE BALL AT THE T-1000 MAGNET
       expire: 4s
   t2_ch4_hold_lit:
-    mode_banner:
+    t2_banner:
       tokens:
         title: HOLD THE LINE
         detail: HIT AN ENDOSKELETON NOW
       expire: 3s
-    countdown:
+    t2_countdown:
       key: t2_ch4_hold_clock
       priority: 10
       tokens:
@@ -161,11 +161,11 @@ widget_player:
         event: timer_t2_ch4_hold_tick
         seconds: "10"
   t2_ch4_hold_the_line:
-    countdown:
+    t2_countdown:
       key: t2_ch4_hold_clock
       action: remove
   timer_t2_ch4_hold_complete:
-    countdown:
+    t2_countdown:
       key: t2_ch4_hold_clock
       action: remove
   t2_ch4_escaped:

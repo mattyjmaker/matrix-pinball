@@ -1,8 +1,8 @@
-[gd_scene load_steps=19 format=3 uid="uid://dxmhitrmhqv4s"]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1_slide"]
-[ext_resource type="Shader" path="res://assets/shaders/matrix_rain.gdshader" id="2_rain"]
-[ext_resource type="Shader" path="res://assets/shaders/signal_trace.gdshader" id="3_trace"]
+[ext_resource type="Shader" path="res://assets/shaders/t800_vision.gdshader" id="2_vision"]
+[ext_resource type="Shader" path="res://assets/shaders/reticle.gdshader" id="3_reticle"]
 [ext_resource type="Shader" path="res://assets/shaders/phosphor.gdshader" id="4_phos"]
 [ext_resource type="Shader" path="res://assets/shaders/glitch.gdshader" id="5_glitch"]
 [ext_resource type="Theme" uid="uid://ccb1am66a2yg0" path="res://assets/themes/ui-code.tres" id="6_code"]
@@ -17,68 +17,43 @@
 base_font = ExtResource("12_mono")
 spacing_glyph = 14
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_rain"]
-shader = ExtResource("2_rain")
-shader_parameter/columns = 72.0
-shader_parameter/rows = 36.0
-shader_parameter/fall_speed = 0.13
-shader_parameter/trail_length = 0.35
-shader_parameter/density = 0.6
-shader_parameter/glyph_rate = 5.0
-shader_parameter/flicker = 0.2
-shader_parameter/intensity = 0.45
-shader_parameter/head_color = Color(0.6, 1, 0.7, 1)
-shader_parameter/trail_color = Color(0.12, 0.7, 0.24, 1)
-shader_parameter/background_color = Color(0.002, 0.014, 0.007, 1)
-shader_parameter/background_alpha = 1.0
-shader_parameter/radial_falloff = 0.0
-shader_parameter/falloff_aspect = 1.0
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vision"]
+shader = ExtResource("2_vision")
+shader_parameter/aspect = 1.78
+shader_parameter/base_color = Color(0.03, 0, 0, 1)
+shader_parameter/glow_color = Color(0.17, 0.02, 0.02, 1)
+shader_parameter/scanline_count = 540.0
+shader_parameter/scanline_depth = 0.22
+shader_parameter/grid_cells = 22.0
+shader_parameter/grid_alpha = 0.06
+shader_parameter/band_speed = 0.05
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_well"]
-shader = ExtResource("2_rain")
-shader_parameter/columns = 12.0
-shader_parameter/rows = 9.0
-shader_parameter/fall_speed = 0.3
-shader_parameter/trail_length = 0.5
-shader_parameter/density = 1.0
-shader_parameter/glyph_rate = 11.0
-shader_parameter/flicker = 0.28
-shader_parameter/intensity = 2.4
-shader_parameter/head_color = Color(0.9, 1, 0.93, 1)
-shader_parameter/trail_color = Color(0.2, 0.95, 0.38, 1)
-shader_parameter/background_color = Color(0, 0, 0, 1)
-shader_parameter/background_alpha = 0.0
-shader_parameter/radial_falloff = 0.8
-shader_parameter/falloff_aspect = 1.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_trace"]
-shader = ExtResource("3_trace")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_reticle"]
+shader = ExtResource("3_reticle")
 shader_parameter/aspect = 1.0
-shader_parameter/sweep_speed = 0.2
-shader_parameter/ring_count = 4.0
-shader_parameter/contact_count = 6.0
-shader_parameter/intensity = 1.5
-shader_parameter/grid_color = Color(0.16, 0.9, 0.32, 1)
-shader_parameter/sweep_color = Color(0.72, 1, 0.8, 1)
+shader_parameter/spin_speed = 0.08
+shader_parameter/intensity = 1.0
+shader_parameter/line_color = Color(0.9, 0.14, 0.1, 1)
+shader_parameter/mark_color = Color(0.96, 0.96, 0.96, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_phos"]
 shader = ExtResource("4_phos")
 shader_parameter/scanline_count = 720.0
-shader_parameter/scanline_depth = 0.12
-shader_parameter/vignette_strength = 0.85
-shader_parameter/vignette_softness = 0.6
-shader_parameter/tint = Color(0, 0, 0, 1)
+shader_parameter/scanline_depth = 0.08
+shader_parameter/vignette_strength = 0.75
+shader_parameter/vignette_softness = 0.65
+shader_parameter/tint = Color(0.08, 0, 0, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_glitch"]
 shader = ExtResource("5_glitch")
-shader_parameter/interval = 9.0
-shader_parameter/duration = 0.22
-shader_parameter/band_count = 26.0
-shader_parameter/displacement = 0.025
-shader_parameter/channel_split = 0.003
-shader_parameter/band_share = 0.4
+shader_parameter/interval = 14.0
+shader_parameter/duration = 0.18
+shader_parameter/band_count = 18.0
+shader_parameter/displacement = 0.02
+shader_parameter/channel_split = 0.004
+shader_parameter/band_share = 0.35
 
-[node name="Base" type="Control"]
+[node name="BaseT2" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -87,23 +62,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_slide")
 
-[node name="Rain" type="ColorRect" parent="."]
-material = SubResource("ShaderMaterial_rain")
+[node name="Vision" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_vision")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Scrim" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 0.55)
 
 [node name="Stage" type="Control" parent="."]
 layout_mode = 1
@@ -115,23 +81,13 @@ offset_bottom = 990.0
 mouse_filter = 2
 script = ExtResource("8_stage")
 
-[node name="Well" type="ColorRect" parent="Stage"]
-material = SubResource("ShaderMaterial_well")
+[node name="Reticle" type="ColorRect" parent="Stage"]
+material = SubResource("ShaderMaterial_reticle")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-color = Color(0, 0, 0, 0)
-
-[node name="Trace" type="ColorRect" parent="Stage"]
-material = SubResource("ShaderMaterial_trace")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+offset_bottom = -170.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -143,8 +99,8 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -196.0
-offset_bottom = -40.0
+offset_top = -170.0
+offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
@@ -153,9 +109,9 @@ theme_override_constants/separation = 10
 [node name="Heading" type="Label" parent="Stage/Readout"]
 layout_mode = 2
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.6)
+theme_override_colors/font_color = Color(0.85, 0.2, 0.16, 0.8)
 theme_override_font_sizes/font_size = 30
-text = "TRACE PROGRAM RUNNING"
+text = "ANALYSIS RUNNING"
 horizontal_alignment = 1
 
 [node name="Trace" type="RichTextLabel" parent="Stage/Readout"]
@@ -163,15 +119,17 @@ custom_minimum_size = Vector2(0, 86)
 layout_mode = 2
 theme = ExtResource("6_code")
 theme_override_fonts/normal_font = SubResource("FontVariation_readout")
-theme_override_font_sizes/normal_font_size = 64
+theme_override_font_sizes/normal_font_size = 56
 bbcode_enabled = true
-text = "[center]312-555-0690[/center]"
+text = "[center]0084 3327 1109 5590[/center]"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0
 mouse_filter = 2
 script = ExtResource("11_trace")
-target = "312-555-0690"
+target = "0084 3327 1109 5590"
+locked_color = Color(0.96, 0.96, 0.96, 1)
+scramble_color = Color(0.75, 0.2, 0.16, 1)
 
 [node name="Status" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -185,7 +143,7 @@ theme_override_constants/separation = 8
 [node name="player" type="Label" parent="Status"]
 layout_mode = 2
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.55, 1, 0.65, 0.95)
+theme_override_colors/font_color = Color(0.96, 0.96, 0.96, 0.95)
 theme_override_font_sizes/font_size = 54
 text = "PLAYER 1"
 script = ExtResource("7_var")
@@ -196,14 +154,14 @@ min_players = 2
 [node name="ball" type="Label" parent="Status"]
 layout_mode = 2
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.4, 0.95, 0.5, 0.8)
+theme_override_colors/font_color = Color(0.88, 0.86, 0.86, 0.95)
 theme_override_font_sizes/font_size = 54
 text = "BALL 1"
 script = ExtResource("7_var")
 variable_name = "ball"
 template_string = "BALL %s"
 
-[node name="act" type="Label" parent="."]
+[node name="chapter" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -211,13 +169,12 @@ offset_top = 64.0
 offset_bottom = 130.0
 grow_horizontal = 2
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.8)
+theme_override_colors/font_color = Color(0.9, 0.16, 0.12, 0.9)
 theme_override_font_sizes/font_size = 48
-text = "ACT I"
+text = "CHAPTER 1"
 horizontal_alignment = 1
 script = ExtResource("7_var")
-variable_name = "act"
-template_string = "ACT %s"
+variable_name = "chapter"
 initialize_empty = false
 
 [node name="PlayerScores" type="VBoxContainer" parent="."]
@@ -235,7 +192,7 @@ theme_override_constants/separation = 6
 [node name="player1score" type="Label" parent="PlayerScores"]
 layout_mode = 2
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
+theme_override_colors/font_color = Color(0.72, 0.7, 0.7, 0.9)
 theme_override_font_sizes/font_size = 44
 text = "P1  1,000,000"
 horizontal_alignment = 2
@@ -250,7 +207,7 @@ min_players = 2
 [node name="player2score" type="Label" parent="PlayerScores"]
 layout_mode = 2
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
+theme_override_colors/font_color = Color(0.72, 0.7, 0.7, 0.9)
 theme_override_font_sizes/font_size = 44
 text = "P2  1,000,000"
 horizontal_alignment = 2
@@ -265,7 +222,7 @@ min_players = 2
 [node name="player3score" type="Label" parent="PlayerScores"]
 layout_mode = 2
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
+theme_override_colors/font_color = Color(0.72, 0.7, 0.7, 0.9)
 theme_override_font_sizes/font_size = 44
 text = "P3  1,000,000"
 horizontal_alignment = 2
@@ -280,7 +237,7 @@ min_players = 3
 [node name="player4score" type="Label" parent="PlayerScores"]
 layout_mode = 2
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.85)
+theme_override_colors/font_color = Color(0.72, 0.7, 0.7, 0.9)
 theme_override_font_sizes/font_size = 44
 text = "P4  1,000,000"
 horizontal_alignment = 2
@@ -304,79 +261,81 @@ theme_override_constants/separation = 10
 [node name="Heading" type="Label" parent="Roster"]
 layout_mode = 2
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.55)
+theme_override_colors/font_color = Color(0.85, 0.2, 0.16, 0.8)
 theme_override_font_sizes/font_size = 34
-text = "FREED"
+text = "SAVED"
 
 [node name="Underline" type="ColorRect" parent="Roster"]
 custom_minimum_size = Vector2(0, 2)
 layout_mode = 2
-color = Color(0.16, 0.9, 0.32, 0.3)
+color = Color(0.9, 0.14, 0.1, 0.5)
 
-[node name="Trinity" type="Label" parent="Roster"]
+[node name="John" type="Label" parent="Roster"]
 layout_mode = 2
 theme = ExtResource("6_code")
 theme_override_font_sizes/font_size = 40
-text = "[ ] TRINITY"
+text = "[ ] JOHN"
 script = ExtResource("9_roster")
-key = "TRINITY"
-freed = true
-[node name="Tank" type="Label" parent="Roster"]
-layout_mode = 2
-theme = ExtResource("6_code")
-theme_override_font_sizes/font_size = 40
-text = "[ ] TANK"
-script = ExtResource("9_roster")
-key = "TANK"
-freed = true
-[node name="Dozer" type="Label" parent="Roster"]
-layout_mode = 2
-theme = ExtResource("6_code")
-theme_override_font_sizes/font_size = 40
-text = "[ ] DOZER"
-script = ExtResource("9_roster")
-key = "DOZER"
-freed = true
-[node name="Switch" type="Label" parent="Roster"]
-layout_mode = 2
-theme = ExtResource("6_code")
-theme_override_font_sizes/font_size = 40
-text = "[ ] SWITCH"
-script = ExtResource("9_roster")
-key = "SWITCH"
+key = "JOHN"
+prefix = "saved"
 freed = false
-[node name="Apoc" type="Label" parent="Roster"]
+dim_color = Color(0.62, 0.46, 0.46, 0.7)
+lit_color = Color(0.96, 0.96, 0.96, 1)
+[node name="Sarah" type="Label" parent="Roster"]
 layout_mode = 2
 theme = ExtResource("6_code")
 theme_override_font_sizes/font_size = 40
-text = "[ ] APOC"
+text = "[ ] SARAH"
 script = ExtResource("9_roster")
-key = "APOC"
+key = "SARAH"
+prefix = "saved"
 freed = false
-[node name="Mouse" type="Label" parent="Roster"]
+dim_color = Color(0.62, 0.46, 0.46, 0.7)
+lit_color = Color(0.96, 0.96, 0.96, 1)
+[node name="Dyson" type="Label" parent="Roster"]
 layout_mode = 2
 theme = ExtResource("6_code")
 theme_override_font_sizes/font_size = 40
-text = "[ ] MOUSE"
+text = "[ ] DYSON"
 script = ExtResource("9_roster")
-key = "MOUSE"
+key = "DYSON"
+prefix = "saved"
 freed = false
-[node name="Niobe" type="Label" parent="Roster"]
+dim_color = Color(0.62, 0.46, 0.46, 0.7)
+lit_color = Color(0.96, 0.96, 0.96, 1)
+[node name="Chip" type="Label" parent="Roster"]
 layout_mode = 2
 theme = ExtResource("6_code")
 theme_override_font_sizes/font_size = 40
-text = "[ ] NIOBE"
+text = "[ ] CHIP"
 script = ExtResource("9_roster")
-key = "NIOBE"
+key = "CHIP"
+prefix = "saved"
 freed = false
-[node name="Link" type="Label" parent="Roster"]
+dim_color = Color(0.62, 0.46, 0.46, 0.7)
+lit_color = Color(0.96, 0.96, 0.96, 1)
+[node name="Resistance" type="Label" parent="Roster"]
 layout_mode = 2
 theme = ExtResource("6_code")
 theme_override_font_sizes/font_size = 40
-text = "[ ] LINK"
+text = "[ ] RESISTANCE"
 script = ExtResource("9_roster")
-key = "LINK"
+key = "RESISTANCE"
+prefix = "saved"
 freed = false
+dim_color = Color(0.62, 0.46, 0.46, 0.7)
+lit_color = Color(0.96, 0.96, 0.96, 1)
+[node name="Skynet" type="Label" parent="Roster"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] SKYNET"
+script = ExtResource("9_roster")
+key = "SKYNET"
+prefix = "saved"
+freed = false
+dim_color = Color(0.62, 0.46, 0.46, 0.7)
+lit_color = Color(0.96, 0.96, 0.96, 1)
 
 [node name="Locks" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -397,9 +356,9 @@ alignment = 2
 [node name="Heading" type="Label" parent="Locks"]
 layout_mode = 2
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.55)
+theme_override_colors/font_color = Color(0.85, 0.2, 0.16, 0.8)
 theme_override_font_sizes/font_size = 34
-text = "POWER STATIONS"
+text = "FUTURE WAR LOCK"
 horizontal_alignment = 2
 
 [node name="Cells" type="HBoxContainer" parent="Locks"]
@@ -407,20 +366,22 @@ layout_mode = 2
 size_flags_horizontal = 8
 theme_override_constants/separation = 12
 script = ExtResource("10_locks")
-locked = 2
+locked = 0
+empty_color = Color(0.9, 0.14, 0.1, 0.22)
+filled_color = Color(0.96, 0.96, 0.96, 0.95)
 
 [node name="Cell1" type="ColorRect" parent="Locks/Cells"]
 custom_minimum_size = Vector2(54, 30)
 layout_mode = 2
-color = Color(0.16, 0.9, 0.32, 0.2)
+color = Color(0.9, 0.14, 0.1, 0.22)
 [node name="Cell2" type="ColorRect" parent="Locks/Cells"]
 custom_minimum_size = Vector2(54, 30)
 layout_mode = 2
-color = Color(0.16, 0.9, 0.32, 0.2)
+color = Color(0.9, 0.14, 0.1, 0.22)
 [node name="Cell3" type="ColorRect" parent="Locks/Cells"]
 custom_minimum_size = Vector2(54, 30)
 layout_mode = 2
-color = Color(0.16, 0.9, 0.32, 0.2)
+color = Color(0.9, 0.14, 0.1, 0.22)
 
 [node name="ScoreBlock" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -439,9 +400,9 @@ theme_override_constants/separation = 14
 [node name="objective" type="Label" parent="ScoreBlock"]
 layout_mode = 2
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.5, 1, 0.6, 0.9)
+theme_override_colors/font_color = Color(0.9, 0.88, 0.88, 0.9)
 theme_override_font_sizes/font_size = 44
-text = "> TRACE THE SIGNAL :: HIT THE EMP TARGETS"
+text = "> KNOCK DOWN THE PERIMETER DROP: ARRIVAL"
 horizontal_alignment = 1
 script = ExtResource("7_var")
 variable_name = "objective"
@@ -451,14 +412,14 @@ initialize_empty = false
 [node name="Rule" type="ColorRect" parent="ScoreBlock"]
 custom_minimum_size = Vector2(0, 2)
 layout_mode = 2
-color = Color(0.16, 0.9, 0.32, 0.35)
+color = Color(0.9, 0.14, 0.1, 0.6)
 
 [node name="score" type="Label" parent="ScoreBlock"]
 layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("6_code")
-theme_override_colors/font_color = Color(0.82, 1, 0.86, 1)
-theme_override_colors/font_shadow_color = Color(0.1, 1, 0.3, 0.35)
+theme_override_colors/font_color = Color(0.97, 0.97, 0.97, 1)
+theme_override_colors/font_shadow_color = Color(1, 0.16, 0.1, 0.4)
 theme_override_constants/shadow_offset_x = 0
 theme_override_constants/shadow_offset_y = 0
 theme_override_constants/shadow_outline_size = 22

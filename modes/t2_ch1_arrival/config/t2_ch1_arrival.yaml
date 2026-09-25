@@ -66,14 +66,14 @@ widget_player:
       tokens:
         clip: mall_pursuit
       expire: 8s
-    chapter_card:
+    t2_card:
       priority: 10
       tokens:
         kicker: TERMINATOR 2  CHAPTER 1
         title: ARRIVAL
         goal: 3 RAMP SHOTS BEFORE THE T-1000
       expire: 5s
-    countdown:
+    t2_countdown:
       key: t2_ch1_clock
       priority: 10
       tokens:
@@ -81,7 +81,7 @@ widget_player:
         event: timer_t2_ch1_mall_tick
         seconds: "40"
   t2_ch1_mall_done:
-    countdown:
+    t2_countdown:
       key: t2_ch1_clock
       action: update
       tokens:

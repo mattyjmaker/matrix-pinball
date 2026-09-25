@@ -42,7 +42,7 @@ variable_player:
 
 widget_player:
   t1000_found:
-    mode_banner:
+    t2_banner:
       tokens:
         title: IT HAS FOUND YOU
         detail: T-1000 VUK STARTS MULTIBALL

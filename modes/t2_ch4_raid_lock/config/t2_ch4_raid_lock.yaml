@@ -49,7 +49,7 @@ widget_player:
       tokens:
         clip: cyberdyne_breakin
       expire: 6s
-    chapter_card:
+    t2_card:
       priority: 10
       tokens:
         kicker: TERMINATOR 2  CHAPTER 4
@@ -57,19 +57,19 @@ widget_player:
         goal: "DYSON'S ACCESS: SHOOT THE DISPLACEMENT VUK"
       expire: 5s
   t2_ch4_lock_lit:
-    mode_banner:
+    t2_banner:
       tokens:
         title: ARSENAL LOCK LIT
         detail: LOCK 3 BALLS
       expire: 3s
   multiball_lock_raid_lock_locked_ball{total_balls_locked==1}:
-    mode_banner:
+    t2_banner:
       tokens:
         title: BALL LOCKED
         detail: TWO BALLS LEFT
       expire: 2s
   multiball_lock_raid_lock_locked_ball{total_balls_locked==2}:
-    mode_banner:
+    t2_banner:
       tokens:
         title: BALL LOCKED
         detail: ONE MORE BALL

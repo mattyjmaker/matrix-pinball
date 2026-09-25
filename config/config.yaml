@@ -501,7 +501,19 @@ ball_devices:
   #   tags: plunger, shooter
   #   eject_coil: c_auto_plunge
 
+# One gameplay slide per game: the Matrix's `base` and Terminator 2's
+# `base_t2`. Both start on ball_starting; on player 1's first ball the choice
+# is not made yet, so game_selected swaps the slide if it went the other way.
 slide_player:
-  mode_base_started: base
+  mode_base_started{machine.game_choice=="matrix"}: base
+  mode_base_started{machine.game_choice=="t2"}: base_t2
+  game_selected{game=="t2"}:
+    base_t2: {}
+    base:
+      action: remove
+  game_selected{game=="matrix"}:
+    base: {}
+    base_t2:
+      action: remove
   init_done: welcome
   mode_attract_started: attract

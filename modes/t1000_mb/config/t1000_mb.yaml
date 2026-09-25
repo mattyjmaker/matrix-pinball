@@ -67,7 +67,7 @@ widget_player:
       tokens:
         clip: t1000_reveal
       expire: 6s
-    chapter_card:
+    t2_card:
       priority: 10
       tokens:
         kicker: MULTIBALL
@@ -75,13 +75,13 @@ widget_player:
         goal: T-1000 RAMP AND SEMI GRILLE FOR JACKPOTS
       expire: 4s
   t1000_add_a_ball_lit:
-    mode_banner:
+    t2_banner:
       tokens:
         title: ADD-A-BALL LIT
         detail: SHOOT THE T-1000 VUK
       expire: 3s
   t1000_jackpot:
-    mode_banner:
+    t2_banner:
       tokens:
         title: JACKPOT
         detail: ""

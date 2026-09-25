@@ -45,7 +45,7 @@ widget_player:
       tokens:
         clip: pescadero_breakout
       expire: 8s
-    chapter_card:
+    t2_card:
       priority: 10
       tokens:
         kicker: PESCADERO  MULTIBALL
@@ -53,13 +53,13 @@ widget_player:
         goal: PESCADERO RAMP FOR JACKPOTS
       expire: 5s
   right_loop_ramp_hit:
-    mode_banner:
+    t2_banner:
       tokens:
         title: JACKPOT
         detail: OUT THROUGH THE WARD
       expire: 2s
   t2_ch2_super_jackpot:
-    mode_banner:
+    t2_banner:
       tokens:
         title: SUPER JACKPOT
         detail: ALL THREE WARD TARGETS

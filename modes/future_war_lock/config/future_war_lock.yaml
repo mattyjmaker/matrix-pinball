@@ -36,7 +36,7 @@ variable_player:
 
 widget_player:
   multiball_lock_future_war_lock_locked_ball:
-    mode_banner:
+    t2_banner:
       tokens:
         title: FUTURE WAR LOCK
         detail: BALL LOCKED

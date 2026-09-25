@@ -298,29 +298,45 @@ War lock and the T-1000 gate are off. `code/judgment_day.py`, the shape of
   T2 for that player and leaves the remaining balls in play under the base
   mode. A player with `t2_complete` gets the base mode only.
 
-## 11. HUD
+## 11. HUD and the Terminator 2 look
 
-One `base.tscn` serves both games. Its game-specific parts carry
-`slides/base/game_panel.gd` with `game` set to `matrix` or `t2` and show
-only while the player variable `game` matches. The rest (player, ball,
-scores, objective, lock cells, the stage) is shared.
+Each game has its own gameplay slide. The Matrix keeps `slides/base/base.tscn`
+(digital rain, the sonar trace, phosphor green). Terminator 2 has
+`slides/base_t2/base_t2.tscn`: the T-800's view. Near-black with a deep red
+cast that is brightest at the centre, scanlines, a faint targeting grid and a
+slow interference band (`assets/shaders/t800_vision.gdshader`); white and grey
+readout text with red rules and headings; a red glow behind the score; and a
+targeting reticle on the idle stage (`assets/shaders/reticle.gdshader`: two
+rings, gapped crosshair, corner brackets, ticks, a sweeping marker and a
+pulsing centre) over an "ANALYSIS RUNNING" number-lock readout. The same
+`stage.gd`, `roster_entry.gd` (with `prefix = "saved"`), `power_stations.gd`
+and `trace_readout.gd` scripts drive it, so the two slides share behaviour
+and differ only in look. Both scripts now read their variable's current value
+when the slide is created, since the slide is rebuilt every ball.
+
+`config.yaml`'s `slide_player` plays `base` or `base_t2` on
+`mode_base_started` by `machine.game_choice`, and swaps them on
+`game_selected` if player 1's choice went the other way from the slide
+already up.
 
 | Variable | Set by | Shown |
 | --- | --- | --- |
-| `game` | Game Select, per player | Which panels are visible |
-| `chapter` | `t2_main` and `judgment_day`: "CHAPTER 1" to "CHAPTER 4", "JUDGMENT DAY", "COMPLETE" | The T2 marker where the Matrix's ACT marker sits |
+| `game` | Game Select, per player | (kept for the HUD; the slide swap is driven by `game_choice`) |
+| `chapter` | `t2_main` and `judgment_day`: "CHAPTER 1" to "CHAPTER 4", "JUDGMENT DAY", "COMPLETE" | The red marker at the top, where the Matrix's ACT marker sits |
 | `objective` | Each chapter, multiball, wizard stage and the controller between chapters | The objective line above the score |
-| `balls_locked` | The Future War lock count | The lock cells, headed FUTURE WAR LOCK for T2 |
-| `saved_*` | Section 9 | The SAVED roster, where the FREED roster sits for the Matrix; `roster_entry.gd` takes a `prefix` |
+| `balls_locked` | The Future War lock count | The lock cells, headed FUTURE WAR LOCK |
+| `saved_*` | Section 9 | The SAVED roster |
 
-Stage widgets are shared with Act I (docs/11 section 9): `countdown`,
-`chapter_card`, `mode_banner` and `video_clip`, plus two new ones in
-`gmc/widgets/`:
+T2 has its own widget set in `gmc/widgets/`, the Matrix widgets' layouts in
+the T2 palette, so the three stage zones of docs/11 section 9 hold:
 
-| Widget | Zone | Used for |
+| Widget | Zone | Matrix equivalent |
 | --- | --- | --- |
-| `game_select` | Whole stage | The game select (section 2) |
-| `dyson_choice` | Whole stage | Chapter 3's choice: clock, KILL HIM (left flipper) and SPARE HIM (right flipper). `pill_choice` could not be reused because its labels are authored text, not tokens |
+| `t2_countdown` | Top | `countdown`; the clock part is `assets/parts/t2_clock.tscn` (white digits, grey churn, red bar, red digits in the last 5 s) |
+| `t2_card` | Middle | `chapter_card`, with a red edge and top rule |
+| `t2_banner` | Bottom | `mode_banner`, with red rules and a red detail line |
+| `dyson_choice` | Whole stage | `pill_choice`, which could not be reused because its labels are authored text: TERMINATE (left flipper, red) or STAND DOWN (right flipper, steel) |
+| `game_select` | Whole stage | `act_select`. Plays before the game is chosen, on whichever slide is up |
 
 The rules of docs/11 section 9 apply unchanged: a mode cannot show its own
 ending (so Chapter 1's clip and the kill and failed-bypass callouts play from
@@ -387,12 +403,12 @@ select and pass unchanged in behaviour.
 
 ## 14. Still to verify
 
-- **The display on the cabinet.** The new scenes (`game_select.tscn`,
-  `dyson_choice.tscn`, the `base.tscn` panels and `game_panel.gd`) were
-  written by hand and have not been opened in Godot. Open `gmc/project.godot`
-  once, let Godot rewrite the `.uid` files for the new scripts, check the two
-  markers and two rosters swap with the `game` variable, and commit what it
-  changes.
+- **The display on the cabinet.** Every T2 scene and shader was rendered in
+  Godot 4.7.2 (OpenGL, under Xvfb, with the real fonts) at 1920x1080 and
+  reviewed: the idle slide, the Chapter 1 clocks, the Dyson choice, the
+  Firefight stack of clock, card and banner, Judgment Day and the finale.
+  Not yet checked: the cabinet's own display, the live slide swap on
+  `game_selected` over BCP, and how the film clips sit over the red slide.
 - **Booting on the real FAST hardware**, as for Act I.
 - **Scoring balance**, once the machine is playable.
 - The hardware assumptions in section 1.

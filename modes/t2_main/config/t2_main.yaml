@@ -34,7 +34,7 @@ variable_player:
 # show its own ending.
 widget_player:
   name_saved{who=="john"}:
-    chapter_card:
+    t2_card:
       key: saved_card
       priority: 10
       tokens:
@@ -43,7 +43,7 @@ widget_player:
         goal: ARRIVAL COMPLETE
       expire: 4s
   name_saved{who=="sarah"}:
-    chapter_card:
+    t2_card:
       key: saved_card
       priority: 10
       tokens:
@@ -52,7 +52,7 @@ widget_player:
         goal: BREAK-OUT SUPER JACKPOT
       expire: 4s
   name_saved{who=="dyson"}:
-    chapter_card:
+    t2_card:
       key: saved_card
       priority: 10
       tokens:
@@ -61,7 +61,7 @@ widget_player:
         goal: THE CHOICE COMPLETE
       expire: 4s
   name_saved{who=="chip"}:
-    chapter_card:
+    t2_card:
       key: saved_card
       priority: 10
       tokens:
@@ -70,7 +70,7 @@ widget_player:
         goal: CYBERDYNE RAID COMPLETE
       expire: 4s
   name_saved{who=="resistance"}:
-    chapter_card:
+    t2_card:
       key: saved_card
       priority: 10
       tokens:
@@ -79,7 +79,7 @@ widget_player:
         goal: FUTURE WAR MULTIBALL COMPLETE
       expire: 4s
   name_saved{who=="skynet"}:
-    chapter_card:
+    t2_card:
       key: saved_card
       priority: 10
       tokens:
@@ -88,13 +88,13 @@ widget_player:
         goal: T-1000 MULTIBALL COMPLETE
       expire: 4s
   judgment_day_lit:
-    mode_banner:
+    t2_banner:
       tokens:
         title: JUDGMENT DAY IS LIT
         detail: SHOOT THE COMMAND SCOOP
       expire: 4s
   multiball_queued:
-    mode_banner:
+    t2_banner:
       tokens:
         title: MULTIBALL READY
         detail: STARTS WHEN THIS MULTIBALL ENDS
@@ -105,19 +105,19 @@ widget_player:
         clip: flood_channel_rescue
       expire: 6s
   t2_ch1_failed:
-    mode_banner:
+    t2_banner:
       tokens:
         title: THE T-1000 GETS AWAY
         detail: IT WILL FIND HIM AGAIN
       expire: 3s
   t2_ch3_kill:
-    mode_banner:
+    t2_banner:
       tokens:
         title: THAT IS NOT WHO YOU ARE
         detail: DYSON IS LOST
       expire: 3s
   t2_ch3_bypass_failed:
-    mode_banner:
+    t2_banner:
       tokens:
         title: SECURITY LOCKS DOWN
         detail: DYSON IS LOST

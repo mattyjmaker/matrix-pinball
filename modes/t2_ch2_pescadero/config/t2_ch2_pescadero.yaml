@@ -36,7 +36,7 @@ widget_player:
       tokens:
         clip: pescadero_breakin
       expire: 8s
-    chapter_card:
+    t2_card:
       priority: 10
       tokens:
         kicker: TERMINATOR 2  CHAPTER 2
@@ -44,7 +44,7 @@ widget_player:
         goal: HIT THE THREE WARD TARGETS
       expire: 5s
   upper_target_hit:
-    mode_banner:
+    t2_banner:
       tokens:
         title: ORDERLY DOWN
         detail: ""

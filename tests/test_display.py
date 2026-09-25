@@ -46,7 +46,7 @@ class TestDisplayAssets(TestCase):
 
     def test_countdowns_name_their_event(self):
         for path, name, settings in _widget_player_entries():
-            if name in ("countdown", "pill_choice", "act_select") and settings.get("action", "play") == "play":
+            if name in ("countdown", "t2_countdown", "pill_choice", "dyson_choice", "act_select", "game_select") and settings.get("action", "play") == "play":
                 self.assertTrue(settings.get("tokens", {}).get("event"), "{}: {} has no event".format(path, name))
 
     def test_no_placeholder_tokens(self):

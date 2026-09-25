@@ -59,19 +59,19 @@ widget_player:
         clip: molten_steel
       expire: 8s
   judgment_day_super_jackpot:
-    mode_banner:
+    t2_banner:
       tokens:
         title: SUPER JACKPOT
         detail: INTO THE STEEL
       expire: 2s
   judgment_day_sacrifice_step:
-    mode_banner:
+    t2_banner:
       tokens:
         title: LAUNCH SITE DISARMED
         detail: NEXT SITE IS LIT
       expire: 2s
   judgment_day_stage_1_started:
-    chapter_card:
+    t2_card:
       key: judgment_day_card
       priority: 10
       tokens:
@@ -84,7 +84,7 @@ widget_player:
       tokens:
         clip: steel_mill_arrival
       expire: 6s
-    chapter_card:
+    t2_card:
       key: judgment_day_card
       priority: 10
       tokens:
@@ -93,7 +93,7 @@ widget_player:
         goal: "KNOCK THE T-1000 DOWN: SEMI GRILLE"
       expire: 4s
   judgment_day_stage_3_started:
-    chapter_card:
+    t2_card:
       key: judgment_day_card
       priority: 10
       tokens:
@@ -102,7 +102,7 @@ widget_player:
         goal: "EVERY RAMP IS A SUPER JACKPOT"
       expire: 4s
   judgment_day_stage_4_started:
-    chapter_card:
+    t2_card:
       key: judgment_day_card
       priority: 10
       tokens:

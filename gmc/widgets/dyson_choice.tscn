@@ -1,29 +1,34 @@
 [gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_widget.gd" id="1_widget"]
-[ext_resource type="PackedScene" path="res://assets/parts/countdown_clock.tscn" id="2_clock"]
+[ext_resource type="PackedScene" path="res://assets/parts/t2_clock.tscn" id="2_clock"]
 [ext_resource type="Theme" uid="uid://ccb1am66a2yg0" path="res://assets/themes/ui-code.tres" id="3_code"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_kill"]
-bg_color = Color(0.7, 0.12, 0.1, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0.7, 0.12, 0.1, 0.45)
+bg_color = Color(0.72, 0.1, 0.08, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0.9, 0.14, 0.1, 0.45)
 shadow_size = 24
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_spare"]
-bg_color = Color(0.2, 0.55, 0.9, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0.2, 0.55, 0.9, 0.45)
+bg_color = Color(0.2, 0.2, 0.22, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.96, 0.96, 0.96, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0.96, 0.96, 0.96, 0.25)
 shadow_size = 24
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_scrim"]
-bg_color = Color(0, 0.03, 0.01, 0.9)
+bg_color = Color(0.04, 0, 0, 0.92)
 
 [node name="DysonChoice" type="Control"]
 layout_mode = 3
@@ -66,7 +71,7 @@ theme_override_constants/separation = 28
 [node name="Heading" type="Label" parent="Choice"]
 layout_mode = 2
 theme = ExtResource("3_code")
-theme_override_colors/font_color = Color(0.85, 1, 0.88, 1)
+theme_override_colors/font_color = Color(0.97, 0.97, 0.97, 1)
 theme_override_font_sizes/font_size = 56
 text = "DYSON AT GUNPOINT"
 horizontal_alignment = 1
@@ -99,14 +104,14 @@ grow_vertical = 2
 theme = ExtResource("3_code")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 44
-text = "KILL HIM"
+text = "TERMINATE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Button" type="Label" parent="Choice/Options/Kill"]
 layout_mode = 2
 theme = ExtResource("3_code")
-theme_override_colors/font_color = Color(1, 0.55, 0.5, 1)
+theme_override_colors/font_color = Color(0.9, 0.3, 0.25, 1)
 theme_override_font_sizes/font_size = 34
 text = "< LEFT FLIPPER"
 horizontal_alignment = 1
@@ -114,7 +119,7 @@ horizontal_alignment = 1
 [node name="Outcome" type="Label" parent="Choice/Options/Kill"]
 layout_mode = 2
 theme = ExtResource("3_code")
-theme_override_colors/font_color = Color(0.5, 1, 0.6, 0.8)
+theme_override_colors/font_color = Color(0.8, 0.78, 0.78, 0.85)
 theme_override_font_sizes/font_size = 30
 text = "THE CHAPTER ENDS"
 horizontal_alignment = 1
@@ -142,14 +147,14 @@ grow_vertical = 2
 theme = ExtResource("3_code")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 44
-text = "SPARE HIM"
+text = "STAND DOWN"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Button" type="Label" parent="Choice/Options/Spare"]
 layout_mode = 2
 theme = ExtResource("3_code")
-theme_override_colors/font_color = Color(0.55, 0.75, 1, 1)
+theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
 theme_override_font_sizes/font_size = 34
 text = "RIGHT FLIPPER >"
 horizontal_alignment = 1
@@ -157,7 +162,7 @@ horizontal_alignment = 1
 [node name="Outcome" type="Label" parent="Choice/Options/Spare"]
 layout_mode = 2
 theme = ExtResource("3_code")
-theme_override_colors/font_color = Color(0.5, 1, 0.6, 0.8)
+theme_override_colors/font_color = Color(0.8, 0.78, 0.78, 0.85)
 theme_override_font_sizes/font_size = 30
 text = "HE SHOWS YOU INTO CYBERDYNE"
 horizontal_alignment = 1

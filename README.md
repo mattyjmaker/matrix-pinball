@@ -201,7 +201,8 @@ Slides live in `gmc/slides/<name>/<name>.tscn` and are put on screen by
 | Slide | Shown on | Contents |
 | --- | --- | --- |
 | `attract` | `mode_attract_started` | Digital rain, MATRIX title, pulsing PRESS START |
-| `base` | `mode_base_started` | Gameplay HUD: player, ball, score, per-player scores |
+| `base` | `mode_base_started` while the Matrix is the chosen game | Matrix gameplay HUD: player, ball, score, per-player scores |
+| `base_t2` | `mode_base_started` while Terminator 2 is the chosen game | Terminator 2 gameplay HUD in the T-800's red view, same layout (`slides/base_t2/`) |
 | `welcome` | `init_done` | Loading placeholder |
 | `plunge_ready` | `mode_plunge_ready_started` | "wake up player 1..." terminal line |
 
@@ -240,7 +241,7 @@ follows; until then each element shows its authored placeholder.
 | Variable | Type | Drives |
 | --- | --- | --- |
 | `score`, `player`, `ball` | int | Score, player and ball readouts |
-| `game` | str | `matrix` or `t2`: which game's HUD panels are shown |
+| `game` | str | `matrix` or `t2`, the game this player is in |
 | `act` | str | The `ACT ...` marker, e.g. `I`, `II`, `III` (Matrix) |
 | `chapter` | str | The marker for Terminator 2: `CHAPTER 1`, `JUDGMENT DAY`, `COMPLETE` |
 | `objective` | str | The objective line above the score |
@@ -255,12 +256,12 @@ Terminator 2 modes set theirs (docs/12-rules-terminator-2.md, section 11).
 
 The modes draw on the centre stage with five widgets in `gmc/widgets/`:
 `countdown` (a hurry-up clock that churns and locks like the trace readout),
-`chapter_card`, `mode_banner`, `pill_choice` and `act_select`, plus
-`game_select` and `dyson_choice` for Terminator 2. The zones they use, and the
-rules for adding more, are in docs/11-rules-act-1.md, section 9. The HUD's
-game-specific parts (the ACT or CHAPTER marker, the FREED or SAVED roster, the
-lock heading) carry `slides/base/game_panel.gd` and follow the player variable
-`game`, so one `base.tscn` serves both games.
+`chapter_card`, `mode_banner`, `pill_choice` and `act_select`. Terminator 2
+has the same layouts in its own palette: `t2_countdown`, `t2_card`,
+`t2_banner`, `dyson_choice`, plus `game_select`, which plays before the game
+is chosen. The zones they use, and the rules for adding more, are in
+docs/11-rules-act-1.md, section 9; the T2 look is docs/12-rules-terminator-2.md,
+section 11.
 In short: a mode's widgets are cleared when it stops, so a mode's ending is
 shown by a mode that keeps running, and a clock on screen is changed with
 `action: update`.
