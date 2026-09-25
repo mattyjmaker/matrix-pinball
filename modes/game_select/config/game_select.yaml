@@ -1,0 +1,26 @@
+#config_version=6
+
+# Game select: which game this game of pinball is, the Matrix or Terminator 2.
+# Logic in code/game_select.py. Holds every player's first ball_starting; on
+# player 1's it shows the choice, and once a game is chosen it starts that
+# game's own pre-ball select (the Matrix's act select) or steps straight out.
+# See docs/12-rules-terminator-2.md, section 2.
+
+mode:
+  start_events: ball_starting{ball==1}
+  use_wait_queue: true
+  priority: 2000
+  code: game_select.GameSelect
+
+# Played on the first game_select_show; later ones find the key already on
+# screen and do nothing, while the clock counts from the event's `seconds`.
+widget_player:
+  game_select_show:
+    game_select:
+      key: game_select
+      priority: 10
+      tokens:
+        label: STARTING THE MATRIX IN
+        event: game_select_show
+        arg: seconds
+        seconds: "15"

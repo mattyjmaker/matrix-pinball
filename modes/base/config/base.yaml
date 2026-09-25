@@ -1,35 +1,43 @@
 #config_version=6
 
-# Always-on playfield rules from the VPX prototype, plus the score for the
-# lanes and spinners. Runs on every ball, in every act.
-# See docs/11-rules-act-1.md, section 3. Scores are placeholders at the VPX's
-# scale until the rules are balanced.
+# Always-on playfield rules shared by both games, plus the score for the
+# lanes and spinners. Runs on every ball. The mechanics come from the Matrix
+# VPX prototype; each game gives them its own names and callouts:
+#
+#   hardware / event          Matrix                     Terminator 2
+#   popups, popup scoop       Agents, Agents Coming      Endoskeletons, Assembly Line
+#   right outlane lock        Ammo Lock drain save       Arsenal Lock drain save
+#   middle loop VUK award     Deja Vu                    Displacement
+#   mystery (pop targets)     Oracle                     Vision
+#
+# See docs/11-rules-act-1.md section 3 and docs/12-rules-terminator-2.md
+# section 6. Scores are placeholders at the VPX's scale until balanced.
 
 mode:
   start_events: ball_starting
   priority: 100
 
-# --- Agents -----------------------------------------------------------------
-# Hit a raised Agent: "Agent Kill". All three down: "Agents Down". The Agents
-# Coming scoop raises them again.
+# --- Pop-ups -----------------------------------------------------------------
+# Hit a raised pop-up; all three down pays extra. The pop-up scoop raises them
+# again when they are all down, or pays a small award.
 
 event_player:
-  balldevice_bd_cypher_scoop_ball_entered{device.drop_target_banks.agents.complete}: agents_coming
-  balldevice_bd_cypher_scoop_ball_entered{not device.drop_target_banks.agents.complete}: cypher_scoop_award
-  agents_coming: agents_raise
-  # The Ammo Lock gives its ball back on the next Ammo target hit.
-  ammo_target_hit{device.ball_devices.bd_ammo_lock.balls > 0}: ammo_release
-  # Oracle: the four EMP standups light it, the Deja Vu VUK collects it.
-  logicblock_oracle_standups_complete: oracle_lit
-  balldevice_bd_dejavu_vuk_ball_entered{current_player.oracle_lit == 1}: oracle_collect
-  oracle_collect: oracle_standups_reset
+  balldevice_bd_popup_scoop_ball_entered{device.drop_target_banks.popups.complete}: popup_scoop_reset
+  balldevice_bd_popup_scoop_ball_entered{not device.drop_target_banks.popups.complete}: popup_scoop_award
+  popup_scoop_reset: popups_raise
+  # The outlane lock gives its ball back on the next hit of its target.
+  right_outlane_lock_target_hit{device.ball_devices.bd_right_outlane_lock.balls > 0}: outlane_lock_release
+  # Mystery: the four pop area targets light it, the middle loop VUK collects it.
+  logicblock_mystery_targets_complete: mystery_lit
+  balldevice_bd_middle_loop_vuk_ball_entered{current_player.mystery_lit == 1}: mystery_collect
+  mystery_collect: mystery_targets_reset
 
 random_event_player:
-  oracle_collect:
+  mystery_collect:
     events:
-      - oracle_award_small
-      - oracle_award_medium
-      - oracle_award_large
+      - mystery_award_small
+      - mystery_award_medium
+      - mystery_award_large
 
 variable_player:
   s_inlane_left_outer_active:
@@ -42,73 +50,84 @@ variable_player:
     score: 100
   spinner_hit:
     score: 100
-  drop_target_agent_1_down:
+  drop_target_popup_1_down:
     score: 10000
-  drop_target_agent_2_down:
+  drop_target_popup_2_down:
     score: 10000
-  drop_target_agent_3_down:
+  drop_target_popup_3_down:
     score: 10000
-  drop_target_bank_agents_down:
+  drop_target_bank_popups_down:
     score: 50000
-  agents_coming:
+  popup_scoop_reset:
     score: 50000
-  cypher_scoop_award:
+  popup_scoop_award:
     score: 5000
-  balldevice_bd_dejavu_vuk_ball_entered:
+  balldevice_bd_middle_loop_vuk_ball_entered:
     score: 2570
-  multiball_lock_ammo_save_lock_locked_ball:
+  multiball_lock_outlane_save_lock_locked_ball:
     score: 15861
-  oracle_lit:
-    oracle_lit:
+  mystery_lit:
+    mystery_lit:
       action: set
       int: 1
-  oracle_collect:
-    oracle_lit:
+  mystery_collect:
+    mystery_lit:
       action: set
       int: 0
-  oracle_award_small:
+  mystery_award_small:
     score: 25000
-  oracle_award_medium:
+  mystery_award_medium:
     score: 75000
-  oracle_award_large:
+  mystery_award_large:
     score: 150000
 
 accruals:
-  oracle_standups:
+  mystery_targets:
     events:
-      - emp_target_1_hit
-      - emp_target_2_hit
-      - emp_target_3_hit
-      - emp_target_4_hit
-    reset_events: oracle_standups_reset
+      - pop_target_1_hit
+      - pop_target_2_hit
+      - pop_target_3_hit
+      - pop_target_4_hit
+    reset_events: mystery_targets_reset
     disable_on_complete: false
 
-# --- Ammo Lock drain save (VPX) ---------------------------------------------
-# One ball locks behind the Ammo Lock and a new ball is served. The next Ammo
-# target hit releases it as a two-ball play, or, if the last ball on the
-# playfield drains, it comes back instead of the ball ending.
-# Chapter 4 uses the same device for Morpheus's lock, so this one stands down
-# while that chapter's lock phase runs.
+# --- Outlane lock drain save (VPX) ------------------------------------------
+# One ball locks behind the right outlane lock and a new ball is served. The
+# next hit of its target releases it as a two-ball play, or, if the last ball
+# on the playfield drains, it comes back instead of the ball ending.
+# Each game's chapter 4 uses the same device for its own lock, so this one
+# stands down while that chapter's lock phase runs.
 
 multiball_locks:
-  ammo_save_lock:
-    lock_devices: bd_ammo_lock
+  outlane_save_lock:
+    lock_devices: bd_right_outlane_lock
     balls_to_lock: 1
     locked_ball_counting_strategy: physical_only
     empty_lock_devices_on_ball_end: true
-    enable_events: mode_base_started, mode_ch4_rescue_lock_stopped
-    disable_events: mode_ch4_rescue_lock_started
+    enable_events: mode_base_started, mode_ch4_rescue_lock_stopped, mode_t2_ch4_raid_lock_stopped
+    disable_events: mode_ch4_rescue_lock_started, mode_t2_ch4_raid_lock_started
 
 multiballs:
-  ammo_release:
+  outlane_lock_release:
     ball_count: 1
     ball_count_type: add
-    ball_locks: bd_ammo_lock
+    ball_locks: bd_right_outlane_lock
     shoot_again: 0
-    start_events: ammo_release
+    start_events: outlane_lock_release
 
-# The Act I finale. It plays here because the_one and act_one both stop on
-# the EMP, and MPF clears a mode's widgets when it stops.
+ball_saves:
+  outlane_drain_save:
+    active_time: 0
+    balls_to_save: 1
+    only_last_ball: true
+    auto_launch: true
+    ball_locks: bd_right_outlane_lock
+    enable_events: multiball_lock_outlane_save_lock_locked_ball
+    disable_events: outlane_lock_release, mode_ch4_rescue_lock_started, mode_t2_ch4_raid_lock_started
+
+# --- Finales -----------------------------------------------------------------
+# Each game's finale plays here because the wizard and the game's controller
+# both stop on it, and MPF clears a mode's widgets when it stops.
 widget_player:
   the_one_emp:
     video_clip:
@@ -123,13 +142,16 @@ widget_player:
         title: HE IS THE ONE
         goal: ACT II
       expire: 6s
-
-ball_saves:
-  ammo_drain_save:
-    active_time: 0
-    balls_to_save: 1
-    only_last_ball: true
-    auto_launch: true
-    ball_locks: bd_ammo_lock
-    enable_events: multiball_lock_ammo_save_lock_locked_ball
-    disable_events: ammo_release, mode_ch4_rescue_lock_started
+  judgment_day_averted:
+    video_clip:
+      tokens:
+        clip: t800_farewell
+      expire: 8s
+  t2_complete:
+    t2_card:
+      priority: 10
+      tokens:
+        kicker: JUDGMENT DAY AVERTED
+        title: THE FUTURE IS SAFE
+        goal: TERMINATOR 2 COMPLETE
+      expire: 6s

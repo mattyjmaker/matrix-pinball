@@ -46,7 +46,7 @@ class TestDisplayAssets(TestCase):
 
     def test_countdowns_name_their_event(self):
         for path, name, settings in _widget_player_entries():
-            if name in ("countdown", "pill_choice", "act_select") and settings.get("action", "play") == "play":
+            if name in ("countdown", "t2_countdown", "pill_choice", "dyson_choice", "act_select", "game_select") and settings.get("action", "play") == "play":
                 self.assertTrue(settings.get("tokens", {}).get("event"), "{}: {} has no event".format(path, name))
 
     def test_no_placeholder_tokens(self):
@@ -75,7 +75,7 @@ class TestDisplay(DisplayTestCase):
         clocks = [s for n, c, s in played if n == "countdown"]
         self.assertEqual("timer_ch1_rooftops_tick", clocks[0]["tokens"]["event"])
 
-        for ramp in ("trinity", "dejavu", "real_world"):
+        for ramp in ("left_lock", "middle_loop", "right_loop"):
             self.ramp(ramp)
         updates = [s for n, c, s in self.widgets_played() if n == "countdown"]
         self.assertEqual("update", updates[-1]["action"])
@@ -85,10 +85,10 @@ class TestDisplay(DisplayTestCase):
     def test_crew_card_survives_the_chapter_stopping(self):
         self.start()
         self.start_chapter(1)
-        for ramp in ("trinity", "dejavu", "real_world"):
+        for ramp in ("left_lock", "middle_loop", "right_loop"):
             self.ramp(ramp)
         self.sent = []
-        self.enter_device("s_dejavu_vuk")
+        self.enter_device("s_middle_loop_vuk")
         cards = [(c, s["tokens"]) for n, c, s in self.widgets_played() if n == "chapter_card"]
         self.assertIn(("act_one", "TRINITY"), [(c, t["title"]) for c, t in cards])
         cleared = self.contexts_cleared()
@@ -110,7 +110,7 @@ class TestDisplay(DisplayTestCase):
         self.start_chapter(3)
         self.assertEqual("ROUND 1  KUNG FU", self.tokens("countdown")[0]["label"])
         for n in range(1, 6):
-            self.hit_switch_and_run("s_team_{}".format(n), .1)
+            self.hit_switch_and_run("s_five_bank_{}".format(n), .1)
         updates = [s for n, c, s in self.widgets_played() if n == "countdown"]
         self.assertEqual("ROUND 2  SPARRING", updates[-1]["tokens"]["label"])
 
@@ -125,7 +125,7 @@ class TestDisplay(DisplayTestCase):
         self.mock_event("the_one_chase_tick")
         self.player()["the_one_stage"] = 1
         self.player()["the_one_progress"] = 5
-        self.hit_switch_and_run("s_agent_1", 1)
+        self.hit_switch_and_run("s_popup_1", 1)
         played = self.widgets_played()
         clocks = [s["tokens"] for n, c, s in played if n == "countdown"]
         self.assertEqual("the_one_chase_tick", clocks[0]["event"])
@@ -151,8 +151,8 @@ class TestDisplay(DisplayTestCase):
         self.player()["the_one_stage"] = 3
         self.player()["the_one_progress"] = 2
         self.post_event("the_one_mb_room_303", 6)
-        self.ramp("trinity")
-        self.enter_device("s_sentinel_vuk")
+        self.ramp("left_lock")
+        self.enter_device("s_platform_vuk")
         played = self.widgets_played()
         self.assertIn(("video_clip", "base"), [(n, c) for n, c, s in played if n == "video_clip" and c == "base"])
         self.assertIn("ACT I COMPLETE", [s["tokens"]["kicker"] for n, c, s in played if n == "chapter_card"])
@@ -160,6 +160,8 @@ class TestDisplay(DisplayTestCase):
     def test_act_select_screen(self):
         with patch("modes.act_select.code.act_select.AVAILABLE_ACTS", ("I", "II")):
             self.fill_troughs()
+            self.hit_and_release_switch("s_start")
+            self.advance_time_and_run(1)
             self.hit_and_release_switch("s_start")
             self.advance_time_and_run(1)
             screens = self.tokens("act_select")

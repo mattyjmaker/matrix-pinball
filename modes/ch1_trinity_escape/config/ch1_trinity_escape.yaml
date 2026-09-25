@@ -38,7 +38,7 @@ timers:
 event_player:
   timer_ch1_rooftops_complete: ch1_failed
   timer_ch1_phone_complete: ch1_failed
-  balldevice_bd_dejavu_vuk_ball_entered{device.timers.ch1_phone.running}: ch1_phone_answered
+  balldevice_bd_middle_loop_vuk_ball_entered{device.timers.ch1_phone.running}: ch1_phone_answered
   ch1_phone_answered: ch1_completed
 
 variable_player:

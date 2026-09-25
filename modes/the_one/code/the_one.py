@@ -10,12 +10,14 @@ multiball drops to one ball. See docs/11-rules-act-1.md, section 8.
 3. Room 303 (6 balls): the magnet takes a ball and every shot goes dark
    ("Neo dies") with a ball save covering all drains. Then every ramp is a
    super jackpot. SUPER_JACKPOTS of them light the EMP.
-4. EMP: the Sentinel VUK fires it and Act I is complete.
+4. EMP: the Sentinel VUK (the platform VUK) fires it and Act I is complete.
 """
 from mpf.core.mode import Mode
 
 SUBWAY_HITS = 6
-PHONES = ("trinity_ramp", "dejavu_ramp", "real_world_ramp", "sentinel_ramp")
+# The four ramps, by their hardware names; PHONE_NAMES has what the Matrix
+# calls them on screen.
+PHONES = ("left_lock_ramp", "middle_loop_ramp", "right_loop_ramp", "backboard_ramp")
 PHONES_NEEDED = 4
 # The Chase starts at 4 balls and goes to 6 after this many phones.
 PHONES_FOR_SIX_BALLS = 2
@@ -26,10 +28,10 @@ AGENT_RAISE_MS = 1000
 SUPER_JACKPOTS = 3
 
 PHONE_NAMES = {
-    "trinity_ramp": "TRINITY RAMP",
-    "dejavu_ramp": "DEJA VU RAMP",
-    "real_world_ramp": "REAL WORLD RAMP",
-    "sentinel_ramp": "SENTINEL RAMP",
+    "left_lock_ramp": "TRINITY RAMP",
+    "middle_loop_ramp": "DEJA VU RAMP",
+    "right_loop_ramp": "REAL WORLD RAMP",
+    "backboard_ramp": "SENTINEL RAMP",
 }
 
 OBJECTIVES = {
@@ -53,12 +55,12 @@ class TheOne(Mode):
     def mode_start(self, **kwargs):
         self._dark = False
         for number in (1, 2, 3):
-            self.add_mode_event_handler("drop_target_agent_{}_down".format(number), self._agent_down,
+            self.add_mode_event_handler("drop_target_popup_{}_down".format(number), self._agent_down,
                                         number=number)
         for phone in PHONES:
             self.add_mode_event_handler("{}_hit".format(phone), self._phone_hit, phone=phone)
         self.add_mode_event_handler("ramp_hit", self._ramp_hit)
-        self.add_mode_event_handler("balldevice_bd_sentinel_vuk_ball_entered", self._sentinel_vuk)
+        self.add_mode_event_handler("balldevice_bd_platform_vuk_ball_entered", self._sentinel_vuk)
 
         stage = self.player["the_one_stage"]
         if not stage:
@@ -89,7 +91,7 @@ class TheOne(Mode):
         self.machine.events.post("the_one_stage_{}_started".format(stage), progress=progress)
 
         if stage == 1:
-            self.machine.events.post("agents_raise")
+            self.machine.events.post("popups_raise")
             self.machine.events.post("the_one_mb_subway")
         elif stage == 2:
             if progress >= PHONES_FOR_SIX_BALLS:
@@ -103,7 +105,7 @@ class TheOne(Mode):
         elif stage == 3:
             self._room_303()
         elif stage == 4:
-            self.machine.events.post("sentinel_gate_open")
+            self.machine.events.post("platform_gate_open")
 
     # --- stage 1: Subway -------------------------------------------------
 
@@ -117,7 +119,7 @@ class TheOne(Mode):
             self._set_stage(2)
             return
         self.delay.add(ms=AGENT_RAISE_MS, callback=self.machine.events.post,
-                       event="agent_{}_raise".format(number))
+                       event="popup_{}_raise".format(number))
 
     # --- stage 2: The Chase ----------------------------------------------
 
@@ -161,12 +163,12 @@ class TheOne(Mode):
         self._dark = True
         self.player["the_one_phone"] = ""
         self.machine.events.post("the_one_dark")
-        self.machine.events.post("sentinel_magnet_grab")
+        self.machine.events.post("platform_magnet_grab")
         self.delay.add(ms=DARK_MS, callback=self._resurrect)
 
     def _resurrect(self):
         self._dark = False
-        self.machine.events.post("sentinel_magnet_release")
+        self.machine.events.post("platform_magnet_release")
         self.machine.events.post("the_one_resurrected")
         self.machine.events.post("the_one_mb_room_303")
 
@@ -185,5 +187,5 @@ class TheOne(Mode):
         del kwargs
         if self.player["the_one_stage"] != 4:
             return
-        self.machine.events.post("sentinel_gate_close")
+        self.machine.events.post("platform_gate_close")
         self.machine.events.post("the_one_emp")

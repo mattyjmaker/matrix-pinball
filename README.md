@@ -127,10 +127,18 @@ find, so the list must only name switches that are currently defined.
 
 ## Game rules
 
-Act I (the first film) is implemented: four chapter modes in film order, the
-VPX Trinity and Sentinel multiballs, the FREED roster and The One wizard. The
-rules, every timer and score, and the mode map are in
-`docs/11-rules-act-1.md`.
+The cabinet runs two games on the one playfield. A game select before the
+first ball chooses one for every player: flippers step, start confirms, and
+after 15 s with no choice the Matrix starts.
+
+- **The Matrix, Act I** (the first film): four chapter modes in film order,
+  the VPX Trinity and Sentinel multiballs, the FREED roster and The One
+  wizard. The rules, every timer and score, and the mode map are in
+  `docs/11-rules-act-1.md`.
+- **Terminator 2**: four chapter modes in film order, the Future War and
+  T-1000 multiballs, the SAVED roster and the Judgment Day wizard, on the same
+  hardware under its own names. The rules and the game select are in
+  `docs/12-rules-terminator-2.md`.
 
 ### Running the tests
 
@@ -149,7 +157,18 @@ on the real machine: those switches never close and those coils do nothing
 until the feature is wired. To bring one online, move its entries into
 `config/config.yaml`, give them FAST numbers and delete `platform: virtual`.
 Keep each switch's `events_when_activated:` line: the modes listen to those
-logical events (for example `trinity_ramp_hit`), never to switch names.
+events, never to switch names.
+
+### Hardware names are generic
+
+Every switch, coil, device and event names what the hardware is
+(`left_lock_ramp`, `platform_gate`, `popup_1`, `right_outlane_lock`), never
+what a game calls it, because the same playfield will run more than one game
+(`docs/12-rules-terminator-2.md`). The Matrix modes keep the film's names in
+their display text and comments; the mapping is in `docs/11-rules-act-1.md`,
+section 11, and each renamed entry in the config carries a `# was ...`
+comment. `tests/test_shots.py` fails if a Matrix word gets into a hardware
+name.
 
 ### Keyboard
 
@@ -157,21 +176,21 @@ On `mpf both -X` the `[keyboard]` section of `gmc/gmc.cfg` drives the switches.
 Keys marked toggle stay closed until pressed again, which is how a ball sits in
 a device or a drop target stays down.
 
-| Key | Switch | | Key | Switch |
+| Key | Switch (Matrix name) | | Key | Switch (Matrix name) |
 | --- | --- | --- | --- | --- |
-| `1` | Start | | `u` | Deja Vu VUK (toggle) |
-| `a` / `d` | Left / right flipper | | `i` | Sentinel VUK (toggle) |
-| `q` | Mission Drop (toggle) | | `o` | Agents Coming scoop (toggle) |
-| `w` | Mission scoop (toggle) | | `f` `g` `h` | Trinity lock 1 to 3 (toggle) |
-| `e` | Trinity Ramp | | `j` | Ammo Lock (toggle) |
-| `r` | Deja Vu Ramp | | `l` | Ammo target |
-| `t` | Real World Ramp | | `s` / `5` | Sentinel left / right target |
-| `y` | Sentinel Ramp | | `6` | Sentinel magnet |
-| `2` `3` `4` | Agents 1 to 3 (toggle) | | `0` `9` `8` `7` | Outlanes and inlanes |
+| `1` | Start | | `u` | Middle loop VUK (Deja Vu VUK, toggle) |
+| `a` / `d` | Left / right flipper | | `i` | Platform VUK (Sentinel VUK, toggle) |
+| `q` | Mode drop (Mission Drop, toggle) | | `o` | Pop-up scoop (Agents Coming, toggle) |
+| `w` | Mode scoop (Mission scoop, toggle) | | `f` `g` `h` | Left lock 1 to 3 (Trinity lock, toggle) |
+| `e` | Left lock ramp (Trinity Ramp) | | `j` | Right outlane lock (Ammo Lock, toggle) |
+| `r` | Middle loop ramp (Deja Vu Ramp) | | `l` | Right outlane lock target (Ammo target) |
+| `t` | Right loop ramp (Real World Ramp) | | `s` / `5` | Platform gate left / right (Sentinel entrance targets) |
+| `y` | Backboard ramp (Sentinel Ramp) | | `6` | Platform magnet (Sentinel magnet) |
+| `2` `3` `4` | Pop-ups 1 to 3 (Agents, toggle) | | `0` `9` `8` `7` | Outlanes and inlanes |
 
-The trough keys are `x c v b n m k`. The Matrix Team drops, Real World
-standups, Sentinel boss target and EMP standups have no key; use MPF Monitor
-(`pinball-monitor`) for those. The Godot editor's MPF tab rewrites
+The trough keys are `x c v b n m k`. The five-bank and three-bank drops, upper
+playfield standups, platform targets and pop area standups have no key; use
+MPF Monitor (`pinball-monitor`) for those. The Godot editor's MPF tab rewrites
 `gmc/gmc.cfg` in full, so check this section survives an editor save.
 
 ## Slides and the Matrix look
@@ -182,7 +201,8 @@ Slides live in `gmc/slides/<name>/<name>.tscn` and are put on screen by
 | Slide | Shown on | Contents |
 | --- | --- | --- |
 | `attract` | `mode_attract_started` | Digital rain, MATRIX title, pulsing PRESS START |
-| `base` | `mode_base_started` | Gameplay HUD: player, ball, score, per-player scores |
+| `base` | `mode_base_started` while the Matrix is the chosen game | Matrix gameplay HUD: player, ball, score, per-player scores |
+| `base_t2` | `mode_base_started` while Terminator 2 is the chosen game | Terminator 2 gameplay HUD in the T-800's red view, same layout (`slides/base_t2/`) |
 | `welcome` | `init_done` | Loading placeholder |
 | `plunge_ready` | `mode_plunge_ready_started` | "wake up player 1..." terminal line |
 
@@ -221,19 +241,27 @@ follows; until then each element shows its authored placeholder.
 | Variable | Type | Drives |
 | --- | --- | --- |
 | `score`, `player`, `ball` | int | Score, player and ball readouts |
-| `act` | str | The `ACT ...` marker, e.g. `I`, `II`, `III` |
+| `game` | str | `matrix` or `t2`, the game this player is in |
+| `act` | str | The `ACT ...` marker, e.g. `I`, `II`, `III` (Matrix) |
+| `chapter` | str | The marker for Terminator 2: `CHAPTER 1`, `JUDGMENT DAY`, `COMPLETE` |
 | `objective` | str | The objective line above the score |
-| `balls_locked` | int | How many power station cells are lit |
+| `balls_locked` | int | How many lock cells are lit (both games) |
 | `freed_trinity`, `freed_tank`, … | bool | Lights that name in the FREED roster |
+| `saved_john`, `saved_sarah`, … | bool | Lights that name in the SAVED roster |
 
-The Act I modes set all of these (docs/11-rules-act-1.md, section 9).
+The Act I modes set all of these (docs/11-rules-act-1.md, section 9); the
+Terminator 2 modes set theirs (docs/12-rules-terminator-2.md, section 11).
 
 #### Stage widgets
 
 The modes draw on the centre stage with five widgets in `gmc/widgets/`:
 `countdown` (a hurry-up clock that churns and locks like the trace readout),
-`chapter_card`, `mode_banner`, `pill_choice` and `act_select`. The zones they
-use, and the rules for adding more, are in docs/11-rules-act-1.md, section 9.
+`chapter_card`, `mode_banner`, `pill_choice` and `act_select`. Terminator 2
+has the same layouts in its own palette: `t2_countdown`, `t2_card`,
+`t2_banner`, `dyson_choice`, plus `game_select`, which plays before the game
+is chosen. The zones they use, and the rules for adding more, are in
+docs/11-rules-act-1.md, section 9; the T2 look is docs/12-rules-terminator-2.md,
+section 11.
 In short: a mode's widgets are cleared when it stops, so a mode's ending is
 shown by a mode that keeps running, and a clock on screen is changed with
 `action: update`.

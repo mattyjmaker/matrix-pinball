@@ -1,9 +1,11 @@
 extends HBoxContainer
 
-## Power station lock indicator: one cell per ball locked.
+## Lock indicator: one cell per ball locked.
 ##
 ## Colours its ColorRect children from the player variable named below, so the
-## number of stations is whatever the scene contains.
+## number of cells is whatever the scene contains. Reads the current value when
+## the slide is created, since the slide is rebuilt every ball, and follows
+## updates from then on.
 
 @export var variable_name: String = "balls_locked"
 @export var locked: int = 0
@@ -11,9 +13,12 @@ extends HBoxContainer
 @export var filled_color: Color = Color(0.55, 1.0, 0.65, 0.95)
 
 func _ready() -> void:
-	_apply()
 	if MPF.game:
+		var current = MPF.game.player.get(variable_name)
+		if current != null:
+			locked = int(current)
 		MPF.game.connect("player_update", _on_player_update)
+	_apply()
 
 func _on_player_update(var_name: String, value: Variant) -> void:
 	if var_name == variable_name:

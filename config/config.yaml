@@ -75,6 +75,8 @@ machine:
 
 modes:
   - base
+  - game_select
+  # The Matrix (docs/11-rules-act-1.md)
   - act_select
   - act_one
   - trinity_lock
@@ -88,9 +90,39 @@ modes:
   - ch4_rescue_lock
   - ch4_rescue_mb
   - the_one
+  # Terminator 2 (docs/12-rules-terminator-2.md)
+  - t2_main
+  - future_war_lock
+  - future_war_mb
+  - t1000_gate
+  - t1000_mb
+  - t2_ch1_arrival
+  - t2_ch2_pescadero
+  - t2_ch2_breakout_mb
+  - t2_ch3_dyson
+  - t2_ch4_raid_lock
+  - t2_ch4_raid_mb
+  - judgment_day
 
-# Per-player state the rules and the HUD share. See docs/11-rules-act-1.md.
+# Which game this game of pinball is: `matrix` or `t2`. Chosen once per game
+# by game_select on player 1's first ball, shared by every player.
+machine_vars:
+  game_choice:
+    initial_value: matrix
+    value_type: str
+    persist: false
+
+# Per-player state the rules and the HUD share. See docs/11-rules-act-1.md
+# and docs/12-rules-terminator-2.md.
 player_vars:
+  # Copy of the machine's game_choice, so the HUD can show that game's panels.
+  game:
+    initial_value: matrix
+    value_type: str
+  # What the game select is offering while it is up.
+  game_option:
+    initial_value: MATRIX
+    value_type: str
   act:
     initial_value: I
     value_type: str
@@ -101,7 +133,8 @@ player_vars:
   chapter_next:
     initial_value: 1
     value_type: int
-  mission_ready:
+  # The mode drop is down, so the mode scoop will start something.
+  mode_ready:
     initial_value: 0
     value_type: int
   freed_trinity:
@@ -135,10 +168,12 @@ player_vars:
   the_one_progress:
     initial_value: 0
     value_type: int
+  # Balls in the left lock, for the HUD's lock cells. Both games use it.
   balls_locked:
     initial_value: 0
     value_type: int
-  oracle_lit:
+  # The pop area targets light the mystery award (Oracle / Vision).
+  mystery_lit:
     initial_value: 0
     value_type: int
   # Multiballs waiting for the running one to end, comma-separated.
@@ -149,10 +184,69 @@ player_vars:
     initial_value: 0
     value_type: int
 
+  # --- Terminator 2 ---
+  # The HUD's chapter marker: CHAPTER 1 to 4, JUDGMENT DAY, then COMPLETE.
+  chapter:
+    initial_value: CHAPTER 1
+    value_type: str
+  t2_chapter_next:
+    initial_value: 1
+    value_type: int
+  saved_john:
+    initial_value: 0
+    value_type: int
+  saved_sarah:
+    initial_value: 0
+    value_type: int
+  saved_dyson:
+    initial_value: 0
+    value_type: int
+  saved_chip:
+    initial_value: 0
+    value_type: int
+  saved_resistance:
+    initial_value: 0
+    value_type: int
+  saved_skynet:
+    initial_value: 0
+    value_type: int
+  saved_count:
+    initial_value: 0
+    value_type: int
+  judgment_day_lit:
+    initial_value: 0
+    value_type: int
+  # 0 until Judgment Day starts, then its stage (1 to 4). Survives ball end.
+  judgment_day_stage:
+    initial_value: 0
+    value_type: int
+  judgment_day_progress:
+    initial_value: 0
+    value_type: int
+  raid_mb_starting:
+    initial_value: 0
+    value_type: int
+  breakout_mb_starting:
+    initial_value: 0
+    value_type: int
+  # 1 once Judgment Day is averted: T2 has no more rules for this player.
+  t2_complete:
+    initial_value: 0
+    value_type: int
+
 settings:
   the_one_threshold:
     label: FREED names to light The One
     sort: 100
+    values:
+      4: "4"
+      5: "5"
+      6: "6"
+    key_type: int
+    default: 4
+  judgment_day_threshold:
+    label: SAVED names to light Judgment Day
+    sort: 110
     values:
       4: "4"
       5: "5"
@@ -255,42 +349,46 @@ switches:
   # s_plunger:
   #   number: TODO
 
-  # EMP Pop Bumper Area Switches
-  s_emp_pop:
+  # Pop bumper area (the "EMP" area in the Matrix design). Every hardware
+  # name in this file and in playfield_pending.yaml is generic: it says what
+  # the feature is, not what a game calls it, so every game listens to the
+  # same events. Each game's modes and docs carry the mapping to that game's
+  # names (docs/11-rules-act-1.md section 11, docs/12-rules-terminator-2.md
+  # section 4). Keep the event names when renumbering a switch.
+  s_pop_bumper_1:                 # was s_emp_pop
     number: bottom32-14
     debounce: quick
-  s_emp_trigger:
+  s_pop_trigger:                  # was s_emp_trigger
     number: bottom32-13
     tags: playfield_active
-  # events_when_activated is the logical layer the modes listen to. Keep
-  # the event names when renumbering a switch.
-  s_emp_target_1:
+  s_pop_target_1:                 # was s_emp_target_1
     number: bottom32-9
     tags: playfield_active
-    events_when_activated: emp_target_1_hit, emp_target_hit
-  s_emp_target_2:
+    events_when_activated: pop_target_1_hit, pop_target_hit
+  s_pop_target_2:
     number: bottom32-10
     tags: playfield_active
-    events_when_activated: emp_target_2_hit, emp_target_hit
-  s_emp_target_3:
+    events_when_activated: pop_target_2_hit, pop_target_hit
+  s_pop_target_3:
     number: bottom32-11
     tags: playfield_active
-    events_when_activated: emp_target_3_hit, emp_target_hit
-  s_emp_target_4:
+    events_when_activated: pop_target_3_hit, pop_target_hit
+  s_pop_target_4:
     number: bottom32-12
     tags: playfield_active
-    events_when_activated: emp_target_4_hit, emp_target_hit
+    events_when_activated: pop_target_4_hit, pop_target_hit
   s_kickback_target:
     number: bottom32-8
     tags: playfield_active
     events_when_activated: kickback_target_hit
 
-  # Ammo Target
-  s_ammo_target:
+  # Standup and rollover at the bottom right outlane lock (the "Ammo" lock
+  # and target in the Matrix design).
+  s_right_outlane_lock_target:    # was s_ammo_target
     number: bottom32-20
     tags: playfield_active
-    events_when_activated: ammo_target_hit
-  s_ammo_rollover:
+    events_when_activated: right_outlane_lock_target_hit
+  s_right_outlane_lock_rollover:  # was s_ammo_rollover
     number: bottom32-21
     tags: playfield_active
 
@@ -325,9 +423,9 @@ coils:
     platform_settings:
       recycle_ms: 40
 
-  # Middle Playfield Coils (in EMP)
+  # Pop bumper area
   # TODO(hardware): pop bumper coil not yet installed.
-  # c_emp_pop:
+  # c_pop_bumper_1:
   #   number: TODO
   #   default_pulse_ms: 20
   #   platform_settings:
@@ -403,7 +501,19 @@ ball_devices:
   #   tags: plunger, shooter
   #   eject_coil: c_auto_plunge
 
+# One gameplay slide per game: the Matrix's `base` and Terminator 2's
+# `base_t2`. Both start on ball_starting; on player 1's first ball the choice
+# is not made yet, so game_selected swaps the slide if it went the other way.
 slide_player:
-  mode_base_started: base
+  mode_base_started{machine.game_choice=="matrix"}: base
+  mode_base_started{machine.game_choice=="t2"}: base_t2
+  game_selected{game=="t2"}:
+    base_t2: {}
+    base:
+      action: remove
+  game_selected{game=="matrix"}:
+    base: {}
+    base_t2:
+      action: remove
   init_done: welcome
   mode_attract_started: attract

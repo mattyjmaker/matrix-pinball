@@ -1,9 +1,11 @@
 #config_version=6
 
-# Sentinel Multiball (VPX): 3 balls. Jackpots on the Sentinel ramp and the
-# boss target; three jackpots free DOZER.
-# Add-a-ball, once per multiball: hit all three Sentinel Boss standups to light
-# it, then shoot the Sentinel VUK. Peaks at 4 balls.
+# Sentinel Multiball (VPX): 3 balls. Jackpots on the backboard ramp (the
+# Sentinel ramp, next to the toy) and either platform target; three jackpots
+# free DOZER.
+# Add-a-ball, once per multiball: hit both gate targets and a platform target
+# to light it, then shoot the platform VUK. Peaks at 4 balls.
+# Hardware: the Sentinel Boss is the platform toy (config/playfield_pending.yaml).
 # See docs/11-rules-act-1.md, section 6.
 
 mode:
@@ -23,9 +25,9 @@ multiballs:
 accruals:
   sentinel_add_a_ball_targets:
     events:
-      - sentinel_left_hit
-      - sentinel_right_hit
-      - sentinel_boss_hit
+      - platform_gate_left_hit
+      - platform_gate_right_hit
+      - platform_target_hit
     events_when_complete: sentinel_add_a_ball_lit
     start_enabled: true
 
@@ -37,9 +39,9 @@ counters:
     start_enabled: true
 
 event_player:
-  sentinel_ramp_hit: sentinel_jackpot
-  sentinel_boss_hit: sentinel_jackpot
-  balldevice_bd_sentinel_vuk_ball_entered{current_player.sentinel_aab_lit==1}: sentinel_add_a_ball
+  backboard_ramp_hit: sentinel_jackpot
+  platform_target_hit: sentinel_jackpot
+  balldevice_bd_platform_vuk_ball_entered{current_player.sentinel_aab_lit==1}: sentinel_add_a_ball
 
 variable_player:
   mode_sentinel_mb_started:

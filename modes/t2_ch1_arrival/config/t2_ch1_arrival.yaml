@@ -1,0 +1,93 @@
+#config_version=6
+
+# Chapter 1: Arrival. Single-ball hurry-up; the T-1000 is the clock.
+#   The mall: three ramp shots, any ramps, inside 40 s.
+#   The flood channel: the Displacement VUK (middle loop VUK), its value
+#   counting down for 20 s.
+# Completion saves JOHN. See docs/12-rules-terminator-2.md, section 7.
+
+mode:
+  start_events: start_t2_ch1
+  stop_events: t2_ch1_completed, t2_ch1_failed
+  events_when_stopped: t2_ch1_ended
+  priority: 300
+
+counters:
+  t2_ch1_shots:
+    count_events: ramp_hit
+    count_complete_value: 3
+    events_when_complete: t2_ch1_mall_done
+    start_enabled: true
+
+timers:
+  t2_ch1_mall:
+    start_value: 40
+    end_value: 0
+    direction: down
+    start_running: true
+    control_events:
+      - event: t2_ch1_mall_done
+        action: stop
+  t2_ch1_channel:
+    start_value: 20
+    end_value: 0
+    direction: down
+    control_events:
+      - event: t2_ch1_mall_done
+        action: start
+
+event_player:
+  timer_t2_ch1_mall_complete: t2_ch1_failed
+  timer_t2_ch1_channel_complete: t2_ch1_failed
+  balldevice_bd_middle_loop_vuk_ball_entered{device.timers.t2_ch1_channel.running}: t2_ch1_rescued
+  t2_ch1_rescued: t2_ch1_completed
+
+variable_player:
+  mode_t2_ch1_arrival_started:
+    objective:
+      action: set
+      string: "THE MALL: MAKE 3 RAMP SHOTS"
+  logicblock_t2_ch1_shots_hit:
+    score: 50000
+  t2_ch1_mall_done:
+    objective:
+      action: set
+      string: "THE FLOOD CHANNEL: SHOOT THE DISPLACEMENT VUK"
+  # The rescue pays more the sooner it comes.
+  t2_ch1_rescued:
+    score:
+      int: 250000 + device.timers.t2_ch1_channel.ticks * 25000
+
+# The completion and failure callouts are in t2_main.yaml: this mode's
+# widgets are cleared when it stops.
+widget_player:
+  mode_t2_ch1_arrival_started:
+    video_clip:
+      tokens:
+        clip: mall_pursuit
+      expire: 8s
+    t2_card:
+      priority: 10
+      tokens:
+        kicker: TERMINATOR 2  CHAPTER 1
+        title: ARRIVAL
+        goal: 3 RAMP SHOTS BEFORE THE T-1000
+      expire: 5s
+    t2_countdown:
+      key: t2_ch1_clock
+      priority: 10
+      tokens:
+        label: THE MALL
+        event: timer_t2_ch1_mall_tick
+        seconds: "40"
+  t2_ch1_mall_done:
+    t2_countdown:
+      key: t2_ch1_clock
+      action: update
+      tokens:
+        label: THE FLOOD CHANNEL
+        event: timer_t2_ch1_channel_tick
+        seconds: "20"
+        total: "20"
+        value_base: "250000"
+        value_step: "25000"

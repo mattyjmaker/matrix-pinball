@@ -1,0 +1,117 @@
+#config_version=6
+
+# Chapter 3: The Choice, Dyson. The Command scoop holds the ball while Sarah
+# has Dyson at gunpoint. Left flipper: kill. Right flipper: spare. No input
+# for 10 s: spare. Kill ends the chapter (played, not completed). Spare
+# releases the ball for the Cyberdyne Lab bypass: all five five-bank drops
+# inside 30 s. Completing the bypass saves DYSON.
+# See docs/12-rules-terminator-2.md, section 7.
+
+mode:
+  start_events: start_t2_ch3
+  stop_events: t2_ch3_kill, t2_ch3_done
+  events_when_stopped: t2_ch3_ended
+  priority: 300
+
+timers:
+  t2_ch3_choice:
+    start_value: 10
+    end_value: 0
+    direction: down
+    start_running: true
+    control_events:
+      - event: t2_ch3_spare
+        action: stop
+  t2_ch3_bypass:
+    start_value: 30
+    end_value: 0
+    direction: down
+    control_events:
+      - event: t2_ch3_spare
+        action: start
+      - event: t2_ch3_bypass_done
+        action: stop
+
+state_machines:
+  t2_ch3_choice:
+    starting_state: choosing
+    states:
+      choosing:
+        label: Choosing
+      kill:
+        label: Kill
+        events_when_started: t2_ch3_kill
+      spare:
+        label: Spare
+        events_when_started: t2_ch3_spare
+    transitions:
+      - source: choosing
+        target: kill
+        events: s_left_flipper_active
+      - source: choosing
+        target: spare
+        events: s_right_flipper_active, timer_t2_ch3_choice_complete
+
+event_player:
+  t2_ch3_kill: t2_scoop_release
+  t2_ch3_spare: t2_scoop_release, five_bank_reset
+  drop_target_bank_five_bank_down{device.state_machines.t2_ch3_choice.state=="spare"}: t2_ch3_bypass_done
+  t2_ch3_bypass_done: t2_ch3_completed, t2_ch3_done
+  timer_t2_ch3_bypass_complete: t2_ch3_bypass_failed, t2_ch3_done
+
+variable_player:
+  mode_t2_ch3_dyson_started:
+    objective:
+      action: set
+      string: "LEFT FLIPPER: KILL DYSON   RIGHT FLIPPER: SPARE HIM"
+  t2_ch3_kill:
+    score: 5000
+  t2_ch3_spare:
+    objective:
+      action: set
+      string: "CYBERDYNE LAB BYPASS: ALL 5 LAB TARGETS"
+  t2_ch3_bypass_done:
+    score: 150000
+
+# The kill and the failed bypass callouts are in t2_main.yaml: this mode
+# stops on both, which would clear them.
+widget_player:
+  mode_t2_ch3_dyson_started:
+    video_clip:
+      tokens:
+        clip: dyson_confrontation
+      expire: 10s
+    dyson_choice:
+      priority: 10
+      tokens:
+        label: TERMINATOR 2  CHAPTER 3
+        event: timer_t2_ch3_choice_tick
+        seconds: "10"
+  t2_ch3_spare:
+    video_clip:
+      tokens:
+        clip: dyson_spared
+      expire: 6s
+    t2_card:
+      priority: 10
+      tokens:
+        kicker: THE CHOICE
+        title: DYSON LISTENS
+        goal: ALL 5 LAB TARGETS IN 30 SECONDS
+      expire: 5s
+    t2_countdown:
+      key: t2_ch3_clock
+      priority: 10
+      tokens:
+        label: CYBERDYNE LAB BYPASS
+        event: timer_t2_ch3_bypass_tick
+        seconds: "30"
+  t2_ch3_bypass_done:
+    t2_countdown:
+      key: t2_ch3_clock
+      action: remove
+    t2_banner:
+      tokens:
+        title: WE ARE IN
+        detail: DYSON KNOWS THE WAY
+      expire: 3s

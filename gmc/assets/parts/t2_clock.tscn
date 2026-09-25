@@ -1,0 +1,83 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://assets/parts/countdown_clock.gd" id="1_clock"]
+[ext_resource type="Theme" uid="uid://ccb1am66a2yg0" path="res://assets/themes/ui-code.tres" id="2_code"]
+[ext_resource type="Script" path="res://slides/base/trace_readout.gd" id="3_trace"]
+[ext_resource type="FontFile" uid="uid://x50uvbht14xy" path="res://assets/fonts/JackInput.ttf" id="4_mono"]
+
+[sub_resource type="FontVariation" id="FontVariation_clock"]
+base_font = ExtResource("4_mono")
+spacing_glyph = 18
+
+[node name="T2Clock" type="VBoxContainer"]
+custom_minimum_size = Vector2(780, 220)
+mouse_filter = 2
+theme_override_constants/separation = 6
+alignment = 1
+script = ExtResource("1_clock")
+normal_color = Color(0.96, 0.96, 0.96, 1)
+normal_churn_color = Color(0.55, 0.5, 0.5, 1)
+warn_color = Color(0.95, 0.16, 0.1, 1)
+warn_churn_color = Color(0.5, 0.08, 0.06, 1)
+bar_color = Color(0.9, 0.14, 0.1, 0.85)
+
+[node name="Heading" type="Label" parent="."]
+layout_mode = 2
+theme = ExtResource("2_code")
+theme_override_colors/font_color = Color(0.85, 0.2, 0.16, 0.85)
+theme_override_font_sizes/font_size = 32
+text = "COUNTDOWN"
+horizontal_alignment = 1
+
+[node name="Digits" type="RichTextLabel" parent="."]
+custom_minimum_size = Vector2(0, 130)
+layout_mode = 2
+theme = ExtResource("2_code")
+theme_override_fonts/normal_font = SubResource("FontVariation_clock")
+theme_override_font_sizes/normal_font_size = 120
+bbcode_enabled = true
+text = "[center]00[/center]"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+mouse_filter = 2
+script = ExtResource("3_trace")
+target = "00"
+scramble_hz = 30.0
+lock_seconds = 0.07
+loop = false
+locked_color = Color(0.96, 0.96, 0.96, 1)
+scramble_color = Color(0.55, 0.5, 0.5, 1)
+
+[node name="Bar" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Track" type="ColorRect" parent="Bar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.9, 0.14, 0.1, 0.18)
+
+[node name="Fill" type="ColorRect" parent="Bar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.9, 0.14, 0.1, 0.85)
+
+[node name="Value" type="Label" parent="."]
+layout_mode = 2
+theme = ExtResource("2_code")
+theme_override_colors/font_color = Color(0.96, 0.96, 0.96, 1)
+theme_override_font_sizes/font_size = 44
+text = "0"
+horizontal_alignment = 1

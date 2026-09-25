@@ -1,0 +1,43 @@
+#config_version=6
+
+# Future War lock: the left lock takes three balls. The third requests Future
+# War Multiball, which the T2 controller starts now or queues behind a running
+# multiball. Runs whenever T2's features are on, which is every T2 ball except
+# while Judgment Day runs. (The Matrix's Trinity lock on the same hardware.)
+# See docs/12-rules-terminator-2.md, section 8.
+
+mode:
+  start_events: t2_features_start
+  stop_events: t2_features_stop, t2_complete
+  priority: 250
+
+multiball_locks:
+  future_war_lock:
+    lock_devices: bd_left_lock
+    balls_to_lock: 3
+    locked_ball_counting_strategy: virtual_only
+    enable_events: mode_future_war_lock_started
+    reset_count_for_current_player_events: multiball_future_war_started
+
+event_player:
+  multiball_lock_future_war_lock_full: request_future_war_mb
+
+variable_player:
+  multiball_lock_future_war_lock_locked_ball:
+    score: 10000
+    # Drives the lock cells on the HUD.
+    balls_locked:
+      action: set
+      int: total_balls_locked
+  multiball_future_war_started:
+    balls_locked:
+      action: set
+      int: 0
+
+widget_player:
+  multiball_lock_future_war_lock_locked_ball:
+    t2_banner:
+      tokens:
+        title: FUTURE WAR LOCK
+        detail: BALL LOCKED
+      expire: 2s

@@ -1,0 +1,114 @@
+#config_version=6
+
+# Judgment Day: the Terminator 2 wizard. Stage logic in code/judgment_day.py;
+# this file holds its multiballs, ball save and scores. The T2 controller
+# starts it from the Command scoop once enough names are SAVED, and restarts
+# it on the player's next ball until it is averted.
+# See docs/12-rules-terminator-2.md, section 10.
+
+mode:
+  start_events: start_judgment_day_mb
+  stop_events: t2_complete
+  priority: 400
+  code: judgment_day.JudgmentDay
+
+multiballs:
+  jd_freeway:
+    ball_count: 2
+    ball_count_type: total
+    shoot_again: 15s
+    start_events: judgment_day_mb_freeway
+  jd_mill:
+    ball_count: 4
+    ball_count_type: total
+    shoot_again: 15s
+    start_events: judgment_day_mb_mill
+  jd_molten:
+    ball_count: 6
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: judgment_day_mb_molten
+
+ball_saves:
+  # Covers every drain while the T-1000 is down in the molten steel stage.
+  jd_down:
+    active_time: 8s
+    balls_to_save: -1
+    auto_launch: true
+    enable_events: judgment_day_down
+
+variable_player:
+  judgment_day_freeway_hit:
+    score: 100000
+  judgment_day_mill_hit:
+    score: 500000
+  judgment_day_super_jackpot:
+    score: 1000000
+  judgment_day_averted:
+    score: 5000000
+
+widget_player:
+  judgment_day_started:
+    video_clip:
+      tokens:
+        clip: freeway_chase
+      expire: 8s
+  judgment_day_down:
+    video_clip:
+      tokens:
+        clip: molten_steel
+      expire: 8s
+  judgment_day_super_jackpot:
+    t2_banner:
+      tokens:
+        title: SUPER JACKPOT
+        detail: INTO THE STEEL
+      expire: 2s
+  judgment_day_sacrifice_step:
+    t2_banner:
+      tokens:
+        title: LAUNCH SITE DISARMED
+        detail: NEXT SITE IS LIT
+      expire: 2s
+  judgment_day_stage_1_started:
+    t2_card:
+      key: judgment_day_card
+      priority: 10
+      tokens:
+        kicker: JUDGMENT DAY  STAGE 1
+        title: THE FREEWAY
+        goal: "SHOOT THE T-1000 RAMP"
+      expire: 4s
+  judgment_day_stage_2_started:
+    video_clip:
+      tokens:
+        clip: steel_mill_arrival
+      expire: 6s
+    t2_card:
+      key: judgment_day_card
+      priority: 10
+      tokens:
+        kicker: JUDGMENT DAY  STAGE 2
+        title: THE STEEL MILL
+        goal: "KNOCK THE T-1000 DOWN: SEMI GRILLE"
+      expire: 4s
+  judgment_day_stage_3_started:
+    t2_card:
+      key: judgment_day_card
+      priority: 10
+      tokens:
+        kicker: JUDGMENT DAY  STAGE 3
+        title: MOLTEN STEEL
+        goal: "EVERY RAMP IS A SUPER JACKPOT"
+      expire: 4s
+  judgment_day_stage_4_started:
+    t2_card:
+      key: judgment_day_card
+      priority: 10
+      tokens:
+        kicker: JUDGMENT DAY  STAGE 4
+        title: SELF-SACRIFICE
+        goal: "THE FOUR LAUNCH SITES, IN ORDER"
+      expire: 4s
+# The farewell clip and the T2 finale are in base.yaml: this mode and t2_main
+# both stop on judgment_day_averted, which would clear them.

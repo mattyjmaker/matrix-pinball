@@ -22,9 +22,10 @@ Status (2026-09-24):
   replay. Each is marked "(build)" where it first appears.
 - Scores are placeholders at the VPX prototype's scale, for balancing once the
   machine is playable.
-- Shot names are logical. The ramps, wireforms and upper playfield are not
-  built yet (see 08-this-machine.md), so the switches behind each shot are
-  placeholders on the virtual platform (section 11).
+- Shot names in this document are the Matrix's. The hardware behind them has
+  generic names (section 11 has the table). The ramps, wireforms and upper
+  playfield are not built yet (see 08-this-machine.md), so the switches
+  behind each shot are placeholders on the virtual platform.
 
 Sources: the VPX v1.7 rules summary in 10-dropbox-design-files.md
 (user-provided), the feature list in 09-parts-inventory.md (user-provided),
@@ -194,9 +195,11 @@ round lost on time still moves to the next one.
 
 Acts play in order, but a player can skip ahead before play starts.
 
-- On each player's first ball, before the ball is served, the select holds
-  `ball_starting`. Flippers step through the acts; start confirms. While it is
-  up, start does not add a player. No confirmation in **30 s** starts Act I.
+- On each player's first ball, before the ball is served, the select runs
+  while `game_select` holds `ball_starting` (docs/12-rules-terminator-2.md,
+  section 2; it starts on `start_act_select` once the Matrix is the chosen
+  game). Flippers step through the acts; start confirms. While it is up,
+  start does not add a player. No confirmation in **30 s** starts Act I.
 - Only acts with rules are offered (`AVAILABLE_ACTS` in
   `modes/act_select/code/act_select.py`). With one act the mode steps straight
   out, so today the game starts in Act I with no screen.
@@ -222,9 +225,9 @@ while The One runs.
 - Four hits across the two Sentinel entrance targets open the gate ("Hit the
   Sentinel!", 100,000). A ball into the Sentinel VUK while it is open requests
   the multiball: 3 balls, 20 s ball save.
-- Jackpots on the Sentinel ramp and the boss target, 150,000. Three jackpots
-  (build) free **DOZER**.
-- **Add-a-ball**, once per multiball: hit the two entrance targets and the boss
+- Jackpots on the Sentinel ramp (the backboard ramp, next to the toy) and
+  either boss target, 150,000. Three jackpots (build) free **DOZER**.
+- **Add-a-ball**, once per multiball: hit the two entrance targets and a boss
   target to light it, then shoot the Sentinel VUK. 10 s save on the added ball.
   Peaks at 4 balls.
 - The gate closes and the hit count resets when the multiball ends. Both also
@@ -352,7 +355,7 @@ stage after that time instead of blocking it.
 | `ch2_unplugged`, `ch4_rescue_mb` | 310 | `start_unplugged_mb`, `start_rescue_mb` | YAML |
 | `trinity_mb`, `sentinel_mb` | 320 | `start_trinity_mb`, `start_sentinel_mb` | YAML |
 | `the_one` | 400 | `start_the_one_mb` | `code/the_one.py` |
-| `act_select` | 1000 | `ball_starting` on ball 1 | `code/act_select.py` |
+| `act_select` | 1000 | `start_act_select` from `game_select` on ball 1 | `code/act_select.py` |
 
 Multiballs never start themselves: a lock posts `request_<name>_mb` and
 `act_one` posts `start_<name>_mb` when nothing else is running. Chapters post
@@ -360,11 +363,36 @@ Multiballs never start themselves: a lock posts `request_<name>_mb` and
 
 ### Hardware layers
 
-- **Logical events.** Every playfield switch posts a logical event through
-  `events_when_activated` (for example `trinity_ramp_hit`, `ramp_hit`,
-  `left_shot_hit`, `emp_target_1_hit`). The modes listen to those and to MPF's
-  device events (`drop_target_…`, `balldevice_…_ball_entered`), never to raw
-  switch names, so rewiring a feature changes no rules.
+- **Generic hardware names.** Every switch, coil, device and event names what
+  the hardware is, not what the Matrix calls it, because the playfield will
+  run more than one game (docs/12-rules-terminator-2.md). The modes listen to
+  those events (`left_lock_ramp_hit`, `platform_gate_hit`, `pop_target_1_hit`)
+  and to MPF's device events (`drop_target_popup_1_down`,
+  `balldevice_bd_middle_loop_vuk_ball_entered`), never to raw switch names,
+  so rewiring a feature changes no rules. The Matrix names live in the modes'
+  display text and comments, and in this table. `tests/test_shots.py` fails
+  if a Matrix word gets into a hardware name.
+
+| Matrix name (this document) | Hardware name | Events and devices |
+| --- | --- | --- |
+| Trinity Ramp | left lock ramp | `left_lock_ramp_hit`, `ramp_hit`, `left_shot_hit` |
+| Trinity lock | left lock | `bd_left_lock`, `c_left_lock_post` |
+| Deja Vu Ramp | middle loop ramp | `middle_loop_ramp_hit`, `ramp_hit`, `left_shot_hit` |
+| Deja Vu VUK | middle loop VUK | `bd_middle_loop_vuk` |
+| Real World Ramp | right loop ramp: the far right loop, up and in front of the backboard onto the upper playfield | `right_loop_ramp_hit`, `ramp_hit`, `right_shot_hit` |
+| Real World standups | upper playfield targets | `upper_target_N_hit`, `upper_target_hit` |
+| Sentinel ramp | backboard ramp: next to the toy, up into and behind the backboard, out at the top left of the upper playfield | `backboard_ramp_hit`, `ramp_hit`, `right_shot_hit` |
+| Sentinel entrance targets | platform gate (two front targets that lower and rise) | `platform_gate_left_hit`, `platform_gate_right_hit`, `platform_gate_hit`, diverter `platform_gate` |
+| Sentinel boss target | platform targets (two, on the rising platform) | `platform_target_1_hit`, `platform_target_2_hit`, `platform_target_hit` |
+| Sentinel VUK | platform VUK | `bd_platform_vuk` (see its TODO: the real toy has a subway to the middle loop VUK) |
+| Sentinel magnet | platform magnet | `platform_magnet_hit`, `platform_magnet_grab`, `platform_magnet_release` |
+| Agents | pop-ups | `drop_target_popup_N_down`, bank `popups`, `popups_raise`, `popup_N_raise` |
+| Agents Coming scoop | pop-up scoop | `bd_popup_scoop` |
+| Mission Drop, Mission scoop | mode drop, mode scoop | `drop_target_mode_drop_down`, `mode_drop_reset`, `bd_mode_scoop`, player variable `mode_ready` |
+| Matrix Team drops | five-bank | `drop_target_bank_five_bank_down`, `five_bank_reset` |
+| (unused) | three-bank | bank `three_bank`, `three_bank_reset` |
+| EMP standups | pop area targets | `pop_target_N_hit`, `pop_target_hit` |
+| Ammo Lock, Ammo target | right outlane lock and its target | `bd_right_outlane_lock`, `right_outlane_lock_target_hit` |
 - **Pending hardware.** Everything not yet built or wired is in
   `config/playfield_pending.yaml`, on the `virtual` platform, which
   `hardware: platform: fast, virtual` loads alongside FAST. MPF configures every
@@ -373,10 +401,13 @@ Multiballs never start themselves: a lock posts `request_<name>_mb` and
   `core/switch_controller.py`). To bring a feature online, move its entries to
   `config/config.yaml`, give them FAST numbers and delete `platform: virtual`.
 - Assumptions to check when each feature is built, all marked `TODO` in that
-  file: the Trinity lock has three switched positions; the Ammo Lock holds one
-  ball; the Sentinel gate is a held coil; which ramps count as left and right
-  for the sparring combos (Trinity and Deja Vu left, Real World and Sentinel
-  right).
+  file: the left lock is modelled with three count switches, but the real
+  mech is a post on the ramp's return path with no position switches, so the
+  count will become ramp entries while the post is up; the platform VUK stands
+  in for the toy's subway to the middle loop VUK; the platform gate is a held
+  coil whose energised state is not yet known; which ramps count as left and
+  right for the sparring combos (left lock and middle loop left, right loop
+  and backboard right).
 
 ### Testing
 
