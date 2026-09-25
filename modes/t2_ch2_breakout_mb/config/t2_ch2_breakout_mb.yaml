@@ -1,0 +1,66 @@
+#config_version=6
+
+# Chapter 2: Break-Out Multiball. 3 balls. Jackpots on the Pescadero Ramp
+# (the right loop ramp); the super jackpot is all three Ward standups again.
+# The super jackpot saves SARAH. See docs/12-rules-terminator-2.md, section 7.
+
+mode:
+  start_events: start_breakout_mb
+  stop_events: multiball_breakout_ended
+  events_when_stopped: t2_ch2_ended
+  priority: 310
+
+multiballs:
+  breakout:
+    ball_count: 3
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: mode_t2_ch2_breakout_mb_started
+
+accruals:
+  t2_ch2_super_jackpot:
+    events:
+      - upper_target_1_hit
+      - upper_target_2_hit
+      - upper_target_3_hit
+    events_when_complete: t2_ch2_super_jackpot
+    start_enabled: true
+
+event_player:
+  t2_ch2_super_jackpot: t2_ch2_completed
+
+variable_player:
+  mode_t2_ch2_breakout_mb_started:
+    objective:
+      action: set
+      string: "BREAK-OUT: PESCADERO RAMP FOR JACKPOTS"
+  right_loop_ramp_hit:
+    score: 100000
+  t2_ch2_super_jackpot:
+    score: 500000
+
+widget_player:
+  mode_t2_ch2_breakout_mb_started:
+    video_clip:
+      tokens:
+        clip: pescadero_breakout
+      expire: 8s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: PESCADERO  MULTIBALL
+        title: BREAK-OUT
+        goal: PESCADERO RAMP FOR JACKPOTS
+      expire: 5s
+  right_loop_ramp_hit:
+    mode_banner:
+      tokens:
+        title: JACKPOT
+        detail: OUT THROUGH THE WARD
+      expire: 2s
+  t2_ch2_super_jackpot:
+    mode_banner:
+      tokens:
+        title: SUPER JACKPOT
+        detail: ALL THREE WARD TARGETS
+      expire: 3s

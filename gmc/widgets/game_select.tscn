@@ -1,0 +1,82 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_widget.gd" id="1_widget"]
+[ext_resource type="PackedScene" path="res://assets/parts/countdown_clock.tscn" id="2_clock"]
+[ext_resource type="Theme" uid="uid://ccb1am66a2yg0" path="res://assets/themes/ui-code.tres" id="3_code"]
+[ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_variable.gd" id="4_var"]
+
+[node name="GameSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_widget")
+
+[node name="Scrim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 890.0
+offset_top = 220.0
+offset_right = 1670.0
+offset_bottom = 980.0
+mouse_filter = 2
+color = Color(0, 0.03, 0.01, 0.9)
+
+[node name="Clock" parent="." instance=ExtResource("2_clock")]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 890.0
+offset_top = 220.0
+offset_right = 1670.0
+offset_bottom = 450.0
+
+[node name="Choice" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 910.0
+offset_top = 480.0
+offset_right = 1650.0
+offset_bottom = 960.0
+mouse_filter = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="Heading" type="Label" parent="Choice"]
+layout_mode = 2
+theme = ExtResource("3_code")
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.8)
+theme_override_font_sizes/font_size = 40
+text = "SELECT YOUR GAME"
+horizontal_alignment = 1
+
+[node name="game_option" type="Label" parent="Choice"]
+layout_mode = 2
+theme = ExtResource("3_code")
+theme_override_colors/font_color = Color(0.85, 1, 0.88, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 1, 0.3, 0.4)
+theme_override_font_sizes/font_size = 110
+text = "MATRIX"
+horizontal_alignment = 1
+autowrap_mode = 2
+script = ExtResource("4_var")
+variable_name = "game_option"
+initialize_empty = false
+
+[node name="Hint" type="Label" parent="Choice"]
+layout_mode = 2
+theme = ExtResource("3_code")
+theme_override_colors/font_color = Color(0.5, 1, 0.6, 0.9)
+theme_override_font_sizes/font_size = 34
+text = "FLIPPERS CHANGE   START CONFIRMS"
+horizontal_alignment = 1
+
+[node name="Warning" type="Label" parent="Choice"]
+layout_mode = 2
+theme = ExtResource("3_code")
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.6)
+theme_override_font_sizes/font_size = 28
+text = "ONE GAME FOR EVERY PLAYER"
+horizontal_alignment = 1

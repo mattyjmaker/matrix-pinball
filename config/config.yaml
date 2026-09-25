@@ -75,6 +75,8 @@ machine:
 
 modes:
   - base
+  - game_select
+  # The Matrix (docs/11-rules-act-1.md)
   - act_select
   - act_one
   - trinity_lock
@@ -88,9 +90,39 @@ modes:
   - ch4_rescue_lock
   - ch4_rescue_mb
   - the_one
+  # Terminator 2 (docs/12-rules-terminator-2.md)
+  - t2_main
+  - future_war_lock
+  - future_war_mb
+  - t1000_gate
+  - t1000_mb
+  - t2_ch1_arrival
+  - t2_ch2_pescadero
+  - t2_ch2_breakout_mb
+  - t2_ch3_dyson
+  - t2_ch4_raid_lock
+  - t2_ch4_raid_mb
+  - judgment_day
 
-# Per-player state the rules and the HUD share. See docs/11-rules-act-1.md.
+# Which game this game of pinball is: `matrix` or `t2`. Chosen once per game
+# by game_select on player 1's first ball, shared by every player.
+machine_vars:
+  game_choice:
+    initial_value: matrix
+    value_type: str
+    persist: false
+
+# Per-player state the rules and the HUD share. See docs/11-rules-act-1.md
+# and docs/12-rules-terminator-2.md.
 player_vars:
+  # Copy of the machine's game_choice, so the HUD can show that game's panels.
+  game:
+    initial_value: matrix
+    value_type: str
+  # What the game select is offering while it is up.
+  game_option:
+    initial_value: MATRIX
+    value_type: str
   act:
     initial_value: I
     value_type: str
@@ -136,10 +168,12 @@ player_vars:
   the_one_progress:
     initial_value: 0
     value_type: int
+  # Balls in the left lock, for the HUD's lock cells. Both games use it.
   balls_locked:
     initial_value: 0
     value_type: int
-  oracle_lit:
+  # The pop area targets light the mystery award (Oracle / Vision).
+  mystery_lit:
     initial_value: 0
     value_type: int
   # Multiballs waiting for the running one to end, comma-separated.
@@ -150,10 +184,69 @@ player_vars:
     initial_value: 0
     value_type: int
 
+  # --- Terminator 2 ---
+  # The HUD's chapter marker: CHAPTER 1 to 4, JUDGMENT DAY, then COMPLETE.
+  chapter:
+    initial_value: CHAPTER 1
+    value_type: str
+  t2_chapter_next:
+    initial_value: 1
+    value_type: int
+  saved_john:
+    initial_value: 0
+    value_type: int
+  saved_sarah:
+    initial_value: 0
+    value_type: int
+  saved_dyson:
+    initial_value: 0
+    value_type: int
+  saved_chip:
+    initial_value: 0
+    value_type: int
+  saved_resistance:
+    initial_value: 0
+    value_type: int
+  saved_skynet:
+    initial_value: 0
+    value_type: int
+  saved_count:
+    initial_value: 0
+    value_type: int
+  judgment_day_lit:
+    initial_value: 0
+    value_type: int
+  # 0 until Judgment Day starts, then its stage (1 to 4). Survives ball end.
+  judgment_day_stage:
+    initial_value: 0
+    value_type: int
+  judgment_day_progress:
+    initial_value: 0
+    value_type: int
+  raid_mb_starting:
+    initial_value: 0
+    value_type: int
+  breakout_mb_starting:
+    initial_value: 0
+    value_type: int
+  # 1 once Judgment Day is averted: T2 has no more rules for this player.
+  t2_complete:
+    initial_value: 0
+    value_type: int
+
 settings:
   the_one_threshold:
     label: FREED names to light The One
     sort: 100
+    values:
+      4: "4"
+      5: "5"
+      6: "6"
+    key_type: int
+    default: 4
+  judgment_day_threshold:
+    label: SAVED names to light Judgment Day
+    sort: 110
     values:
       4: "4"
       5: "5"

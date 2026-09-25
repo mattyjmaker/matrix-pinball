@@ -1,11 +1,12 @@
 #config_version=6
 
 # Act select, before each player's first ball. Logic in code/act_select.py.
-# Skipped while only Act I has rules. See docs/11-rules-act-1.md, section 5.
+# Skipped while only Act I has rules. Started by game_select once the Matrix
+# is the chosen game; game_select holds the ball until this mode stops.
+# See docs/11-rules-act-1.md, section 5.
 
 mode:
-  start_events: ball_starting{ball==1}
-  use_wait_queue: true
+  start_events: start_act_select
   priority: 1000
   code: act_select.ActSelect
 

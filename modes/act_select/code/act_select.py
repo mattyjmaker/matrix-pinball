@@ -1,9 +1,9 @@
 """Act select: before a player's first ball, pick which act to start in.
 
-Holds `ball_starting` (the mode uses `use_wait_queue`) until the player
-chooses. Flippers step through the acts, start confirms, and after
-TIMEOUT_SECONDS with no confirmation the game starts in Act I. While the
-select is up the start button does not add a player.
+Started by game_select, which holds `ball_starting` until this mode stops.
+Flippers step through the acts, start confirms, and after TIMEOUT_SECONDS
+with no confirmation the game starts in Act I. While the select is up the
+start button does not add a player.
 
 Only acts with rules are offered. With one act the mode steps straight out,
 so the game starts in Act I with no screen. Add "II" to AVAILABLE_ACTS when

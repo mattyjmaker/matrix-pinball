@@ -162,6 +162,8 @@ class TestDisplay(DisplayTestCase):
             self.fill_troughs()
             self.hit_and_release_switch("s_start")
             self.advance_time_and_run(1)
+            self.hit_and_release_switch("s_start")
+            self.advance_time_and_run(1)
             screens = self.tokens("act_select")
             self.assertEqual("act_select_show", screens[0]["event"])
             self.assertEqual("seconds", screens[0]["arg"])

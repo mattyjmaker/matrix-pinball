@@ -1,0 +1,175 @@
+#config_version=6
+
+# Chapter 4: Cyberdyne Raid multiball, three stages.
+#   Break-In (3 balls): every guard, the four Launch Site standups (pop area
+#     targets) and the three Endoskeletons (pop-ups).
+#   Firefight (4 balls): the Future War Ramp (left lock ramp) lights "Hold the
+#     line" for 10 s; hit an Endoskeleton while it is lit.
+#   Escape (5 balls): a ball over the T-1000 magnet (platform magnet) is caught
+#     as the cruiser just misses the getaway truck. Saves CHIP.
+# See docs/12-rules-terminator-2.md, section 7.
+
+mode:
+  start_events: start_raid_mb
+  stop_events: multiball_raid_ended
+  events_when_stopped: t2_ch4_ended
+  priority: 310
+
+multiballs:
+  raid:
+    ball_count: 3
+    ball_count_type: total
+    ball_locks: bd_right_outlane_lock
+    shoot_again: 20s
+    start_events: mode_t2_ch4_raid_mb_started
+    add_a_ball_events: t2_ch4_firefight_started, t2_ch4_escape_started
+    add_a_ball_shoot_again: 10s
+
+state_machines:
+  t2_ch4_stage:
+    starting_state: breakin
+    states:
+      breakin:
+        label: Break-In
+      firefight:
+        label: Firefight
+        events_when_started: t2_ch4_firefight_started
+      escape:
+        label: Escape
+        events_when_started: t2_ch4_escape_started
+      done:
+        label: Escaped
+    transitions:
+      - source: breakin
+        target: firefight
+        events: t2_ch4_breakin_cleared
+      - source: firefight
+        target: escape
+        events: t2_ch4_hold_the_line
+      - source: escape
+        target: done
+        events: t2_ch4_escaped
+
+accruals:
+  t2_ch4_guards:
+    events:
+      - pop_target_1_hit
+      - pop_target_2_hit
+      - pop_target_3_hit
+      - pop_target_4_hit
+      - drop_target_popup_1_down
+      - drop_target_popup_2_down
+      - drop_target_popup_3_down
+    events_when_complete: t2_ch4_breakin_cleared
+    start_enabled: true
+
+timers:
+  t2_ch4_hold:
+    start_value: 10
+    end_value: 0
+    direction: down
+    control_events:
+      - event: t2_ch4_hold_lit
+        action: restart
+      - event: t2_ch4_hold_the_line
+        action: stop
+
+event_player:
+  mode_t2_ch4_raid_mb_started: popups_raise
+  t2_ch4_firefight_started: popups_raise
+  left_lock_ramp_hit{device.state_machines.t2_ch4_stage.state=="firefight"}: t2_ch4_hold_lit
+  drop_target_bank_popups_down{device.state_machines.t2_ch4_stage.state=="breakin"}: popups_raise
+  drop_target_popup_1_down{device.state_machines.t2_ch4_stage.state=="firefight" and device.timers.t2_ch4_hold.running}: t2_ch4_hold_the_line
+  drop_target_popup_2_down{device.state_machines.t2_ch4_stage.state=="firefight" and device.timers.t2_ch4_hold.running}: t2_ch4_hold_the_line
+  drop_target_popup_3_down{device.state_machines.t2_ch4_stage.state=="firefight" and device.timers.t2_ch4_hold.running}: t2_ch4_hold_the_line
+  t2_ch4_hold_the_line: popups_raise
+  platform_magnet_hit{device.state_machines.t2_ch4_stage.state=="escape"}: t2_ch4_escaped
+  t2_ch4_escaped: platform_magnet_grab, platform_magnet_release|2s, t2_ch4_completed
+
+variable_player:
+  mode_t2_ch4_raid_mb_started:
+    objective:
+      action: set
+      string: "BREAK-IN: HIT EVERY GUARD"
+  pop_target_hit{device.state_machines.t2_ch4_stage.state=="breakin"}:
+    score: 75000
+  drop_target_popup_1_down{device.state_machines.t2_ch4_stage.state=="breakin"}:
+    score: 75000
+  drop_target_popup_2_down{device.state_machines.t2_ch4_stage.state=="breakin"}:
+    score: 75000
+  drop_target_popup_3_down{device.state_machines.t2_ch4_stage.state=="breakin"}:
+    score: 75000
+  t2_ch4_firefight_started:
+    objective:
+      action: set
+      string: "FIREFIGHT: FUTURE WAR RAMP, THEN HIT AN ENDOSKELETON"
+  t2_ch4_hold_the_line:
+    score: 250000
+  t2_ch4_escape_started:
+    objective:
+      action: set
+      string: "ESCAPE: CATCH THE BALL AT THE T-1000 MAGNET"
+  t2_ch4_escaped:
+    score: 1000000
+    objective:
+      action: set
+      string: "THE CHIP IS DESTROYED"
+
+widget_player:
+  mode_t2_ch4_raid_mb_started:
+    chapter_card:
+      key: t2_ch4_stage_card
+      priority: 10
+      tokens:
+        kicker: CYBERDYNE RAID  STAGE 1
+        title: BREAK-IN
+        goal: HIT EVERY GUARD
+      expire: 4s
+  t2_ch4_firefight_started:
+    video_clip:
+      tokens:
+        clip: cyberdyne_firefight
+      expire: 6s
+    chapter_card:
+      key: t2_ch4_stage_card
+      priority: 10
+      tokens:
+        kicker: CYBERDYNE RAID  STAGE 2
+        title: FIREFIGHT
+        goal: FUTURE WAR RAMP, THEN HIT AN ENDOSKELETON
+      expire: 4s
+  t2_ch4_escape_started:
+    chapter_card:
+      key: t2_ch4_stage_card
+      priority: 10
+      tokens:
+        kicker: CYBERDYNE RAID  STAGE 3
+        title: ESCAPE
+        goal: CATCH THE BALL AT THE T-1000 MAGNET
+      expire: 4s
+  t2_ch4_hold_lit:
+    mode_banner:
+      tokens:
+        title: HOLD THE LINE
+        detail: HIT AN ENDOSKELETON NOW
+      expire: 3s
+    countdown:
+      key: t2_ch4_hold_clock
+      priority: 10
+      tokens:
+        label: HOLD THE LINE
+        event: timer_t2_ch4_hold_tick
+        seconds: "10"
+  t2_ch4_hold_the_line:
+    countdown:
+      key: t2_ch4_hold_clock
+      action: remove
+  timer_t2_ch4_hold_complete:
+    countdown:
+      key: t2_ch4_hold_clock
+      action: remove
+  t2_ch4_escaped:
+    video_clip:
+      tokens:
+        clip: dyson_sacrifice
+      expire: 6s

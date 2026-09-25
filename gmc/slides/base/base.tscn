@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dxmhitrmhqv4s"]
+[gd_scene load_steps=20 format=3 uid="uid://dxmhitrmhqv4s"]
 
 [ext_resource type="Script" path="res://addons/mpf-gmc/classes/mpf_slide.gd" id="1_slide"]
 [ext_resource type="Shader" path="res://assets/shaders/matrix_rain.gdshader" id="2_rain"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://slides/base/power_stations.gd" id="10_locks"]
 [ext_resource type="Script" path="res://slides/base/trace_readout.gd" id="11_trace"]
 [ext_resource type="FontFile" uid="uid://x50uvbht14xy" path="res://assets/fonts/JackInput.ttf" id="12_mono"]
+[ext_resource type="Script" path="res://slides/base/game_panel.gd" id="13_panel"]
 
 [sub_resource type="FontVariation" id="FontVariation_readout"]
 base_font = ExtResource("12_mono")
@@ -203,13 +204,24 @@ script = ExtResource("7_var")
 variable_name = "ball"
 template_string = "BALL %s"
 
-[node name="act" type="Label" parent="."]
+[node name="MatrixMarker" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_top = 64.0
 offset_bottom = 130.0
 grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("13_panel")
+game = "matrix"
+
+[node name="act" type="Label" parent="MatrixMarker"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme = ExtResource("6_code")
 theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.8)
 theme_override_font_sizes/font_size = 48
@@ -218,6 +230,34 @@ horizontal_alignment = 1
 script = ExtResource("7_var")
 variable_name = "act"
 template_string = "ACT %s"
+initialize_empty = false
+
+[node name="T2Marker" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 64.0
+offset_bottom = 130.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("13_panel")
+game = "t2"
+
+[node name="chapter" type="Label" parent="T2Marker"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("6_code")
+theme_override_colors/font_color = Color(0.45, 0.95, 0.55, 0.8)
+theme_override_font_sizes/font_size = 48
+text = "CHAPTER 1"
+horizontal_alignment = 1
+script = ExtResource("7_var")
+variable_name = "chapter"
 initialize_empty = false
 
 [node name="PlayerScores" type="VBoxContainer" parent="."]
@@ -300,6 +340,8 @@ offset_top = 300.0
 offset_right = 560.0
 offset_bottom = 980.0
 theme_override_constants/separation = 10
+script = ExtResource("13_panel")
+game = "matrix"
 
 [node name="Heading" type="Label" parent="Roster"]
 layout_mode = 2
@@ -378,6 +420,85 @@ script = ExtResource("9_roster")
 key = "LINK"
 freed = false
 
+[node name="RosterT2" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 0
+offset_left = 96.0
+offset_top = 300.0
+offset_right = 560.0
+offset_bottom = 980.0
+theme_override_constants/separation = 10
+script = ExtResource("13_panel")
+game = "t2"
+
+[node name="Heading" type="Label" parent="RosterT2"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.55)
+theme_override_font_sizes/font_size = 34
+text = "SAVED"
+
+[node name="Underline" type="ColorRect" parent="RosterT2"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.16, 0.9, 0.32, 0.3)
+
+[node name="John" type="Label" parent="RosterT2"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] JOHN"
+script = ExtResource("9_roster")
+key = "JOHN"
+prefix = "saved"
+freed = false
+[node name="Sarah" type="Label" parent="RosterT2"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] SARAH"
+script = ExtResource("9_roster")
+key = "SARAH"
+prefix = "saved"
+freed = false
+[node name="Dyson" type="Label" parent="RosterT2"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] DYSON"
+script = ExtResource("9_roster")
+key = "DYSON"
+prefix = "saved"
+freed = false
+[node name="Chip" type="Label" parent="RosterT2"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] CHIP"
+script = ExtResource("9_roster")
+key = "CHIP"
+prefix = "saved"
+freed = false
+[node name="Resistance" type="Label" parent="RosterT2"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] RESISTANCE"
+script = ExtResource("9_roster")
+key = "RESISTANCE"
+prefix = "saved"
+freed = false
+[node name="Skynet" type="Label" parent="RosterT2"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] SKYNET"
+script = ExtResource("9_roster")
+key = "SKYNET"
+prefix = "saved"
+freed = false
+
 [node name="Locks" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 3
@@ -401,6 +522,19 @@ theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.55)
 theme_override_font_sizes/font_size = 34
 text = "POWER STATIONS"
 horizontal_alignment = 2
+script = ExtResource("13_panel")
+game = "matrix"
+
+[node name="HeadingT2" type="Label" parent="Locks"]
+visible = false
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.55)
+theme_override_font_sizes/font_size = 34
+text = "FUTURE WAR LOCK"
+horizontal_alignment = 2
+script = ExtResource("13_panel")
+game = "t2"
 
 [node name="Cells" type="HBoxContainer" parent="Locks"]
 layout_mode = 2

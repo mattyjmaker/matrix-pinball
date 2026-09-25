@@ -1,0 +1,76 @@
+#config_version=6
+
+# Chapter 4: Cyberdyne Raid, lock phase.
+#   Dyson's access: the Displacement VUK (middle loop VUK) lights the Arsenal
+#   Lock (the right outlane lock).
+#   Arm up: lock three balls at the Arsenal Lock (virtual count; it holds one
+#   ball physically). The third starts t2_ch4_raid_mb.
+# The base mode's outlane drain save stands down while this runs.
+# See docs/12-rules-terminator-2.md, section 7.
+
+mode:
+  start_events: start_t2_ch4
+  stop_events: mode_t2_ch4_raid_mb_started
+  priority: 300
+
+multiball_locks:
+  raid_lock:
+    lock_devices: bd_right_outlane_lock
+    balls_to_lock: 3
+    locked_ball_counting_strategy: virtual_only
+    enable_events: t2_ch4_lock_lit
+    reset_count_for_current_player_events: mode_t2_ch4_raid_lock_started
+
+event_player:
+  balldevice_bd_middle_loop_vuk_ball_entered{current_player.t2_ch4_lock_lit==0}: t2_ch4_lock_lit
+  multiball_lock_raid_lock_full: request_raid_mb
+
+variable_player:
+  mode_t2_ch4_raid_lock_started:
+    objective:
+      action: set
+      string: "DYSON'S ACCESS: SHOOT THE DISPLACEMENT VUK"
+    t2_ch4_lock_lit:
+      action: set
+      int: 0
+  t2_ch4_lock_lit:
+    t2_ch4_lock_lit:
+      action: set
+      int: 1
+    objective:
+      action: set
+      string: "ARM UP: LOCK 3 AT THE ARSENAL LOCK"
+  multiball_lock_raid_lock_locked_ball:
+    score: 50000
+
+widget_player:
+  mode_t2_ch4_raid_lock_started:
+    video_clip:
+      tokens:
+        clip: cyberdyne_breakin
+      expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: TERMINATOR 2  CHAPTER 4
+        title: CYBERDYNE RAID
+        goal: "DYSON'S ACCESS: SHOOT THE DISPLACEMENT VUK"
+      expire: 5s
+  t2_ch4_lock_lit:
+    mode_banner:
+      tokens:
+        title: ARSENAL LOCK LIT
+        detail: LOCK 3 BALLS
+      expire: 3s
+  multiball_lock_raid_lock_locked_ball{total_balls_locked==1}:
+    mode_banner:
+      tokens:
+        title: BALL LOCKED
+        detail: TWO BALLS LEFT
+      expire: 2s
+  multiball_lock_raid_lock_locked_ball{total_balls_locked==2}:
+    mode_banner:
+      tokens:
+        title: BALL LOCKED
+        detail: ONE MORE BALL
+      expire: 2s

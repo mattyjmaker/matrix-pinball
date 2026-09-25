@@ -1,0 +1,88 @@
+#config_version=6
+
+# T-1000 Multiball: 3 balls. Jackpots on the T-1000 Ramp (backboard ramp) and
+# either Semi Grille target (platform targets); three jackpots save SKYNET.
+# Add-a-ball, once per multiball: hit both Cruiser targets and a Semi Grille
+# target to light it, then shoot the T-1000 VUK. Peaks at 4 balls.
+# (The Matrix's Sentinel Multiball on the same hardware.)
+# See docs/12-rules-terminator-2.md, section 8.
+
+mode:
+  start_events: start_t1000_mb
+  stop_events: multiball_t1000_ended
+  priority: 320
+
+multiballs:
+  t1000:
+    ball_count: 3
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: mode_t1000_mb_started
+    add_a_ball_events: t1000_add_a_ball
+    add_a_ball_shoot_again: 10s
+
+accruals:
+  t1k_add_a_ball_targets:
+    events:
+      - platform_gate_left_hit
+      - platform_gate_right_hit
+      - platform_target_hit
+    events_when_complete: t1000_add_a_ball_lit
+    start_enabled: true
+
+counters:
+  t1k_jackpots:
+    count_events: t1000_jackpot
+    count_complete_value: 3
+    events_when_complete: t1000_mb_completed
+    start_enabled: true
+
+event_player:
+  backboard_ramp_hit: t1000_jackpot
+  platform_target_hit: t1000_jackpot
+  balldevice_bd_platform_vuk_ball_entered{current_player.t1000_aab_lit==1}: t1000_add_a_ball
+
+variable_player:
+  mode_t1000_mb_started:
+    objective:
+      action: set
+      string: "T-1000 MULTIBALL: T-1000 RAMP AND SEMI GRILLE FOR JACKPOTS"
+    t1000_aab_lit:
+      action: set
+      int: 0
+  t1000_jackpot:
+    score: 150000
+  t1000_add_a_ball_lit:
+    t1000_aab_lit:
+      action: set
+      int: 1
+  t1000_add_a_ball:
+    t1000_aab_lit:
+      action: set
+      int: 0
+
+widget_player:
+  mode_t1000_mb_started:
+    video_clip:
+      tokens:
+        clip: t1000_reveal
+      expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: MULTIBALL
+        title: T-1000
+        goal: T-1000 RAMP AND SEMI GRILLE FOR JACKPOTS
+      expire: 4s
+  t1000_add_a_ball_lit:
+    mode_banner:
+      tokens:
+        title: ADD-A-BALL LIT
+        detail: SHOOT THE T-1000 VUK
+      expire: 3s
+  t1000_jackpot:
+    mode_banner:
+      tokens:
+        title: JACKPOT
+        detail: ""
+      expire: 2s

@@ -195,9 +195,11 @@ round lost on time still moves to the next one.
 
 Acts play in order, but a player can skip ahead before play starts.
 
-- On each player's first ball, before the ball is served, the select holds
-  `ball_starting`. Flippers step through the acts; start confirms. While it is
-  up, start does not add a player. No confirmation in **30 s** starts Act I.
+- On each player's first ball, before the ball is served, the select runs
+  while `game_select` holds `ball_starting` (docs/12-rules-terminator-2.md,
+  section 2; it starts on `start_act_select` once the Matrix is the chosen
+  game). Flippers step through the acts; start confirms. While it is up,
+  start does not add a player. No confirmation in **30 s** starts Act I.
 - Only acts with rules are offered (`AVAILABLE_ACTS` in
   `modes/act_select/code/act_select.py`). With one act the mode steps straight
   out, so today the game starts in Act I with no screen.
@@ -353,7 +355,7 @@ stage after that time instead of blocking it.
 | `ch2_unplugged`, `ch4_rescue_mb` | 310 | `start_unplugged_mb`, `start_rescue_mb` | YAML |
 | `trinity_mb`, `sentinel_mb` | 320 | `start_trinity_mb`, `start_sentinel_mb` | YAML |
 | `the_one` | 400 | `start_the_one_mb` | `code/the_one.py` |
-| `act_select` | 1000 | `ball_starting` on ball 1 | `code/act_select.py` |
+| `act_select` | 1000 | `start_act_select` from `game_select` on ball 1 | `code/act_select.py` |
 
 Multiballs never start themselves: a lock posts `request_<name>_mb` and
 `act_one` posts `start_<name>_mb` when nothing else is running. Chapters post

@@ -127,14 +127,18 @@ find, so the list must only name switches that are currently defined.
 
 ## Game rules
 
-Act I (the first film) is implemented: four chapter modes in film order, the
-VPX Trinity and Sentinel multiballs, the FREED roster and The One wizard. The
-rules, every timer and score, and the mode map are in
-`docs/11-rules-act-1.md`.
+The cabinet runs two games on the one playfield. A game select before the
+first ball chooses one for every player: flippers step, start confirms, and
+after 15 s with no choice the Matrix starts.
 
-A second selectable game, Terminator 2, is planned but not implemented. Its
-design, including the Game Select mode that chooses between Matrix and
-Terminator 2 before play, is in `docs/12-rules-terminator-2.md`.
+- **The Matrix, Act I** (the first film): four chapter modes in film order,
+  the VPX Trinity and Sentinel multiballs, the FREED roster and The One
+  wizard. The rules, every timer and score, and the mode map are in
+  `docs/11-rules-act-1.md`.
+- **Terminator 2**: four chapter modes in film order, the Future War and
+  T-1000 multiballs, the SAVED roster and the Judgment Day wizard, on the same
+  hardware under its own names. The rules and the game select are in
+  `docs/12-rules-terminator-2.md`.
 
 ### Running the tests
 
@@ -236,19 +240,27 @@ follows; until then each element shows its authored placeholder.
 | Variable | Type | Drives |
 | --- | --- | --- |
 | `score`, `player`, `ball` | int | Score, player and ball readouts |
-| `act` | str | The `ACT ...` marker, e.g. `I`, `II`, `III` |
+| `game` | str | `matrix` or `t2`: which game's HUD panels are shown |
+| `act` | str | The `ACT ...` marker, e.g. `I`, `II`, `III` (Matrix) |
+| `chapter` | str | The marker for Terminator 2: `CHAPTER 1`, `JUDGMENT DAY`, `COMPLETE` |
 | `objective` | str | The objective line above the score |
-| `balls_locked` | int | How many power station cells are lit |
+| `balls_locked` | int | How many lock cells are lit (both games) |
 | `freed_trinity`, `freed_tank`, … | bool | Lights that name in the FREED roster |
+| `saved_john`, `saved_sarah`, … | bool | Lights that name in the SAVED roster |
 
-The Act I modes set all of these (docs/11-rules-act-1.md, section 9).
+The Act I modes set all of these (docs/11-rules-act-1.md, section 9); the
+Terminator 2 modes set theirs (docs/12-rules-terminator-2.md, section 11).
 
 #### Stage widgets
 
 The modes draw on the centre stage with five widgets in `gmc/widgets/`:
 `countdown` (a hurry-up clock that churns and locks like the trace readout),
-`chapter_card`, `mode_banner`, `pill_choice` and `act_select`. The zones they
-use, and the rules for adding more, are in docs/11-rules-act-1.md, section 9.
+`chapter_card`, `mode_banner`, `pill_choice` and `act_select`, plus
+`game_select` and `dyson_choice` for Terminator 2. The zones they use, and the
+rules for adding more, are in docs/11-rules-act-1.md, section 9. The HUD's
+game-specific parts (the ACT or CHAPTER marker, the FREED or SAVED roster, the
+lock heading) carry `slides/base/game_panel.gd` and follow the player variable
+`game`, so one `base.tscn` serves both games.
 In short: a mode's widgets are cleared when it stops, so a mode's ending is
 shown by a mode that keeps running, and a clock on screen is changed with
 `action: update`.
