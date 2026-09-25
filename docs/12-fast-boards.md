@@ -565,6 +565,25 @@ Ordered by impact.
    door pins, J10 D5, and the filter board's CPU voltage range. In each case
    the pinout table and the silkscreen take precedence.
 
+## 6. Printable sheets
+
+`tools/board_sheets.py` builds A4 landscape reference sheets for printing and
+keeping at the machine: one PDF per board plus a combined binder
+(`printouts/fast-boards-binder.pdf`). Each sheet has FAST's board diagram, a
+drawn pin strip and table for every connector (pin 1 end, key position, FAST
+wire colour), this machine's assignment from `config/config.yaml`, and blank
+spaces for recording fuse values, loop order and test results.
+
+- Run: `python3 tools/board_sheets.py`. It needs `reportlab`, `pypdf`,
+  `pillow` and `pyyaml` (`pip install reportlab pypdf pillow pyyaml`) and
+  internet access to fastpinball.com on the first run.
+- Re-run after changing switch or coil numbers, so the "This machine" columns
+  stay current. The sheets record the git revision they were built from.
+- `printouts/` is git-ignored. The sheets embed FAST Pinball's diagrams, and
+  optionally photos of this machine's boards from `printouts/photos/`
+  (`cabinet_io.jpg`, `opto_flipper.jpg`); this repo is public, so neither is
+  committed.
+
 ## Sources
 
 Official, fastpinball.com (fetched 2026-09-25):

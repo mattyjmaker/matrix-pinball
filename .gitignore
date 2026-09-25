@@ -11,3 +11,7 @@ gmc/video/*
 
 # Python bytecode from mode code and the tests.
 __pycache__/
+
+# Printable board sheets (tools/board_sheets.py). Not committed: they embed
+# FAST Pinball's diagrams and photos of this machine, and this repo is public.
+printouts/
