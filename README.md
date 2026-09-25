@@ -132,6 +132,10 @@ VPX Trinity and Sentinel multiballs, the FREED roster and The One wizard. The
 rules, every timer and score, and the mode map are in
 `docs/11-rules-act-1.md`.
 
+A second selectable game, Terminator 2, is planned but not implemented. Its
+design, including the Game Select mode that chooses between Matrix and
+Terminator 2 before play, is in `docs/12-rules-terminator-2.md`.
+
 ### Running the tests
 
 With the MPF venv active, from the repo root:
