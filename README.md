@@ -10,7 +10,7 @@ Godot Media Controller (GMC) and FAST Pinball Neuron hardware.
 | MPF | 0.80.x | Requires Python 3.10 to 3.14 |
 | GMC addon | 1.0.0 | Vendored in `gmc/addons/mpf-gmc`. Latest release; verified running on Godot 4.7.2 |
 | Godot | 4.7.2 (latest stable) | Download from godotengine.org, not the distro package. The project is tagged `4.7`. |
-| FAST hardware | Neuron, FP-EXP-2000, FP-CAB-0001, FP-I/O-1616, FP-I/O-3208 | Supported by mainline MPF. No FAST fork needed. FAST's own MPF docs and starter configs are at https://fastpinball.com/mpf/ |
+| FAST hardware | Neuron, FP-EXP-2000, FP-I/O-0024 (Cabinet I/O), FP-I/O-1616, FP-I/O-3208 | Supported by mainline MPF. No FAST fork needed. FAST's own MPF docs and starter configs are at https://fastpinball.com/mpf/ |
 
 ## Layout
 
@@ -384,20 +384,25 @@ FAST numbers. They are commented out in `config/config.yaml` and marked
 - The plunger lane has no switch, so the trough ejects directly to the playfield
   as described in the MPF docs for plunger lanes without a switch.
 
-### Cabinet I/O board (FP-CAB-0001)
+### Cabinet I/O board (FP-I/O-0024)
 
 `s_left_flipper`, `s_right_flipper`, `s_start` and the `flippers:` section are
 now configured against the `cab` board, so the side flipper buttons and the
-start button work once the board is wired. The board is internally an
-`FP-I/O-0024`: 24 switch inputs (`cab-0` to `cab-23`) and 8 drivers
-(`cab-0` to `cab-7`). The numbers in the config follow FAST's recommended
+start button work once the board is wired. The board has 24 switch inputs
+(`cab-0` to `cab-23`) and 8 drivers (`cab-0` to `cab-7`).
+
+The config declares it as `FP-I/O-0024`, the model FAST sells publicly. The
+part number on the board itself has not been read yet. MPF 0.80 stops at
+startup if the `model:` does not match what the board reports, and it does not
+treat `FP-CAB-0001` as the same board. See `docs/12-fast-boards.md` for the
+pinouts and the checks to do. The numbers in the config follow FAST's recommended
 cabinet recipe and are **not yet confirmed on this machine**:
 
 | Device | Number | Header |
 | --- | --- | --- |
-| `s_left_flipper` | `cab-8` | left-side cabinet header (`cab-8` to `cab-15`) |
-| `s_start` | `cab-10` | left-side cabinet header |
-| `s_right_flipper` | `cab-16` | right-side cabinet header (`cab-16` to `cab-23`) |
+| `s_left_flipper` | `cab-8` | J1 cabinet left, pin 1 (`cab-8` to `cab-15`) |
+| `s_start` | `cab-10` | J1 cabinet left, pin 3 |
+| `s_right_flipper` | `cab-16` | J9 cabinet right, pin 1 (`cab-16` to `cab-23`) |
 
 MPF only range-checks these against the 24 inputs the board reports, so a
 wrong-but-in-range number will not raise an error. Confirm each one in the

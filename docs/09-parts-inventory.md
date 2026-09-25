@@ -22,7 +22,7 @@ The **Feb 2023 order** was placed through Pinside/Trident Pinball and paid 2023-
 | Part | Qty | Status | Notes |
 |---|---|---|---|
 | FAST Neuron starter bundle + power supplies + connector/pin pack | 1 | HAVE | Feb 2023 order. Running on this PC as `/dev/ttyACM*` (see 08-this-machine.md). |
-| FAST Expansion Board, 256 LEDs | 1 | HAVE | Neuron bundle option |
+| FAST Expansion Board, 256 LEDs (FP-EXP-0081) | 1 | HAVE | Neuron bundle option |
 | FAST Expansion Board, 128 LEDs + 4 servos (FP-EXP-0071) + connectors | 1 | HAVE | Feb 2023 |
 | FAST network cables: 7 ft ×2, 2 ft ×4 | 6 | HAVE | Feb 2023. The BOM says 3 ft ×4, but the cart shows 2 ft. |
 | FAST vertical mount bracket set | 3 | HAVE | Feb 2023 |
@@ -30,7 +30,7 @@ The **Feb 2023 order** was placed through Pinside/Trident Pinball and paid 2023-
 | FAST I/O 1616 (Neuron version) + connectors | 1 | HAVE (2nd) | This is a **second** 1616, so there are 2 in total. |
 | FAST 3 ft network cable | 2 | HAVE | Second Order |
 | FAST vertical mount bracket set | 3 | HAVE | Second Order |
-| FAST Cabinet I/O board + connectors | 1 | HAVE | Third Order |
+| FAST Cabinet I/O board + connectors | 1 | HAVE | Third Order. FAST's public Cabinet I/O is the FP-I/O-0024; the part number on this board has not been read yet (see 12-fast-boards.md). |
 | FAST RGB/LED inserts | 50-pack | HAVE | Feb 2023 |
 | Wire, 1,400 ft in 11 colours (wirebot.xyz) | 1 lot | HAVE | |
 
@@ -39,11 +39,12 @@ The **Feb 2023 order** was placed through Pinside/Trident Pinball and paid 2023-
 | Where | Board | Part no. | On a bus? |
 |---|---|---|---|
 | Backbox | FAST **Smart Power Filter Board** (the "big capacitor board") | FP-PWR-0007 | EXP bus, via a 5-wire cable from its J7 BREAKOUT header to a Neuron breakout header |
-| Backbox | FAST **Neuron** controller | — | host USB; hosts the NET and EXP buses |
+| Backbox | FAST **Neuron** controller | FP-CPU-2000 | host USB; hosts the NET and EXP buses |
 | Playfield, back | FAST **I/O 1616** | FP-I/O-1616 | NET loop |
 | Playfield, rear | FAST **Playfield Interchange Board** | FP-PWR-0030 | **No** — passive |
 | Playfield | FAST **I/O 3208** — flippers and the lower third are primarily wired to this one | FP-I/O-3208 | NET loop |
 | Playfield, middle | FAST **I/O 1616** (the 2nd one) | FP-I/O-1616 | NET loop |
+| Cabinet, front left | FAST **Cabinet I/O** (mounted, not wired) | FP-I/O-0024 expected, not yet read off the board | NET loop |
 
 So the NET loop carries **2× 1616 + 1× 3208 + the Cabinet I/O** (the latter mounted but unwired — see below).
 
@@ -55,11 +56,13 @@ Both the Smart Power Filter Board and the Playfield Interchange Board ship in th
 
 ✅ The **FP-I/O-3208 does exist** and is installed, even though it never appeared in the BOM or the Feb 2023 FAST cart. The config's `bottom32: FP-I/O-3208` is correct. (The Dropbox `FAST_3208_HEAT_PRESS_M3_v15.stl` mount is presumably for it.)
 
-⚠ **The config is missing a board.** `config/config.yaml`'s `io_loop:` declares only three — `cab` (FP-CAB-0001), `top16` (FP-I/O-1616) and `bottom32` (FP-I/O-3208) — but there are two 1616s installed. The middle 1616 needs its own entry, and the `order:` values must match the real daisy-chain order out of the Neuron, or every switch and driver number shifts to the wrong board.
+⚠ **The config is missing a board.** `config/config.yaml`'s `io_loop:` declares only three — `cab` (now FP-I/O-0024, previously FP-CAB-0001), `top16` (FP-I/O-1616) and `bottom32` (FP-I/O-3208) — but there are two 1616s installed. The middle 1616 needs its own entry, and the `order:` values must match the real daisy-chain order out of the Neuron, or every switch and driver number shifts to the wrong board.
 
-**Cabinet I/O (FP-CAB-0001): installed but not yet wired** (user, 2026-09-20). The config expects it at `order: 1`. Two consequences: the `cab-…` switch numbers (flipper buttons, start) and the cabinet drivers (knocker, button lamps) can't be finalised yet; and if its **NET cable isn't in the I/O loop**, `order: 1` is wrong and every other board's order shifts.
+**Cabinet I/O (FP-I/O-0024 expected): installed but not yet wired** (user, 2026-09-20). The config expects it at `order: 1`. Two consequences: the `cab-…` switch numbers (flipper buttons, start) and the cabinet drivers (knocker, button lamps) can't be finalised yet; and if its **NET cable isn't in the I/O loop**, `order: 1` is wrong and every other board's order shifts.
 
 ⚠ **No LED expansion boards are installed or configured.** The user owns two (FP-EXP-0081 256-LED and FP-EXP-0071 128-LED + 4-servo), and `config/config.yaml`'s `exp:` section lists only the Neuron's own `FP-EXP-2000` plus the power filter breakout. So there are no playfield RGB LEDs or servos wired yet — consistent with wiring being unfinished.
+
+Per-board pinouts, wiring rules and open checks: 12-fast-boards.md.
 
 Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/playfield-interchange-board/) · [wiring it](https://fastpinball.com/wiring/neuron/playfield-interchange/) · [Smart Power Filter Board](https://fastpinball.com/products/power/smart-power-filter-board/) · [part number lookup](https://fastpinball.com/products/part-numbers/)
 

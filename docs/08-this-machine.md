@@ -10,7 +10,9 @@ This is the production cabinet PC, and it is also used for development. Set up o
 ### Boards installed (user, 2026-09-20)
 - **Backbox:** the FAST Smart Power Filter Board (FP-PWR-0007, the "big capacitor board") + the Neuron.
 - **Playfield:** I/O 1616 at the back, the FAST Playfield Interchange Board (FP-PWR-0030, passive — no MPF config needed), the I/O 3208 (flippers and the lower third are primarily wired to it), and the second I/O 1616 in the middle.
-- **Cabinet:** the Cabinet I/O (FP-CAB-0001) **is installed, but not yet wired** (user, 2026-09-20).
+- **Cabinet:** the Cabinet I/O **is installed, but not yet wired** (user, 2026-09-20). Its part number has not been read off the board. FAST's public Cabinet I/O is the FP-I/O-0024, and the config now uses that model; the repo previously said FP-CAB-0001. See 12-fast-boards.md, section 2, check 1.
+
+Per-board pinouts, FAST's wiring rules and the checks still to do on the machine are in 12-fast-boards.md.
 
 See 09-parts-inventory.md for the capacity analysis. The 3208 is confirmed real, which resolves an earlier open question.
 
@@ -28,9 +30,8 @@ What this means for the MPF side:
 
 ### Wiring colour convention (user, 2026-09-22)
 
-This machine's own convention. Recorded as user-provided; it has not been
-cross-checked against FAST's published wiring guides, which are at
-fastpinball.com/wiring/neuron.
+This machine's own convention, recorded as user-provided. It was checked
+against FAST's wiring standard on 2026-09-25 (12-fast-boards.md, section 4).
 
 | Circuit | Leg | Colour |
 | --- | --- | --- |
@@ -41,6 +42,17 @@ fastpinball.com/wiring/neuron.
 
 So a cabinet flipper button is orange out to the button and purple back, and a
 flipper coil is blue on the positive run and black on the negative.
+
+Compared with FAST's standard (Official, fastpinball.com/wiring/standards):
+- Orange, purple and blue match.
+- Black on the coil negative does not match. FAST uses grey or white for the
+  wire from the coil to the I/O board driver pin, and keeps black for ground
+  returns. That includes the 48 V toxic ground from each I/O board's GND pins
+  back to the Playfield Interchange Board.
+- Using black for driver lines makes a control line look like a ground
+  return. Decide whether to use grey or white for the wiring still to do.
+- FAST's other colours: yellow for 12 V, red for 5 V, white for LED data,
+  and black for all DC ground returns.
 
 Not yet recorded, and worth adding here as they are decided: LED and lamp
 wiring, opto power and signal, ground and earth bonding, and whether any
@@ -67,10 +79,15 @@ types and compatibility with the Neuron-generation Cabinet I/O are unknown.
 - Opto power: the left and right Cabinet I/O switch headers each have their
   own always-on 12 V output (user, 2026-09-25). Power each side's opto board
   from its own header's 12 V instead of J11 (SHAKER PWR), which keeps the
-  optos off the shaker supply and keeps each side's wiring local. The
-  pin's current rating is not known here; check it in FAST's Cabinet I/O
-  manual. That 12 V pin sits in the same connector as the switch inputs,
-  so check pin 1 orientation before plugging in.
+  optos off the shaker supply and keeps each side's wiring local. FAST's
+  pages give no current rating for these pins. That 12 V pin (pin 13) sits
+  in the same connector as the switch inputs, so check pin 1 orientation
+  before plugging in.
+- FAST's own guide says to power opto flipper buttons from J11 (SHAKER PWR),
+  which has its own ground pin. The side headers have 12 V (pin 13) but only
+  the switch return G (pin 9) as a return path. Whether G is rated to carry
+  opto emitter current is not published (Unverified). Ask FAST before relying
+  on it, or use J11 as FAST recommends.
 - Fallback: the owned Stern 500-6890-01 leaf switches wire straight to the
   Cabinet I/O headers with no board and need no config change.
 
@@ -81,7 +98,7 @@ donated car speakers. To add: the Kenwood KFC-WPS1200F 12" sub, driven by the
 Blaupunkt AMP1501.
 
 Neither the audio signal nor the sub amp's power goes through the FAST boards.
-The Cabinet I/O (FP-CAB-0001) only carries switch inputs and low-side drivers.
+The Cabinet I/O only carries switch inputs and low-side drivers.
 The Smart Power Filter Board's 12 V headers are 0.156" parts rated 7 A per pin
 (FAST, "Smart Power Filter Board Wiring"), while the AMP1501 carries
 2 x 20 A fuses. FAST's own audio option is the FAST Audio Interface board
@@ -161,6 +178,12 @@ shake the cabinet, not only background bass. Consequences:
   show (see 04-game-logic-and-mechs.md, "Shakers"). `shakers:` needs the
   FAST EXP-1313, which is not owned. The shaker's voltage, current and
   diode are not yet checked.
+- Conflict: the Cabinet I/O has one high-current driver (driver 7, D1 on J2),
+  and the knocker is also planned for it. Its other outputs are
+  current-limited LED drivers (L0 to L5) and logic outputs (D5, D6), which
+  cannot run a motor by FAST's ratings. FAST's shaker guide says a regular
+  driver works "with caveats around the snubber" and recommends the EXP-1313.
+  See 12-fast-boards.md, section 5, finding 3.
 
 Open items:
 - [x] Order the Mean Well RSP-500-12 and the 50 A fuse (user, 2026-09-23).
@@ -178,13 +201,17 @@ Open items:
       third supply's added load.
 - [ ] Read the labels on the two existing backbox Mean Wells to confirm they
       are the RSP-500-48 and LRS-150-12.
+- [ ] Decide which device gets the Cabinet I/O's only high-current driver
+      (`cab-7`): the knocker or the shaker. The other needs an FP-EXP-1313
+      (shaker) or a spare playfield I/O driver run to the cabinet.
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
-      assigning it a Cabinet I/O driver. It is installed in the cabinet, not
+      assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
       JJP shaker kits (041-5029-04) as 12 V DC, 3100 RPM; its current is not
       published, so read the fitted motor's label or measure its winding
       resistance (stall current is roughly 12 V / R). Planned wiring: motor +
-      to Cabinet I/O J11 (SHAKER PWR, 12 V), motor - to a Cabinet I/O driver,
+      to Cabinet I/O J11 (SHAKER PWR, 12 V), motor - to driver 7 (J2 D1) if
+      the shaker gets it,
       diode across the motor with the band to +12 V. The flipper optos take
       12 V from the side switch headers, not J11 (see "Cabinet flipper opto
       boards"). Still run the shaker hard once while watching the flipper
@@ -265,9 +292,20 @@ Logs go to `~/matrix-pinball/logs/`.
       24 inputs the board reports and nothing more, so a wrong-but-in-range
       number reads the wrong input silently. Verify in the service-mode switch
       test once the board is wired.
+- [ ] **Do the board checks in 12-fast-boards.md, section 2.** The most
+      important are the Cabinet I/O part number (MPF 0.80 aborts if the
+      `model:` does not match the board), the physical loop order, and the
+      Neuron firmware version (v2.13 or newer is needed for the Cabinet I/O).
+- [ ] **48 V enable.** The Smart Power Filter Board's software 48 V enable is
+      not released (FAST, as fetched 2026-09-25), so 48 V flows only while its
+      J8 (ENA IN) pins 1 and 3 are closed. Wire the coin door interlock to J8
+      (and optionally J9 ENA OUT to a Cabinet I/O switch input), or jumper J8
+      for testing.
 - [ ] **Add the second 1616 to `io_loop:` in `config/config.yaml`.** The config declares only three boards (`cab`, `top16`, `bottom32`) but two 1616s are installed. Until the fourth entry exists — with `order:` values matching the real daisy-chain order out of the Neuron — switch and driver numbers will land on the wrong boards.
-- [ ] Run `mpf hardware scan` to confirm the board models and loop order match the config (`FP-CAB-0001`, `FP-I/O-1616` ×2, `FP-I/O-3208`, `FP-EXP-2000` + `FP-PWR-0007`). This is the fastest way to get the true `order:` values.
-- [ ] Wire the Cabinet I/O (FP-CAB-0001). It's mounted but unwired. The config
+- [ ] Run `mpf hardware scan` to confirm the board models and loop order match the config (`FP-I/O-0024`, `FP-I/O-1616` ×2, `FP-I/O-3208`, `FP-EXP-2000` + `FP-PWR-0007`). This is the fastest way to get the true `order:` values.
+- [ ] Wire the Cabinet I/O (FP-I/O-0024 expected). It's mounted but unwired.
+      Pinouts are in 12-fast-boards.md, section 3.6. None of its 13-pin
+      headers are keyed. The config
       now assumes the side flipper buttons and start button land on the
       left-side (`cab-8` to `cab-15`) and right-side (`cab-16` to `cab-23`)
       headers; the coin door header J4 is `cab-0` to `cab-7`. The board's 8
@@ -275,11 +313,12 @@ Logs go to `~/matrix-pinball/logs/`.
       button lamps yet.
 - [ ] Fit the knocker in the cabinet (user wants it there, 2026-09-25): the
       owned WPC assembly B-10686-1 with an AE-23-800 coil. Per FAST's Cabinet
-      I/O wiring page, the board takes 12 V and 48 V on J3 from the Smart
-      Power Filter Board's J10 (4-pin), and a knocker wires from 48 V on the
-      board to one coil lug and from the other lug to a Cabinet I/O driver,
-      with a diode across the coil, band to the 48 V side. The diode must be
-      a 1N4004 or 1N4007, not a 1N4001 (50 V). Check that the assembly's coil
+      I/O pages, the board takes 12 V and 48 V on J3 (12 V, G, TG, H2) from
+      the Smart Power Filter Board's J10 (4-pin). The knocker goes on J2
+      (D1, key, TG, H2): H2 to the coil lug on the diode band side, D1 to the
+      other lug. D1 is software driver 7 (`cab-7`). FAST accepts a 1N4001,
+      1N4004 or 1N4007 diode; this repo uses a 1N4004 or 1N4007 because a
+      1N4001 is rated only 50 V. Check that the assembly's coil
       already has one. MPF 0.80 has no `knockers:` device (not in its
       `config_spec.yaml`), so the knocker is a plain entry under `coils:`
       fired by `coil_player`. Nothing in the Act I rules fires it yet.

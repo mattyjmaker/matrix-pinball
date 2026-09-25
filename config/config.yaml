@@ -33,8 +33,12 @@ fast:
     debug: false      # change to true to see full NET serial communication in the log. Search for `[NET]`
     controller: neuron
     io_loop:
+            # TODO(hardware): model must match what the board reports, or MPF
+            # 0.80 aborts at startup (it does not alias FP-CAB-0001 and
+            # FP-I/O-0024). FAST's public Cabinet I/O is the FP-I/O-0024; read
+            # the silkscreen to confirm. See docs/12-fast-boards.md, section 2.
             cab:
-                model: FP-CAB-0001
+                model: FP-I/O-0024
                 order: 1
             top16:
                 model: FP-I/O-1616
@@ -162,15 +166,16 @@ settings:
 
 
 switches:
-  ## Cabinet Buttons (FP-CAB-0001, io_loop name "cab")
+  ## Cabinet Buttons (Cabinet I/O FP-I/O-0024, io_loop name "cab")
   # Wire colours: orange out of the board input, purple on the return. See
   # docs/08-this-machine.md, "Wiring colour convention".
-  # The Cabinet I/O board is internally an FP-I/O-0024: 24 switch inputs
-  # (cab-0 .. cab-23) and 8 drivers (cab-0 .. cab-7).
-  # Header layout per FAST's recommended cabinet recipe:
-  #   coin door (J4)          cab-0  .. cab-7
-  #   left-side cabinet header  cab-8  .. cab-15
-  #   right-side cabinet header cab-16 .. cab-23
+  # FP-I/O-0024: 24 switch inputs (cab-0 .. cab-23) and 8 drivers
+  # (cab-0 .. cab-7; the knocker driver D1 on J2 is cab-7).
+  # Header layout per FAST's pinout (pin 1 = lowest input):
+  #   coin door (J4)            cab-0  .. cab-7
+  #   cabinet left (J1)         cab-8  .. cab-15
+  #   cabinet right (J9)        cab-16 .. cab-23 (21-23 also on J10)
+  # Full pinouts: docs/12-fast-boards.md, section 3.6.
   # TODO(hardware): these three numbers are the recommended defaults, not yet
   # confirmed against this machine. After wiring, verify each one in the MPF
   # service-mode switch test and correct the number if it differs.

@@ -224,6 +224,7 @@ fast:
         model: FP-EXP-0081
   # aud: ...                 # FAST Audio board
 ```
+- `io_loop` `model:` must match the model the board reports over the loop (revision suffix ignored), or MPF 0.80 aborts with an `AssertionError`. `FP-CAB-0001` and `FP-I/O-0024` are both valid names but are **not** aliases of each other (checked in the 0.80.0 source, `net_neuron.py`). The owned boards are covered in 12-fast-boards.md.
 - Device numbers use the io_loop board **name**, e.g. `number: cabinet-0` for switch 0 on the board named `cabinet`, and `cabinet-7` for driver 7 (from the FAST-recommended 0024 cabinet config). EXP LEDs are `board-port-led`, e.g. `neuron-1-1`.
 - EXP models supported as of 0.57.4, with default addresses: `FP-EXP-2000` (48), `-1313` shaker (30), `-0051` DC motors (D0), `-0061` steppers (90), `-0071` servos (B4), `-0081` 2×4 LED headers (84), `-0091` (88). For several boards of the same model, set the solder jumpers (J0 = +1, J1 = +2, so up to 4 of one model) and add `address:`.
 - **Raspberry Pi connected directly to a Neuron:** the Neuron's LED headers are not on the normal EXP bus. Move the `FP-EXP-2000` definition under `fast: exp_int: boards:`.
