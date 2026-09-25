@@ -58,36 +58,72 @@ Not yet recorded, and worth adding here as they are decided: LED and lamp
 wiring, opto power and signal, ground and earth bonding, and whether any
 sub-loom uses a different scheme.
 
-### Cabinet flipper opto boards (user, 2026-09-25)
+### Cabinet flipper opto boards (user, 2026-09-25; silkscreen read 2026-09-25)
 
-Two FAST **FP-SWI-7003-1** boards are installed in the cabinet, one on each
-side, for opto flipper buttons. The part number is not on FAST's published
-part list or product pages (user checked), so the user believes it was a trial
-board that was never released. Treat it as undocumented: its pinout, header
-types and compatibility with the Neuron-generation Cabinet I/O are unknown.
+Two FAST **FP-SWI-7083-1** "OPTO FLIPPER SW" boards are installed in the
+cabinet, one on each side. The part number comes from a photo of the board's
+silkscreen (user-provided, 2026-09-25). It was previously recorded here as
+FP-SWI-7003-1, which was a misreading. FAST's part number index lists no
+FP-SWI boards at all (Official, checked 2026-09-25), so the board is still
+undocumented by FAST. Its full details are in 12-fast-boards.md, section 3.9.
 
-- Blocker: no housings on hand that fit the boards' headers. The header
-  family (pin count, pitch) is not yet identified.
-- One board per side keeps the buttons on separate Cabinet I/O headers, which
-  matches the config: `s_left_flipper` on the left header (`cab-8` to
-  `cab-15`) and `s_right_flipper` on the right (`cab-16` to `cab-23`). The
-  exact input depends on which board channel each button's opto uses, and
-  whether the opto reads NO or NC is unknown until the switch test.
-- Before connecting a board to the Cabinet I/O, get its pinout from FAST
-  support or trace it and bench-test it on a separate supply, so 12 V cannot
-  reach a switch input.
-- Opto power: the left and right Cabinet I/O switch headers each have their
-  own always-on 12 V output (user, 2026-09-25). Power each side's opto board
-  from its own header's 12 V instead of J11 (SHAKER PWR), which keeps the
-  optos off the shaker supply and keeps each side's wiring local. FAST's
-  pages give no current rating for these pins. That 12 V pin (pin 13) sits
-  in the same connector as the switch inputs, so check pin 1 orientation
-  before plugging in.
-- FAST's own guide says to power opto flipper buttons from J11 (SHAKER PWR),
-  which has its own ground pin. The side headers have 12 V (pin 13) but only
-  the switch return G (pin 9) as a return path. Whether G is rated to carry
-  opto emitter current is not published (Unverified). Ask FAST before relying
-  on it, or use J11 as FAST recommends.
+From the silkscreen (user-provided photo):
+- **Two optos per board** (OP1, OP2). The button's actuator carries two flags,
+  one through each opto, so each board gives two switch outputs, SW1 and SW2.
+  Which output trips first on a press is not known yet.
+- **J1** is a 7-pin white header. Pin 1 is marked with a triangle.
+
+  | J1 pin | Signal |
+  | --- | --- |
+  | 1 | SW1 |
+  | 2 | SW2 |
+  | 3 | GND |
+  | 4 | GND |
+  | 5 | KEY |
+  | 6 | 12V |
+  | 7 | 12V |
+
+- There is also an unpopulated 4-pad alternative (SW1, SW2, 12V, GND) and two
+  test points (IN1, IN2).
+- Blocker: no matching housings. The header's pitch and family are not
+  confirmed. Measure the pin pitch and check whether pin 5 is fitted (see
+  12-fast-boards.md, section 3.9).
+
+Planned wiring, one board per Cabinet I/O side header (4 wires):
+
+| Opto board J1 | Cabinet I/O left (J1) | Cabinet I/O right (J9) |
+| --- | --- | --- |
+| 1 SW1 | pin 1, `cab-8` | pin 1, `cab-16` |
+| 2 SW2 | pin 2, `cab-9` | pin 2, `cab-17` |
+| 3 or 4 GND | pin 9, G | pin 9, G |
+| 6 or 7 12V | pin 13, 12 V | pin 13, 12 V |
+
+- This matches FAST's recommended cabinet numbering (flippers on `cab-8/9` and
+  `cab-16/17`), and keeps `s_left_flipper` (`cab-8`) and `s_right_flipper`
+  (`cab-16`) as configured, provided SW1 is the first stage. If SW2 trips
+  first, swap the two wires or change the numbers.
+- The board's GND is both its supply return and the reference for its
+  switch outputs, so it must share ground with the switch inputs. Taking
+  12 V and ground from the same header as the inputs does that with no
+  question about separate grounds. FAST's guide suggests J11 for opto power
+  instead. FAST publishes no current rating for the side header's 12 V and G
+  pins (Unverified), so measure the board's current draw on the bench first.
+- The start button (`cab-10`, left header pin 3) also needs pin 9 (G). The
+  header has one G pin, so the start button's purple and the opto board's
+  GND share it (two wires in one crimp, or a splice).
+
+Bench test before connecting to the Cabinet I/O (output type is Unverified):
+1. Power one board from a 12 V bench supply on J1 pins 6 and 3.
+2. Measure the current draw.
+3. Measure SW1 and SW2 to GND with nothing else connected, button released
+   and pressed. An output that switches between open (no voltage) and near
+   0 V is an open-collector output, which suits a FAST switch input. An output
+   that sits at about 12 V is driven, and must not go to a switch input until
+   FAST confirms it is safe.
+4. Note which output is active when released and which when pressed. If an
+   output is active with the button released (like a plain opto), set
+   `type: NC` on that switch in MPF.
+
 - Fallback: the owned Stern 500-6890-01 leaf switches wire straight to the
   Cabinet I/O headers with no board and need no config change.
 

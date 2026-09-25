@@ -29,12 +29,12 @@ has to be checked on the machine.
 | Cabinet I/O | **FP-I/O-0024 expected; silkscreen not yet read** (the repo previously said FP-CAB-0001) | 1 | Cabinet | NET loop | `cab` | Mounted, not wired |
 | Expansion board, 256 LEDs | FP-EXP-0081 | 1 | Not installed | EXP bus | Not configured | Not wired |
 | Expansion board, 128 LEDs + 4 servos | FP-EXP-0071 | 1 | Not installed | EXP bus | Not configured | Not wired |
-| Flipper opto board | FP-SWI-7003-1 | 2 | Cabinet, one per side | Switch-level only | None | Blocked: no matching housings |
+| Opto flipper switch board | FP-SWI-7083-1 (silkscreen, photo 2026-09-25) | 2 | Cabinet, one per side | Switch-level only | None | Blocked: no matching housings |
 | Network cables | 7 ft x2, 2 ft x4, 3 ft x2 | 8 | | NET and EXP | | |
 
-FP-SWI-7003-1 does not appear anywhere on FAST's part number index, current or
-retired (Official, checked 2026-09-25). See 08-this-machine.md, "Cabinet
-flipper opto boards".
+FAST's part number index lists no FP-SWI boards, current or retired
+(Official, checked 2026-09-25), so the FP-SWI-7083-1 is undocumented by FAST.
+It was previously misrecorded as FP-SWI-7003-1. See section 3.9.
 
 ## 2. Checks to do on the machine
 
@@ -74,8 +74,10 @@ first boot on FAST hardware.
 6. **Expansion boards.** Record the revision of the FP-EXP-0081 and
    FP-EXP-0071, and confirm their ID solder jumpers are open (default
    addresses 84 and B4).
-7. **FP-SWI-7003-1.** Record the header pin count and pitch so matching
-   housings can be ordered.
+7. **FP-SWI-7083-1.** Measure J1's pin pitch and check whether pin 5 (KEY)
+   has a pin fitted, so matching housings can be ordered. Then do the bench
+   test in 08-this-machine.md ("Cabinet flipper opto boards") before
+   connecting it to the Cabinet I/O.
 
 ## 3. Board reference
 
@@ -385,7 +387,49 @@ Neuron:
 - No mid-chain power injection is needed, because the 5 V is made on the
   board.
 
-### 3.9 Buses and cables
+### 3.9 Opto flipper switch board (FP-SWI-7083-1), qty 2
+
+Not on FAST's part number index, and there is no product page. Everything
+below comes from the silkscreen in a photo supplied by the owner on
+2026-09-25 (User-provided). Anything not printed on the board is marked.
+
+- **Function:** "OPTO FLIPPER SW". Two optos (OP1, OP2) sit in the path of
+  two flags on the flipper button's actuator, so each board gives two switch
+  outputs, SW1 and SW2. That suits a two-stage button (first and second
+  stage, or lower and upper flipper). Which output trips first is Unknown.
+- **J1:** 7-pin header, white and shrouded in the photo. Pin 1 is marked with
+  a triangle. Pins: 1 SW1, 2 SW2, 3 GND, 4 GND, 5 KEY, 6 12V, 7 12V.
+- **Alternative pads:** 4 unpopulated through-hole pads, SW1, SW2, 12V and
+  GND.
+- **Test points:** IN1 and IN2, next to U1.
+- **Other parts visible:** R1, R2 and D1, D2 beside the optos. Q1, Q2 are
+  3-pin SMD transistors. U1 is an 8-pin SOIC with an ST logo; its part
+  marking is not legible in the photo. Circuit function: Unverified.
+- **Other marking:** a line reading `...0A_Y226_240330` sits beside J1. Its
+  meaning is Unknown.
+- **Supply:** 12 V, which matches the Cabinet I/O side headers' pin 13 and
+  J11.
+- **Output type:** Unknown. Open-collector outputs to GND would suit a FAST
+  switch input. Confirm with the bench test in 08-this-machine.md first.
+
+**Housing family (Unverified).** The pin count (7) and the KEY position are
+known. The pitch is not. Measure from the centre of pin 1 to the centre of
+pin 7:
+- 15.24 mm means 0.100" (2.54 mm) pitch. FAST's other boards use 0.100"
+  headers for this kind of signal.
+- 15.0 mm means 2.5 mm pitch, for example JST XH.
+
+The 0.24 mm difference needs calipers. The shroud shape also helps: a JST XH
+header is a closed box, while a 0.100" friction-lock header has an open front
+with a ramp on the back wall. If pin 5 has no pin, fit a key plug in position
+5 of the housing.
+
+**Wiring plan:** see 08-this-machine.md, "Cabinet flipper opto boards". In
+short: SW1 and SW2 go to the first two inputs of a Cabinet I/O side header
+(`cab-8`/`cab-9` left, `cab-16`/`cab-17` right), GND to that header's pin 9
+and 12 V to its pin 13.
+
+### 3.10 Buses and cables
 
 - **I/O loop (NET):** a ring of Cat 5 cables (5e and 6 also fine). It is not
   Ethernet.
@@ -471,9 +515,11 @@ Ordered by impact.
    switch for the remaining wiring.
 6. **Opto board power from the side headers is not FAST's recommendation.**
    FAST points opto flipper buttons at J11, which has its own ground. The
-   side headers have 12 V but only the switch return G for a return path.
-   Whether G is rated to carry opto emitter current is not published
-   (Unverified).
+   FP-SWI-7083-1's GND is both its supply return and its switch output
+   reference, so taking 12 V and G from the same side header keeps the
+   grounds common. FAST publishes no current rating for those pins
+   (Unverified), so measure the board's current draw first. The board's
+   output type is also Unverified (section 3.9).
 7. **The Neuron firmware has not been confirmed as v2.13 or newer.** The
    Cabinet I/O needs it (check 3).
 8. **The filter board's breakout `port: 1` has not been confirmed** (check 4).
