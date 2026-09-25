@@ -1,51 +1,61 @@
-"""The physical switch events and the Matrix names modes/matrix_shots gives them."""
+"""The playfield's hardware names: every switch posts generic events, none posts a game's."""
 from tests.matrix_test_case import MatrixTestCase
 
-# switch: (physical events it posts, Matrix events matrix_shots re-posts)
+# switch: the events it posts
 SHOTS = {
-    "s_trinity_ramp": (("ramp_1_hit", "ramp_hit", "left_shot_hit"), ("trinity_ramp_hit",)),
-    "s_dejavu_ramp": (("ramp_2_hit", "ramp_hit", "left_shot_hit"), ("dejavu_ramp_hit",)),
-    "s_real_world_ramp": (("ramp_3_hit", "ramp_hit", "right_shot_hit"), ("real_world_ramp_hit",)),
-    "s_sentinel_ramp": (("ramp_4_hit", "ramp_hit", "right_shot_hit"), ("sentinel_ramp_hit",)),
-    "s_real_world_1": (("upper_target_1_hit", "upper_target_hit"), ("real_world_1_hit", "real_world_target_hit")),
-    "s_real_world_2": (("upper_target_2_hit", "upper_target_hit"), ("real_world_2_hit", "real_world_target_hit")),
-    "s_real_world_3": (("upper_target_3_hit", "upper_target_hit"), ("real_world_3_hit", "real_world_target_hit")),
-    "s_sentinel_left": (("gate_left_target_hit", "gate_entrance_hit"), ("sentinel_left_hit", "sentinel_entrance_hit")),
-    "s_sentinel_right": (("gate_right_target_hit", "gate_entrance_hit"), ("sentinel_right_hit", "sentinel_entrance_hit")),
-    "s_sentinel_boss": (("gate_main_target_hit",), ("sentinel_boss_hit",)),
-    "s_sentinel_magnet": (("magnet_hit",), ("sentinel_magnet_hit",)),
-    "s_emp_target_1": (("pop_target_1_hit", "pop_target_hit"), ("emp_target_1_hit", "emp_target_hit")),
-    "s_emp_target_2": (("pop_target_2_hit", "pop_target_hit"), ("emp_target_2_hit", "emp_target_hit")),
-    "s_emp_target_3": (("pop_target_3_hit", "pop_target_hit"), ("emp_target_3_hit", "emp_target_hit")),
-    "s_emp_target_4": (("pop_target_4_hit", "pop_target_hit"), ("emp_target_4_hit", "emp_target_hit")),
-    "s_ammo_target": (("lock_2_target_hit",), ("ammo_target_hit",)),
+    "s_left_lock_ramp": ("left_lock_ramp_hit", "ramp_hit", "left_shot_hit"),
+    "s_middle_loop_ramp": ("middle_loop_ramp_hit", "ramp_hit", "left_shot_hit"),
+    "s_right_loop_ramp": ("right_loop_ramp_hit", "ramp_hit", "right_shot_hit"),
+    "s_left_lock_spinner": ("spinner_hit",),
+    "s_middle_loop_spinner": ("spinner_hit",),
+    "s_right_loop_spinner": ("spinner_hit",),
+    "s_upper_target_1": ("upper_target_1_hit", "upper_target_hit"),
+    "s_upper_target_2": ("upper_target_2_hit", "upper_target_hit"),
+    "s_upper_target_3": ("upper_target_3_hit", "upper_target_hit"),
+    "s_platform_gate_left": ("platform_gate_left_hit", "platform_gate_hit"),
+    "s_platform_gate_right": ("platform_gate_right_hit", "platform_gate_hit"),
+    "s_platform_target_1": ("platform_target_1_hit", "platform_target_hit"),
+    "s_platform_target_2": ("platform_target_2_hit", "platform_target_hit"),
+    "s_platform_magnet": ("platform_magnet_hit",),
+    "s_pop_target_1": ("pop_target_1_hit", "pop_target_hit"),
+    "s_pop_target_2": ("pop_target_2_hit", "pop_target_hit"),
+    "s_pop_target_3": ("pop_target_3_hit", "pop_target_hit"),
+    "s_pop_target_4": ("pop_target_4_hit", "pop_target_hit"),
+    "s_kickback_target": ("kickback_target_hit",),
+    "s_right_outlane_lock_target": ("right_outlane_lock_target_hit",),
 }
 
-MATRIX_EVENTS = sorted({event for _, matrix in SHOTS.values() for event in matrix})
+# Words from the Matrix design that must not appear in any hardware name.
+MATRIX_WORDS = ("trinity", "dejavu", "deja_vu", "real_world", "sentinel", "agent", "cypher",
+                "mission", "matrix", "team", "ammo", "emp_", "oracle", "morpheus", "neo")
+
+DEVICE_SECTIONS = ("switches", "coils", "ball_devices", "drop_targets", "drop_target_banks",
+                   "diverters", "magnets", "flippers", "autofire_coils")
 
 
 class TestShots(MatrixTestCase):
 
-    def test_switches_post_physical_events(self):
-        for switch, (physical, _) in SHOTS.items():
-            self.assertEqual(list(physical), self.machine.switches[switch].config["events_when_activated"],
-                             switch)
+    def test_switches_post_their_events(self):
+        for switch, events in SHOTS.items():
+            self.assertEqual(list(events), self.machine.switches[switch].config["events_when_activated"], switch)
 
-    def test_no_switch_posts_a_matrix_name(self):
+    def test_no_hardware_name_is_a_matrix_name(self):
+        names = []
+        for section in DEVICE_SECTIONS:
+            names.extend(self.machine.config.get(section, {}))
         for switch in self.machine.switches.values():
-            for event in switch.config["events_when_activated"]:
-                self.assertNotIn(event, MATRIX_EVENTS, "{} posts the themed event {}".format(switch.name, event))
+            names.extend(switch.config["events_when_activated"])
+        for name in names:
+            for word in MATRIX_WORDS:
+                self.assertNotIn(word, name, "{} is named after the Matrix".format(name))
 
-    def test_matrix_shots_runs_with_the_game(self):
+    def test_every_ramp_is_a_ramp_shot(self):
         self.start_matrix_game()
-        self.assertModeRunning("matrix_shots")
+        self.mock_event("ramp_hit")
+        for ramp in ("left_lock", "middle_loop", "right_loop"):
+            self.ramp(ramp)
+        self.assertEventCalled("ramp_hit", 3)
 
-    def test_every_switch_reaches_its_matrix_event(self):
-        self.start_matrix_game()
-        for switch, (_, matrix) in SHOTS.items():
-            for event in matrix:
-                self.mock_event(event)
-            self.hit_and_release_switch(switch)
-            self.advance_time_and_run(.1)
-            for event in matrix:
-                self.assertEventCalled(event, 1)
+    def ramp(self, name):
+        self.hit_and_release_switch("s_{}_ramp".format(name))
+        self.advance_time_and_run(.1)

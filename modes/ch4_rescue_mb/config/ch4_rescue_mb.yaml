@@ -18,7 +18,7 @@ multiballs:
   rescue:
     ball_count: 3
     ball_count_type: total
-    ball_locks: bd_ammo_lock
+    ball_locks: bd_right_outlane_lock
     shoot_again: 20s
     start_events: mode_ch4_rescue_mb_started
     add_a_ball_events: ch4_rooftop_started, ch4_helicopter_started
@@ -52,13 +52,13 @@ state_machines:
 accruals:
   ch4_lobby_guards:
     events:
-      - emp_target_1_hit
-      - emp_target_2_hit
-      - emp_target_3_hit
-      - emp_target_4_hit
-      - drop_target_agent_1_down
-      - drop_target_agent_2_down
-      - drop_target_agent_3_down
+      - pop_target_1_hit
+      - pop_target_2_hit
+      - pop_target_3_hit
+      - pop_target_4_hit
+      - drop_target_popup_1_down
+      - drop_target_popup_2_down
+      - drop_target_popup_3_down
     events_when_complete: ch4_lobby_cleared
     start_enabled: true
 
@@ -74,29 +74,29 @@ timers:
         action: stop
 
 event_player:
-  mode_ch4_rescue_mb_started: agents_raise
-  ch4_rooftop_started: agents_raise
-  trinity_ramp_hit{device.state_machines.ch4_stage.state=="rooftop"}: ch4_dodge_lit
-  drop_target_bank_agents_down{device.state_machines.ch4_stage.state=="lobby"}: agents_raise
-  drop_target_agent_1_down{device.state_machines.ch4_stage.state=="rooftop" and device.timers.ch4_dodge.running}: ch4_dodge_this
-  drop_target_agent_2_down{device.state_machines.ch4_stage.state=="rooftop" and device.timers.ch4_dodge.running}: ch4_dodge_this
-  drop_target_agent_3_down{device.state_machines.ch4_stage.state=="rooftop" and device.timers.ch4_dodge.running}: ch4_dodge_this
-  ch4_dodge_this: agents_raise
-  sentinel_magnet_hit{device.state_machines.ch4_stage.state=="helicopter"}: ch4_morpheus_caught
-  ch4_morpheus_caught: sentinel_magnet_grab, sentinel_magnet_release|2s, ch4_completed
+  mode_ch4_rescue_mb_started: popups_raise
+  ch4_rooftop_started: popups_raise
+  left_lock_ramp_hit{device.state_machines.ch4_stage.state=="rooftop"}: ch4_dodge_lit
+  drop_target_bank_popups_down{device.state_machines.ch4_stage.state=="lobby"}: popups_raise
+  drop_target_popup_1_down{device.state_machines.ch4_stage.state=="rooftop" and device.timers.ch4_dodge.running}: ch4_dodge_this
+  drop_target_popup_2_down{device.state_machines.ch4_stage.state=="rooftop" and device.timers.ch4_dodge.running}: ch4_dodge_this
+  drop_target_popup_3_down{device.state_machines.ch4_stage.state=="rooftop" and device.timers.ch4_dodge.running}: ch4_dodge_this
+  ch4_dodge_this: popups_raise
+  platform_magnet_hit{device.state_machines.ch4_stage.state=="helicopter"}: ch4_morpheus_caught
+  ch4_morpheus_caught: platform_magnet_grab, platform_magnet_release|2s, ch4_completed
 
 variable_player:
   mode_ch4_rescue_mb_started:
     objective:
       action: set
       string: "LOBBY: HIT EVERY GUARD"
-  emp_target_hit{device.state_machines.ch4_stage.state=="lobby"}:
+  pop_target_hit{device.state_machines.ch4_stage.state=="lobby"}:
     score: 75000
-  drop_target_agent_1_down{device.state_machines.ch4_stage.state=="lobby"}:
+  drop_target_popup_1_down{device.state_machines.ch4_stage.state=="lobby"}:
     score: 75000
-  drop_target_agent_2_down{device.state_machines.ch4_stage.state=="lobby"}:
+  drop_target_popup_2_down{device.state_machines.ch4_stage.state=="lobby"}:
     score: 75000
-  drop_target_agent_3_down{device.state_machines.ch4_stage.state=="lobby"}:
+  drop_target_popup_3_down{device.state_machines.ch4_stage.state=="lobby"}:
     score: 75000
   ch4_rooftop_started:
     objective:

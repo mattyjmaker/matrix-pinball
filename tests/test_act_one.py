@@ -10,10 +10,10 @@ class ActOneTestCase(MatrixTestCase):
         return self.machine.game.player
 
     def open_mission(self):
-        self.hit_switch_and_run("s_mission_drop", .5)
+        self.hit_switch_and_run("s_mode_drop", .5)
 
     def shoot_mission(self, settle=3):
-        self.enter_device("s_mission_scoop", settle)
+        self.enter_device("s_mode_scoop", settle)
 
     def start_chapter(self, number):
         self.player()["chapter_next"] = number
@@ -40,27 +40,27 @@ class TestController(ActOneTestCase):
     def test_mission_drop_lights_scoop(self):
         self.start()
         self.open_mission()
-        self.assertPlayerVarEqual(1, "mission_ready")
+        self.assertPlayerVarEqual(1, "mode_ready")
         self.assertPlayerVarEqual("SHOOT THE MISSION SCOOP: TRINITY'S ESCAPE", "objective")
 
     def test_scoop_without_drop_down_only_awards(self):
         self.start()
-        self.mock_event("mission_scoop_award")
+        self.mock_event("mode_scoop_award")
         self.shoot_mission()
-        self.assertEventCalled("mission_scoop_award")
+        self.assertEventCalled("mode_scoop_award")
         self.assertModeNotRunning("ch1_trinity_escape")
-        self.assertEqual(0, self.machine.ball_devices["bd_mission_scoop"].balls)
+        self.assertEqual(0, self.machine.ball_devices["bd_mode_scoop"].balls)
 
     def test_scoop_starts_chapter_one_and_resets_drop(self):
         self.start()
-        self.mock_event("mission_drop_reset")
+        self.mock_event("mode_drop_reset")
         self.open_mission()
         self.shoot_mission()
         self.assertModeRunning("ch1_trinity_escape")
-        self.assertEventCalled("mission_drop_reset")
-        self.assertPlayerVarEqual(0, "mission_ready")
+        self.assertEventCalled("mode_drop_reset")
+        self.assertPlayerVarEqual(0, "mode_ready")
         # The ball is released after the intro.
-        self.assertEqual(0, self.machine.ball_devices["bd_mission_scoop"].balls)
+        self.assertEqual(0, self.machine.ball_devices["bd_mode_scoop"].balls)
 
 
 class TestChapterOne(ActOneTestCase):
@@ -68,10 +68,10 @@ class TestChapterOne(ActOneTestCase):
     def test_complete(self):
         self.start()
         self.start_chapter(1)
-        for ramp in ("trinity", "dejavu", "real_world"):
+        for ramp in ("left_lock", "middle_loop", "right_loop"):
             self.ramp(ramp)
         self.assertPlayerVarEqual("THE PHONE: SHOOT THE DEJA VU VUK", "objective")
-        self.enter_device("s_dejavu_vuk")
+        self.enter_device("s_middle_loop_vuk")
         self.assertModeNotRunning("ch1_trinity_escape")
         self.assertPlayerVarEqual(1, "freed_trinity")
         self.assertPlayerVarEqual(1, "freed_count")
@@ -81,7 +81,7 @@ class TestChapterOne(ActOneTestCase):
     def test_truck_wins_when_rooftops_run_out(self):
         self.start()
         self.start_chapter(1)
-        self.ramp("trinity")
+        self.ramp("left_lock")
         self.advance_time_and_run(41)
         self.assertModeNotRunning("ch1_trinity_escape")
         self.assertPlayerVarEqual(0, "freed_trinity")
@@ -91,11 +91,11 @@ class TestChapterOne(ActOneTestCase):
     def test_phone_value_counts_down(self):
         self.start()
         self.start_chapter(1)
-        for ramp in ("trinity", "dejavu", "real_world"):
+        for ramp in ("left_lock", "middle_loop", "right_loop"):
             self.ramp(ramp)
         before = self.player().score
         self.advance_time_and_run(10)
-        self.enter_device("s_dejavu_vuk")
+        self.enter_device("s_middle_loop_vuk")
         gained = self.player().score - before
         # 250k base plus 25k per second left; the VUK's own 2,570 and the
         # crew award ride on top. About 10 s remain.
@@ -117,7 +117,7 @@ class TestChapterTwo(ActOneTestCase):
         self.start()
         self.start_chapter(2)
         self.advance_time_and_run(5)
-        self.assertEqual(1, self.machine.ball_devices["bd_mission_scoop"].balls)
+        self.assertEqual(1, self.machine.ball_devices["bd_mode_scoop"].balls)
 
     def test_blue_pill_ends_chapter(self):
         self.start()
@@ -126,7 +126,7 @@ class TestChapterTwo(ActOneTestCase):
         self.advance_time_and_run(3)
         self.assertModeNotRunning("ch2_red_pill")
         self.assertModeNotRunning("ch2_unplugged")
-        self.assertEqual(0, self.machine.ball_devices["bd_mission_scoop"].balls)
+        self.assertEqual(0, self.machine.ball_devices["bd_mode_scoop"].balls)
         self.assertPlayerVarEqual(0, "freed_apoc")
         self.assertPlayerVarEqual(3, "chapter_next")
 
@@ -146,7 +146,7 @@ class TestChapterTwo(ActOneTestCase):
         self.confirm_playfield()
         self.assertBallsInPlay(3)
         for n in (1, 2, 3):
-            self.hit_and_release_switch("s_real_world_{}".format(n))
+            self.hit_and_release_switch("s_upper_target_{}".format(n))
         self.advance_time_and_run(.5)
         self.assertPlayerVarEqual(1, "freed_apoc")
         # Chapter 2 ends when the multiball does.
@@ -163,10 +163,10 @@ class TestChapterThree(ActOneTestCase):
 
     def drop_team(self):
         for n in range(1, 6):
-            self.hit_switch_and_run("s_team_{}".format(n), .1)
+            self.hit_switch_and_run("s_five_bank_{}".format(n), .1)
 
     def spar(self, combos):
-        sides = ["trinity", "real_world"]
+        sides = ["left_lock", "right_loop"]
         for i in range(combos + 1):
             self.ramp(sides[i % 2])
 
@@ -179,9 +179,9 @@ class TestChapterThree(ActOneTestCase):
         self.spar(4)
         self.assertPlayerVarEqual(1, "ch3_won_sparring")
         self.assertPlayerVarEqual("JUMP PROGRAM: REAL WORLD RAMP, THEN A STANDUP", "objective")
-        self.ramp("real_world")
+        self.ramp("right_loop")
         self.mock_event("ch3_jump_made")
-        self.hit_and_release_switch("s_real_world_1")
+        self.hit_and_release_switch("s_upper_target_1")
         self.advance_time_and_run(1)
         self.assertEventCalled("ch3_jump_made")
         self.assertModeNotRunning("ch3_construct")
@@ -215,7 +215,7 @@ class TestChapterThree(ActOneTestCase):
         self.start_chapter(3)
         self.drop_team()
         for _ in range(6):
-            self.ramp("trinity")
+            self.ramp("left_lock")
         self.assertPlayerVarEqual(0, "ch3_won_sparring")
 
     def test_woman_in_the_red_dress(self):
@@ -224,9 +224,9 @@ class TestChapterThree(ActOneTestCase):
         self.drop_team()
         # She starts on the Trinity Ramp.
         self.mock_event("ch3_woman_bonus")
-        self.ramp("trinity")
+        self.ramp("left_lock")
         self.assertPlayerVarEqual(1, "ch3_agent_armed")
-        self.hit_switch_and_run("s_agent_2", .5)
+        self.hit_switch_and_run("s_popup_2", .5)
         self.assertEventCalled("ch3_woman_bonus")
 
     def test_woman_walks(self):
@@ -235,7 +235,7 @@ class TestChapterThree(ActOneTestCase):
         self.drop_team()
         self.advance_time_and_run(3.5)
         # Moved on from the Trinity Ramp, so it no longer arms an Agent.
-        self.ramp("trinity")
+        self.ramp("left_lock")
         self.assertPlayerVarEqual(0, "ch3_agent_armed")
 
 
@@ -243,7 +243,7 @@ class TestChapterFour(ActOneTestCase):
 
     def lock_three(self):
         for _ in range(3):
-            self.enter_device("s_ammo_lock", 3)
+            self.enter_device("s_right_outlane_lock", 3)
             self.confirm_playfield()
 
     def test_full_rescue(self):
@@ -251,8 +251,8 @@ class TestChapterFour(ActOneTestCase):
         self.start_chapter(4)
         self.assertPlayerVarEqual("DEJA VU: SHOOT THE DEJA VU VUK", "objective")
         # The Ammo Lock is Morpheus's lock now, not the drain save.
-        self.assertFalse(self.machine.multiball_locks["ammo_save_lock"].enabled)
-        self.enter_device("s_dejavu_vuk")
+        self.assertFalse(self.machine.multiball_locks["outlane_save_lock"].enabled)
+        self.enter_device("s_middle_loop_vuk")
         self.assertPlayerVarEqual("GUNS. LOTS OF GUNS: LOCK 3 AT THE AMMO LOCK", "objective")
         self.lock_three()
         self.assertModeRunning("ch4_rescue_mb")
@@ -261,50 +261,50 @@ class TestChapterFour(ActOneTestCase):
         self.assertPlayerVarEqual("LOBBY: HIT EVERY GUARD", "objective")
 
         for n in (1, 2, 3, 4):
-            self.hit_and_release_switch("s_emp_target_{}".format(n))
+            self.hit_and_release_switch("s_pop_target_{}".format(n))
         for n in (1, 2, 3):
-            self.hit_switch_and_run("s_agent_{}".format(n), .1)
+            self.hit_switch_and_run("s_popup_{}".format(n), .1)
         self.advance_time_and_run(1)
         self.assertPlayerVarEqual("ROOFTOP: TRINITY RAMP, THEN HIT AN AGENT", "objective")
         self.assertBallsInPlay(4)
 
         # Agents are raised for the rooftop. Release their switches.
         for n in (1, 2, 3):
-            self.release_switch_and_run("s_agent_{}".format(n), .1)
-        self.ramp("trinity")
-        self.hit_switch_and_run("s_agent_1", .5)
+            self.release_switch_and_run("s_popup_{}".format(n), .1)
+        self.ramp("left_lock")
+        self.hit_switch_and_run("s_popup_1", .5)
         self.assertPlayerVarEqual("HELICOPTER: CATCH MORPHEUS AT THE SENTINEL MAGNET", "objective")
         self.assertBallsInPlay(5)
 
-        self.hit_and_release_switch("s_sentinel_magnet")
+        self.hit_and_release_switch("s_platform_magnet")
         self.advance_time_and_run(1)
         self.assertPlayerVarEqual(1, "freed_tank")
 
     def test_agent_without_dodge_does_not_advance(self):
         self.start()
         self.start_chapter(4)
-        self.enter_device("s_dejavu_vuk")
+        self.enter_device("s_middle_loop_vuk")
         self.lock_three()
         for n in (1, 2, 3, 4):
-            self.hit_and_release_switch("s_emp_target_{}".format(n))
+            self.hit_and_release_switch("s_pop_target_{}".format(n))
         for n in (1, 2, 3):
-            self.hit_switch_and_run("s_agent_{}".format(n), .1)
+            self.hit_switch_and_run("s_popup_{}".format(n), .1)
         self.advance_time_and_run(1)
         for n in (1, 2, 3):
-            self.release_switch_and_run("s_agent_{}".format(n), .1)
-        self.hit_switch_and_run("s_agent_1", .5)
+            self.release_switch_and_run("s_popup_{}".format(n), .1)
+        self.hit_switch_and_run("s_popup_1", .5)
         self.assertPlayerVarEqual("ROOFTOP: TRINITY RAMP, THEN HIT AN AGENT", "objective")
 
     def test_lock_phase_drain_ends_chapter(self):
         self.start()
         self.start_chapter(4)
-        self.enter_device("s_dejavu_vuk")
+        self.enter_device("s_middle_loop_vuk")
         self.drain_all_balls()
         self.advance_time_and_run(5)
         self.assertModeNotRunning("ch4_rescue_lock")
         self.assertPlayerVarEqual(5, "chapter_next")
         # The drain save lock is back for the next ball.
-        self.assertTrue(self.machine.multiball_locks["ammo_save_lock"].enabled)
+        self.assertTrue(self.machine.multiball_locks["outlane_save_lock"].enabled)
 
 
 class TestTrinityMultiball(ActOneTestCase):
@@ -312,7 +312,7 @@ class TestTrinityMultiball(ActOneTestCase):
     def lock(self):
         # Balls stack in the lock: the new one lands on the next free switch.
         for n in (1, 2, 3):
-            name = "s_trinity_lock_{}".format(n)
+            name = "s_left_lock_{}".format(n)
             if not self.machine.switch_controller.is_active(self.machine.switches[name]):
                 self.enter_device(name, 3)
                 break
@@ -329,7 +329,7 @@ class TestTrinityMultiball(ActOneTestCase):
         self.confirm_playfield()
         self.assertBallsInPlay(3)
         for _ in range(3):
-            self.ramp("trinity")
+            self.ramp("left_lock")
         self.assertPlayerVarEqual(1, "freed_switch")
 
     def test_chapter_blocked_during_multiball(self):
@@ -338,17 +338,17 @@ class TestTrinityMultiball(ActOneTestCase):
             self.lock()
         self.assertModeRunning("trinity_mb")
         self.open_mission()
-        self.mock_event("mission_scoop_award")
+        self.mock_event("mode_scoop_award")
         self.shoot_mission()
-        self.assertEventCalled("mission_scoop_award")
+        self.assertEventCalled("mode_scoop_award")
         self.assertModeNotRunning("ch1_trinity_escape")
 
     def test_queued_behind_sentinel(self):
         self.start()
         for _ in range(4):
-            self.hit_and_release_switch("s_sentinel_left")
+            self.hit_and_release_switch("s_platform_gate_left")
         self.advance_time_and_run(.5)
-        self.enter_device("s_sentinel_vuk")
+        self.enter_device("s_platform_vuk")
         self.assertModeRunning("sentinel_mb")
         self.confirm_playfield()
         # Trinity lock fills during Sentinel Multiball: it waits.
@@ -371,46 +371,46 @@ class TestSentinelMultiball(ActOneTestCase):
 
     def open_gate(self):
         for side in ("left", "right", "left", "right"):
-            self.hit_and_release_switch("s_sentinel_{}".format(side))
+            self.hit_and_release_switch("s_platform_gate_{}".format(side))
         self.advance_time_and_run(.5)
 
     def test_gate_needs_four_hits(self):
         self.start()
-        self.enter_device("s_sentinel_vuk")
+        self.enter_device("s_platform_vuk")
         self.assertModeNotRunning("sentinel_mb")
         self.open_gate()
-        self.assertTrue(self.machine.diverters["sentinel_gate"].active)
-        self.enter_device("s_sentinel_vuk")
+        self.assertTrue(self.machine.diverters["platform_gate"].active)
+        self.enter_device("s_platform_vuk")
         self.assertModeRunning("sentinel_mb")
 
     def test_add_a_ball_once_and_completion(self):
         self.start()
         self.open_gate()
-        self.enter_device("s_sentinel_vuk")
+        self.enter_device("s_platform_vuk")
         self.confirm_playfield()
         self.assertBallsInPlay(3)
-        for target in ("left", "right", "boss"):
-            self.hit_and_release_switch("s_sentinel_{}".format(target))
+        for target in ("s_platform_gate_left", "s_platform_gate_right", "s_platform_target_1"):
+            self.hit_and_release_switch(target)
         self.advance_time_and_run(.5)
         self.assertPlayerVarEqual(1, "sentinel_aab_lit")
-        self.enter_device("s_sentinel_vuk")
+        self.enter_device("s_platform_vuk")
         self.confirm_playfield()
         self.assertBallsInPlay(4)
         # Not again this multiball.
-        for target in ("left", "right", "boss"):
-            self.hit_and_release_switch("s_sentinel_{}".format(target))
+        for target in ("s_platform_gate_left", "s_platform_gate_right", "s_platform_target_1"):
+            self.hit_and_release_switch(target)
         self.advance_time_and_run(.5)
-        self.enter_device("s_sentinel_vuk")
+        self.enter_device("s_platform_vuk")
         self.confirm_playfield()
         self.assertBallsInPlay(4)
-        # The boss target is a jackpot: three have been scored with the ramp.
-        self.ramp("sentinel")
+        # A platform target is a jackpot: three have been scored with the ramp.
+        self.ramp("right_loop")
         self.assertPlayerVarEqual(1, "freed_dozer")
 
     def test_gate_closes_when_multiball_ends(self):
         self.start()
         self.open_gate()
-        self.enter_device("s_sentinel_vuk")
+        self.enter_device("s_platform_vuk")
         self.confirm_playfield()
         self.advance_time_and_run(25)
         while self.machine.game.balls_in_play > 1:
@@ -418,7 +418,7 @@ class TestSentinelMultiball(ActOneTestCase):
             self.advance_time_and_run(2)
         self.advance_time_and_run(1)
         self.assertModeNotRunning("sentinel_mb")
-        self.assertFalse(self.machine.diverters["sentinel_gate"].active)
+        self.assertFalse(self.machine.diverters["platform_gate"].active)
 
 
 class TestTheOne(ActOneTestCase):
@@ -444,10 +444,10 @@ class TestTheOne(ActOneTestCase):
         for _ in range(6):
             n = 1
             for n in (1, 2, 3):
-                if not self.machine.switch_controller.is_active(self.machine.switches["s_agent_{}".format(n)]):
+                if not self.machine.switch_controller.is_active(self.machine.switches["s_popup_{}".format(n)]):
                     break
-            self.hit_switch_and_run("s_agent_{}".format(n), .2)
-            self.release_switch_and_run("s_agent_{}".format(n), 1.2)
+            self.hit_switch_and_run("s_popup_{}".format(n), .2)
+            self.release_switch_and_run("s_popup_{}".format(n), 1.2)
 
     def reach_phones(self, count):
         for _ in range(count):
@@ -503,16 +503,16 @@ class TestTheOne(ActOneTestCase):
 
         # Dark: ramps pay nothing.
         self.mock_event("the_one_super_jackpot")
-        self.ramp("trinity")
+        self.ramp("left_lock")
         self.assertEventNotCalled("the_one_super_jackpot")
         self.advance_time_and_run(5)
         for _ in range(3):
-            self.ramp("dejavu")
+            self.ramp("middle_loop")
         self.assertEventCalled("the_one_super_jackpot", 3)
         self.assertPlayerVarEqual(4, "the_one_stage")
-        self.assertTrue(self.machine.diverters["sentinel_gate"].active)
+        self.assertTrue(self.machine.diverters["platform_gate"].active)
 
-        self.enter_device("s_sentinel_vuk")
+        self.enter_device("s_platform_vuk")
         self.assertPlayerVarEqual("II", "act")
         self.assertModeNotRunning("the_one")
         self.assertModeNotRunning("act_one")
@@ -569,8 +569,8 @@ class TestTheOne(ActOneTestCase):
         self.advance_time_and_run(5)
         self.assertBallNumber(2)
         self.assertModeRunning("the_one")
-        self.assertTrue(self.machine.diverters["sentinel_gate"].active)
-        self.enter_device("s_sentinel_vuk")
+        self.assertTrue(self.machine.diverters["platform_gate"].active)
+        self.enter_device("s_platform_vuk")
         self.assertPlayerVarEqual("II", "act")
 
     def test_act_two_has_no_act_one(self):

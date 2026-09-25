@@ -32,59 +32,51 @@ confrontation, the Cyberdyne raid, the steel mill finale). No specific
 dialogue is quoted here; any line put on screen should be checked against the
 film before use, exactly as docs/11 already asks for Matrix clips.
 
-## 1. Prerequisite, done: hardware de-coupled from theme
+## 1. Prerequisite, done: one generic vocabulary for the hardware
 
-Agreed with the user (2026-09-25) and implemented in the same commit series
-as this document. Before it, each playfield switch's `events_when_activated`
-carried the Matrix name (`trinity_ramp_hit`, `sentinel_ramp_hit`) and the
-modes listened to those names directly, which a second ruleset could not
-share.
+Agreed with the user (2026-09-25) and implemented. Before it, every switch,
+coil, device and event carried a Matrix name (`s_trinity_ramp`,
+`trinity_ramp_hit`, `bd_sentinel_vuk`, drop bank `agents`), and the modes
+listened to those names directly, which a second ruleset could not share.
 
-What was done:
+Now every hardware name says what the feature is, never what a game calls
+it, in `config/config.yaml`, `config/playfield_pending.yaml`, the keyboard
+map and the tests. The Matrix modes listen to the generic events and keep
+the film's names in their display text and comments; each renamed config
+entry carries a `# was ...` comment with the prior name. The Matrix mapping
+is the table in docs/11 section 11; T2's is section 4 below.
+`tests/test_shots.py` fails if a Matrix word gets into a hardware name.
 
-1. Every switch's `events_when_activated` in `config/config.yaml` and
-   `config/playfield_pending.yaml` now names the hardware. A rename only; no
-   device, wiring or coil rule changed. Events that already named the
-   hardware (`ramp_hit`, `left_shot_hit`, `right_shot_hit`, `spinner_hit`,
-   `kickback_target_hit`) were left as they were.
-2. A new YAML mode, `modes/matrix_shots` (priority 150, every ball), re-posts
-   each physical event under its Matrix name through `event_player`. No
-   chapter, multiball or wizard file changed: they still listen to
-   `trinity_ramp_hit` and the rest, which now arrive from `matrix_shots`
-   instead of the switch. The full table is in that file.
-3. `tests/test_shots.py` checks that every switch posts its physical events,
-   that no switch posts a Matrix name, and that every physical event reaches
-   its Matrix name in a running game. The 66 existing tests pass unchanged.
+The vocabulary, as the user described the playfield:
 
-| Physical event | Switch | Matrix name |
-| --- | --- | --- |
-| `ramp_1_hit` to `ramp_4_hit` | Trinity, Deja Vu, Real World, Sentinel ramps, in that order | `trinity_ramp_hit`, `dejavu_ramp_hit`, `real_world_ramp_hit`, `sentinel_ramp_hit` |
-| `upper_target_N_hit`, `upper_target_hit` | The three upper mini-playfield standups | `real_world_N_hit`, `real_world_target_hit` |
-| `gate_left_target_hit`, `gate_right_target_hit`, `gate_entrance_hit` | The two square standups at the gate | `sentinel_left_hit`, `sentinel_right_hit`, `sentinel_entrance_hit` |
-| `gate_main_target_hit` | The rectangular standup behind the gate | `sentinel_boss_hit` |
-| `magnet_hit` | The magnet grab switch | `sentinel_magnet_hit` |
-| `pop_target_N_hit`, `pop_target_hit` | The four standups in the pop bumper area | `emp_target_N_hit`, `emp_target_hit` |
-| `lock_2_target_hit` | The standup beside the single-ball lock | `ammo_target_hit` |
+| Hardware name | What it is |
+| --- | --- |
+| `left_lock_ramp`, `left_lock` | The left ramp, whose return path to the flippers has a post that rises to hold balls. The count is ramp entries while the post is up, assumed full at three |
+| `middle_loop_ramp`, `middle_loop_vuk` | The middle loop ramp and the VUK it pairs with |
+| `right_loop_ramp` | The right loop ramp, up to the upper playfield. The only ramp up there |
+| `upper` | The upper playfield: three standups (`upper_target_1..3`) and a mini left flipper |
+| `platform` | The toy: two targets on a rising platform (`platform_target_1..2`), two front targets that lower and rise to block the path (`platform_gate`), a magnet (`platform_magnet`), and a subway under the raised platform to the middle loop VUK. `bd_platform_vuk` stands in for the subway until the toy is built |
+| `popups`, `popup_scoop` | Three pop-up drop targets and the scoop that raises them |
+| `mode_drop`, `mode_scoop` | The 1-bank smart drop and the scoop behind it that starts a game's modes |
+| `five_bank`, `three_bank` | The 5-bank and 3-bank drop targets. The three-bank has no rules yet |
+| `pop_target_1..4`, `pop_bumper_1` | The standups and pop bumper in the pop bumper area |
+| `right_outlane_lock` | The single-ball lock at the bottom right outlane, with its standup and rollover |
+| `kickback_target` | Relights the left outlane kickback |
+| Flippers | Left, right, upper right, and the upper playfield's left. The upper two are not modelled yet (hardware rules, pending wiring) |
 
-T2's shot mode (`t2_shots`, section 13) is the same file shape with the
-section 4 names on the right-hand side, and Game Select starts one or the
-other.
+Two consequences for the rules, both already applied to Act I:
 
-What was deliberately left Matrix-named, and what it means for T2:
+- **Three ramps, not four.** The VPX's Sentinel ramp does not exist. Where a
+  rule wanted it, the right loop ramp is used, and the ramp-walking features
+  walk three ramps.
+- **Two platform targets, not one boss target.** Rules that wanted the boss
+  target take either platform target (`platform_target_hit`).
 
-- **Switch names** (`s_trinity_ramp`, `s_emp_target_1`) are wiring labels.
-  Nothing in the rules listens to them; only the tests and the keyboard map
-  in `gmc/gmc.cfg` use them. Renaming them buys nothing.
-- **Device names** (`bd_trinity_lock`, `bd_sentinel_vuk`, `sentinel_gate`,
-  `sentinel_magnet`, the `agents` and `matrix_team` drop banks, `mission_drop`)
-  stay, and so do the MPF device events built from them
-  (`balldevice_bd_sentinel_vuk_ball_entered`, `drop_target_bank_agents_down`,
-  `sentinel_gate_open`, `sentinel_magnet_grab`). Renaming these means
-  touching coils, ball devices, the keyboard map and most of the tests. T2's
-  modes will reference these device names directly, exactly as Act I's do,
-  and the Matrix name of a device is no more of a problem for T2 than the
-  Matrix name of a switch. Revisit only if a third game ever makes the
-  inconsistency worth the churn.
+Still modelled provisionally, marked `TODO(hardware)` in
+`config/playfield_pending.yaml`: the left lock's three count switches (the
+real mech has a post and no position switches), the platform VUK (the real
+toy has a subway to the middle loop VUK), the platform gate's energised
+state, and the platform raise coil, which no rule drives yet.
 
 ## 2. Game Select
 
@@ -138,17 +130,18 @@ Every row keeps the existing device and its existing mechanical behaviour
 (lock counts, hold times, magnet duration, drop bank size). Only the name,
 scoring and story meaning change.
 
-| Physical device | Matrix identity | Terminator 2 identity | T2 story meaning |
+| Hardware name (section 1) | Matrix identity | Terminator 2 identity | T2 story meaning |
 | --- | --- | --- | --- |
-| Smart drop + scoop | Mission Drop + Mission scoop | Perimeter Drop + Command scoop | Breaching the next objective; starts each chapter |
-| 3-position lock ramp | Trinity Ramp | Future War Ramp | Sarah's recurring flash-forward: surviving Hunter-Killer sorties |
-| Ramp + VUK pair | Deja Vu Ramp + VUK | Displacement Ramp + VUK | Time-displacement arrivals (both Terminators arrive naked in a lightning field) |
-| Ramp + 3 standups | Real World Ramp + standups | Pescadero Ramp + Ward standups | Escaping the mental hospital |
-| Ramp, VUK, magnet, 2 entrance targets, boss target | Sentinel toy set | T-1000 toy set (T-1000 Ramp/VUK/magnet, Cruiser targets, Semi Grille) | The T-1000's pursuit by cruiser and tanker truck |
-| 3 pop-ups + scoop | Agents + Agents Coming scoop | Endoskeletons + Assembly Line scoop | Skynet's mass-produced units |
-| Lock + target | Ammo Lock + target | Arsenal Lock + target | The gun-store arsenal montage; same drain-save mechanic |
-| 5-bank drop targets | Matrix Team drops | Cyberdyne Lab drops | Wiping the lab's systems during the raid |
-| 4 standups | EMP standups | Launch Site standups | Nuclear launch sites from Sarah's nightmare; lights Vision, and later arms/disarms Judgment Day |
+| `mode_drop`, `mode_scoop` | Mission Drop + Mission scoop | Perimeter Drop + Command scoop | Breaching the next objective; starts each chapter |
+| `left_lock_ramp`, `left_lock` | Trinity Ramp and lock | Future War Ramp and lock | Sarah's recurring flash-forward: surviving Hunter-Killer sorties |
+| `middle_loop_ramp`, `middle_loop_vuk` | Deja Vu Ramp + VUK | Displacement Ramp + VUK | Time-displacement arrivals (both Terminators arrive naked in a lightning field) |
+| `right_loop_ramp`, `upper_target_1..3` | Real World Ramp + standups | Pescadero Ramp + Ward standups | Escaping the mental hospital. Also the ramp T-1000 Multiball jackpots use, as Sentinel Multiball does |
+| `platform` (gate, two targets, magnet, VUK/subway) | Sentinel Boss toy | T-1000 toy (Cruiser targets = gate, Semi Grille = platform targets, T-1000 magnet, T-1000 VUK) | The T-1000's pursuit by cruiser and tanker truck |
+| `popups`, `popup_scoop` | Agents + Agents Coming scoop | Endoskeletons + Assembly Line scoop | Skynet's mass-produced units |
+| `right_outlane_lock` + target | Ammo Lock + target | Arsenal Lock + target | The gun-store arsenal montage; same drain-save mechanic |
+| `five_bank` | Matrix Team drops | Cyberdyne Lab drops | Wiping the lab's systems during the raid |
+| `three_bank` | (unused) | (unused; candidate for a T2-only feature) | |
+| `pop_target_1..4` | EMP standups | Launch Site standups | Nuclear launch sites from Sarah's nightmare; lights Vision, and later arms/disarms Judgment Day |
 | Lanes/spinners | (unnamed) | Freeway lanes/spinners | Cosmetic only |
 | Left/right flipper buttons (mode input) | Blue Pill / Red Pill | Kill Dyson / Spare Dyson | Sarah's choice at gunpoint in Dyson's house |
 
@@ -251,12 +244,14 @@ Judgment Day runs, mirroring Trinity/Sentinel Multiball's availability rule.
 - Four hits across the two Cruiser targets open the way ("It's found you!",
   100,000). A ball into the T-1000 VUK while it is open requests the
   multiball: 3 balls, 20 s ball save.
-- Jackpots on the T-1000 Ramp and the Semi Grille, 150,000. Three jackpots
-  (proposed) save **SKYNET** (meaning Skynet's agent was driven off, a
-  temporary win, not its final defeat, which is reserved for the wizard mode).
-- Add-a-ball, once per multiball: hit the two Cruiser targets and the Semi
-  Grille to light it, then shoot the T-1000 VUK. 10 s save on the added ball.
-  Peaks at 4 balls.
+- Jackpots on the right loop ramp (there is no ramp into the toy; this
+  mirrors Sentinel Multiball) and either Semi Grille target, 150,000. Three
+  jackpots (proposed) save **SKYNET** (meaning Skynet's agent was driven off,
+  a temporary win, not its final defeat, which is reserved for the wizard
+  mode).
+- Add-a-ball, once per multiball: hit the two Cruiser targets and a Semi
+  Grille target to light it, then shoot the T-1000 VUK. 10 s save on the
+  added ball. Peaks at 4 balls.
 - The gate closes and the hit count resets when the multiball ends, and also
   at ball end, so all four hits and the VUK shot must come on one ball.
 
@@ -284,8 +279,8 @@ War lock and the T-1000 gate are off, mirroring The One's exclusivity rule.
 
 | Stage | Balls | Goal | Score |
 | --- | --- | --- | --- |
-| 1. Freeway | 2 | The T-1000 Ramp, 6 hits (proposed) as the tanker chase spills onto the freeway | 100,000 per hit |
-| 2. Steel Mill Arrival | 4 | The Semi Grille shot knocks the T-1000 down; it gets back up 1 s later, mirroring the Agent-rise timing in The One | 500,000 per hit |
+| 1. Freeway | 2 | The right loop ramp, 6 hits (proposed) as the tanker chase spills onto the freeway | 100,000 per hit |
+| 2. Steel Mill Arrival | 4 | Either Semi Grille target knocks the T-1000 down; it gets back up 1 s later, mirroring the Agent-rise timing in The One | 500,000 per hit |
 | 3. Molten Steel | 6 | The T-1000 magnet catch pushes it toward the vat; every ramp becomes a super jackpot while it is down | 1,000,000 per super jackpot |
 | 4. Self-Sacrifice | any | The four Launch Site standups, in sequence, as the T-800 lowers itself into the steel to destroy the last chip | 5,000,000 |
 
@@ -347,7 +342,6 @@ quoted in this document.
 | --- | --- | --- | --- |
 | `game_select` | 2000 | before `act_select`, once per game | `code/game_select.py` |
 | `base` | 100 | every ball, both games | YAML, with T2/Matrix HUD panels gated on `game_choice` |
-| `matrix_shots` (exists) / `t2_shots` | 150 | every ball of the chosen game | YAML: physical switch events to that game's shot names (section 1) |
 | `t2_main` | 200 | every ball while `game_choice` is `t2` | `code/t2_main.py`: chapter order, Command scoop, multiball queue, roster, Judgment Day resume |
 | `future_war_lock`, `t1000_gate` | 250 | `t2_features_start` | YAML |
 | `t2_ch1_arrival`, `t2_ch2_pescadero`, `t2_ch3_dyson`, `t2_ch4_raid` | 300 | `start_ch1` to `start_ch4` from `t2_main` | YAML |
@@ -357,11 +351,15 @@ quoted in this document.
 
 This mirrors docs/11 section 11's table and priority scheme exactly, so the
 existing `act_one`/`the_one` code is a direct template for `t2_main`/
-`judgment_day`.
+`judgment_day`. T2's modes listen to the same generic hardware events as
+the Matrix modes (section 1); there is no per-game translation layer.
 
 ## 14. Still to decide
 
-- **The section 1 hardware refactor** is done (agreed 2026-09-25).
+- **The section 1 hardware vocabulary** is done (agreed 2026-09-25). Its
+  `TODO(hardware)` items (left lock counting, the platform subway, the gate's
+  energised state, the platform raise) wait on the toy and the lock being
+  built.
 - **Game Select's timeout and default**: agreed with the user (2026-09-25),
   15 s, defaulting to Matrix.
 - **Whether `base` is one slide with conditional panels or two slides**

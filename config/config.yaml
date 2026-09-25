@@ -75,7 +75,6 @@ machine:
 
 modes:
   - base
-  - matrix_shots
   - act_select
   - act_one
   - trinity_lock
@@ -102,7 +101,8 @@ player_vars:
   chapter_next:
     initial_value: 1
     value_type: int
-  mission_ready:
+  # The mode drop is down, so the mode scoop will start something.
+  mode_ready:
     initial_value: 0
     value_type: int
   freed_trinity:
@@ -256,30 +256,31 @@ switches:
   # s_plunger:
   #   number: TODO
 
-  # EMP Pop Bumper Area Switches
-  s_emp_pop:
+  # Pop bumper area (the "EMP" area in the Matrix design). Every hardware
+  # name in this file and in playfield_pending.yaml is generic: it says what
+  # the feature is, not what a game calls it, so every game listens to the
+  # same events. Each game's modes and docs carry the mapping to that game's
+  # names (docs/11-rules-act-1.md section 11, docs/12-rules-terminator-2.md
+  # section 4). Keep the event names when renumbering a switch.
+  s_pop_bumper_1:                 # was s_emp_pop
     number: bottom32-14
     debounce: quick
-  s_emp_trigger:
+  s_pop_trigger:                  # was s_emp_trigger
     number: bottom32-13
     tags: playfield_active
-  # events_when_activated is the physical layer: it names the hardware, not
-  # the theme. Each game's shot mode (modes/matrix_shots for the Matrix)
-  # re-posts these as its own themed events, which is what the rules listen
-  # to. Keep the event names when renumbering a switch.
-  s_emp_target_1:
+  s_pop_target_1:                 # was s_emp_target_1
     number: bottom32-9
     tags: playfield_active
     events_when_activated: pop_target_1_hit, pop_target_hit
-  s_emp_target_2:
+  s_pop_target_2:
     number: bottom32-10
     tags: playfield_active
     events_when_activated: pop_target_2_hit, pop_target_hit
-  s_emp_target_3:
+  s_pop_target_3:
     number: bottom32-11
     tags: playfield_active
     events_when_activated: pop_target_3_hit, pop_target_hit
-  s_emp_target_4:
+  s_pop_target_4:
     number: bottom32-12
     tags: playfield_active
     events_when_activated: pop_target_4_hit, pop_target_hit
@@ -288,12 +289,13 @@ switches:
     tags: playfield_active
     events_when_activated: kickback_target_hit
 
-  # Standup beside the single-ball lock (bd_ammo_lock, "lock 2").
-  s_ammo_target:
+  # Standup and rollover at the bottom right outlane lock (the "Ammo" lock
+  # and target in the Matrix design).
+  s_right_outlane_lock_target:    # was s_ammo_target
     number: bottom32-20
     tags: playfield_active
-    events_when_activated: lock_2_target_hit
-  s_ammo_rollover:
+    events_when_activated: right_outlane_lock_target_hit
+  s_right_outlane_lock_rollover:  # was s_ammo_rollover
     number: bottom32-21
     tags: playfield_active
 
@@ -328,9 +330,9 @@ coils:
     platform_settings:
       recycle_ms: 40
 
-  # Middle Playfield Coils (in EMP)
+  # Pop bumper area
   # TODO(hardware): pop bumper coil not yet installed.
-  # c_emp_pop:
+  # c_pop_bumper_1:
   #   number: TODO
   #   default_pulse_ms: 20
   #   platform_settings:

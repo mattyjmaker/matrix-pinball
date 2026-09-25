@@ -36,7 +36,7 @@ class MatrixTestCase(MpfGameTestCase):
     def confirm_playfield(self):
         """Hit a playfield switch so ejected balls count as on the playfield."""
         self.advance_time_and_run(1)
-        self.hit_and_release_switch("s_emp_trigger")
+        self.hit_and_release_switch("s_pop_trigger")
         self.advance_time_and_run(1)
 
     def enter_device(self, switch, settle=2):

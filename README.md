@@ -152,12 +152,19 @@ or Godot, and play through every chapter, multiball and wizard stage.
 on the real machine: those switches never close and those coils do nothing
 until the feature is wired. To bring one online, move its entries into
 `config/config.yaml`, give them FAST numbers and delete `platform: virtual`.
-Keep each switch's `events_when_activated:` line. Those events name the
-hardware (`ramp_1_hit`, `pop_target_1_hit`), and `modes/matrix_shots`
-re-posts each one under its Matrix name (`trinity_ramp_hit`,
-`emp_target_1_hit`), which is what the rules listen to. Nothing listens to
-switch names, and a second game gets its own shot mode over the same
-physical events (`docs/12-rules-terminator-2.md`, section 1).
+Keep each switch's `events_when_activated:` line: the modes listen to those
+events, never to switch names.
+
+### Hardware names are generic
+
+Every switch, coil, device and event names what the hardware is
+(`left_lock_ramp`, `platform_gate`, `popup_1`, `right_outlane_lock`), never
+what a game calls it, because the same playfield will run more than one game
+(`docs/12-rules-terminator-2.md`). The Matrix modes keep the film's names in
+their display text and comments; the mapping is in `docs/11-rules-act-1.md`,
+section 11, and each renamed entry in the config carries a `# was ...`
+comment. `tests/test_shots.py` fails if a Matrix word gets into a hardware
+name.
 
 ### Keyboard
 
@@ -165,21 +172,21 @@ On `mpf both -X` the `[keyboard]` section of `gmc/gmc.cfg` drives the switches.
 Keys marked toggle stay closed until pressed again, which is how a ball sits in
 a device or a drop target stays down.
 
-| Key | Switch | | Key | Switch |
+| Key | Switch (Matrix name) | | Key | Switch (Matrix name) |
 | --- | --- | --- | --- | --- |
-| `1` | Start | | `u` | Deja Vu VUK (toggle) |
-| `a` / `d` | Left / right flipper | | `i` | Sentinel VUK (toggle) |
-| `q` | Mission Drop (toggle) | | `o` | Agents Coming scoop (toggle) |
-| `w` | Mission scoop (toggle) | | `f` `g` `h` | Trinity lock 1 to 3 (toggle) |
-| `e` | Trinity Ramp | | `j` | Ammo Lock (toggle) |
-| `r` | Deja Vu Ramp | | `l` | Ammo target |
-| `t` | Real World Ramp | | `s` / `5` | Sentinel left / right target |
-| `y` | Sentinel Ramp | | `6` | Sentinel magnet |
-| `2` `3` `4` | Agents 1 to 3 (toggle) | | `0` `9` `8` `7` | Outlanes and inlanes |
+| `1` | Start | | `u` | Middle loop VUK (Deja Vu VUK, toggle) |
+| `a` / `d` | Left / right flipper | | `i` | Platform VUK (Sentinel VUK, toggle) |
+| `q` | Mode drop (Mission Drop, toggle) | | `o` | Pop-up scoop (Agents Coming, toggle) |
+| `w` | Mode scoop (Mission scoop, toggle) | | `f` `g` `h` | Left lock 1 to 3 (Trinity lock, toggle) |
+| `e` | Left lock ramp (Trinity Ramp) | | `j` | Right outlane lock (Ammo Lock, toggle) |
+| `r` | Middle loop ramp (Deja Vu Ramp) | | `l` | Right outlane lock target (Ammo target) |
+| `t` | Right loop ramp (Real World Ramp) | | `s` / `5` | Platform gate left / right (Sentinel entrance targets) |
+| `y` | Platform target 1 (Sentinel boss target) | | `6` | Platform magnet (Sentinel magnet) |
+| `2` `3` `4` | Pop-ups 1 to 3 (Agents, toggle) | | `0` `9` `8` `7` | Outlanes and inlanes |
 
-The trough keys are `x c v b n m k`. The Matrix Team drops, Real World
-standups, Sentinel boss target and EMP standups have no key; use MPF Monitor
-(`pinball-monitor`) for those. The Godot editor's MPF tab rewrites
+The trough keys are `x c v b n m k`. The five-bank and three-bank drops, upper
+playfield standups, platform target 2 and pop area standups have no key; use
+MPF Monitor (`pinball-monitor`) for those. The Godot editor's MPF tab rewrites
 `gmc/gmc.cfg` in full, so check this section survives an editor save.
 
 ## Slides and the Matrix look

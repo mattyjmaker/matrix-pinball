@@ -21,9 +21,9 @@ multiballs:
 accruals:
   ch2_super_jackpot:
     events:
-      - real_world_1_hit
-      - real_world_2_hit
-      - real_world_3_hit
+      - upper_target_1_hit
+      - upper_target_2_hit
+      - upper_target_3_hit
     events_when_complete: ch2_super_jackpot
     start_enabled: true
 
@@ -35,7 +35,7 @@ variable_player:
     objective:
       action: set
       string: "UNPLUGGED: REAL WORLD RAMP FOR JACKPOTS"
-  real_world_ramp_hit:
+  right_loop_ramp_hit:
     score: 100000
   ch2_super_jackpot:
     score: 500000
@@ -53,7 +53,7 @@ widget_player:
         title: UNPLUGGED
         goal: REAL WORLD RAMP FOR JACKPOTS
       expire: 5s
-  real_world_ramp_hit:
+  right_loop_ramp_hit:
     mode_banner:
       tokens:
         title: JACKPOT
