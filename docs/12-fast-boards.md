@@ -543,9 +543,10 @@ Ordered by impact.
      FP-EXP-1313 (`fast_defines.py`), and its `shakers:` device needs it.
      FP-EXP-1313 is not on FAST's part number index and has no product
      page (checked 2026-09-26), so its availability is Unknown: ask FAST.
-   - Decision for the owner: give driver 7 to the knocker or to the shaker.
-     The alternatives are a FAST shaker board if one can be bought, or a
-     spare playfield I/O driver run down to the cabinet.
+   - Resolved 2026-09-26: the knocker moves to the backbox on a spare
+     driver of the back 1616 (48 V from the Playfield Interchange J10), and
+     the shaker takes driver 7 with a flyback diode. The FP-EXP-1313 (listed
+     in FAST's shop) is no longer required. See 08-this-machine.md.
 4. **48 V enable must be hardware for now.** Software 48 V control is
    unreleased (Official, as fetched), so the filter board needs J8 closed by
    the coin door switch or a jumper. The "smart switch preferred" advice in

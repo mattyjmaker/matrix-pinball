@@ -360,27 +360,29 @@ Open items:
       third supply's added load.
 - [ ] Read the labels on the two existing backbox Mean Wells to confirm they
       are the RSP-500-48 and LRS-150-12.
-- [ ] **Shaker deferred** (user, 2026-09-26). Plan: FP-EXP-1313 shaker
-      board (FAST shop: shop.fastpinball.com/product/fp-exp-1313-fast-expansion-board-shaker-motor-/58),
-      powered from Cabinet I/O SHAKER PWR (J12 on the -5 board), on the EXP
-      bus, driving the motor; MPF `shakers:`. Deferred because shipping
-      alone is about US$110; add it to a future FAST order to share the
-      postage. Until then the shaker stays disconnected. SHAKER PWR + and -
-      are plain always-on 12 V: never connect the motor straight across
-      them, or it runs whenever the machine is on.
-- [ ] **Knocker on Cabinet I/O J2** (decided 2026-09-26): H2 to the coil lug
-      on the diode band side, D1 (driver 7, `cab-7`) to the other lug.
-      Not yet in the config; add as a coil once fitted.
-      Location and model TBC (user, 2026-09-26). Options: keep the owned
-      Williams B-10686-1 (vertical only, gravity return) on the cabinet
-      back wall under a solid rail or block, or in the backbox; or buy a
-      knocker with a return spring for horizontal mounting (confirm the
-      spring before buying). Diode needed either way: 1N4007 (x100
-      ordered 2026-09-26), not the owned 1N4001G-T (keep those for 12 V
-      loads such as the shaker). Side-wall option: knocker vertical on the
-      18 mm ply side wall, strike plate under a glued, screwed and gusseted
-      block; screws under 18 mm long; set the gap by test-firing with the
-      block clamped.
+- [ ] **Knocker in the backbox, on the back 1616** (decided 2026-09-26,
+      option C). The owned Williams B-10686-1, mounted vertically (gravity
+      return) with the strike plate (01-7525) above the plunger.
+      Wiring, 18 AWG: Playfield Interchange J10 H2 (48 V, fuse F1) to the
+      coil lug on the diode band side (blue); other coil lug to a spare
+      driver pin on the back 1616's J3 or J4 (black, this machine's
+      convention). The 1616's driver GND pins already return to the
+      interchange TG pins. 1N4007 across the coil, band to the H2 lug.
+      A 2-pin 0.156" inline connector where the pair crosses from
+      playfield to backbox, with slack for the head to fold and the
+      playfield to lift; it adds one plug to playfield removal.
+      Config: add as a coil once the loop order gives the back 1616's
+      `io_loop` name and the driver pin is chosen.
+- [ ] **Shaker on the Cabinet I/O, driver 7** (follows from the knocker
+      decision, 2026-09-26). Solid yellow (+) to SHAKER PWR + (J12 on the
+      -5 board; meter its polarity first), striped yellow (-) to J2 D1
+      (`cab-7`), 18 AWG, 1N4007 across the motor with the band on the solid
+      yellow. SHAKER PWR - and J2 H2 and TG stay unconnected; never connect
+      the motor straight across SHAKER PWR + and -. This follows FAST's
+      "driver output (with proper protection)" route, so no FP-EXP-1313 is
+      needed; the motor is driven as a coil (PWM hold power), not MPF's
+      `shakers:` device. Add to the config once its running current is
+      measured.
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
       assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
