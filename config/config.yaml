@@ -340,6 +340,13 @@ coils:
     number: cab-2
     allow_enable: true
 
+  # Cabinet I/O low-current driver L4 (CABINET B pin 11) switches the LED
+  # ring of the cabinet power button (black lead); its red lead takes 12 V
+  # from the right opto board J1 pin 7. Planned 2026-09-26; not yet wired.
+  c_power_button_led:
+    number: cab-4
+    allow_enable: true
+
   # Middle Playfield Coils (in EMP)
   # TODO(hardware): pop bumper coil not yet installed.
   # c_emp_pop:
@@ -351,6 +358,10 @@ coils:
 lights:
   l_start:
     number: c_start_lamp
+    platform: drivers
+    type: w
+  l_power_button:
+    number: c_power_button_led
     platform: drivers
     type: w
 

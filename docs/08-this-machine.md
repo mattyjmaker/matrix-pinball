@@ -200,6 +200,26 @@ Identifying the leads (meter, button out of circuit):
 3. A common vendor mapping is red = LED +, black = LED -, and the other three
    are the switch (C, NO, NC). That mapping is not verified for this button.
 
+Lead mapping (user, 2026-09-26, not yet metered): blue and yellow are the
+momentary switch pair; red and black are the LED (red taken as +). Green is
+not accounted for; on these buttons it is usually the normally closed
+contact, so leave it unconnected and insulated. Confirm with a meter that
+blue to yellow closes only while pressed, and that the LED lights with red
+on + and black on -. The LED's rated voltage is still Unknown.
+
+Planned LED wiring (22 AWG):
+
+| Button lead | To | Wire |
+| --- | --- | --- |
+| Red (LED +) | Right opto board J1 pin 7 (12V) | Yellow |
+| Black (LED -) | CABINET B pin 11 (L4, `cab-4`) | Grey or white |
+| Blue, yellow (switch) | Unconnected for now; later the Neuron J4 pins 2 and 3 | 2-core, if pre-run |
+| Green | Unconnected, insulated | |
+
+The button's own black lead is the LED's switched return, not a ground; it
+lands on a driver pin, so label it. The light is in the config as
+`l_power_button` (`platform: drivers` on `c_power_button_led`, `cab-4`).
+
 How the machine is switched today (user, 2026-09-26): a mains rocker
 switch on the back of the backbox (head). Switching it on powers everything
 at once; the cabinet button plays no part. Switching it off also cuts the
