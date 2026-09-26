@@ -510,7 +510,14 @@ Logs go to `~/matrix-pinball/logs/`.
       1N4004 or 1N4007 diode; this repo uses a 1N4004 or 1N4007 because a
       1N4001 is rated only 50 V. The owned coil has no diode (user,
       2026-09-26): buy and fit one. The black part on the shaker motor is
-      a capacitor, not a diode, and cannot be used. Check that the assembly's coil
+      a capacitor, not a diode, and cannot be used.
+      Mounting: this knocker has no return spring and relies on gravity,
+      so it must be mounted vertically with the plunger firing upwards into
+      the strike plate (01-7525, owned). Williams mounts it in the backbox,
+      striking the backbox top (Community practice, Pinscape build guide).
+      In the cabinet there is no solid surface above, so fit a solid wooden
+      block to the cabinet wall above the plunger to carry the strike plate.
+      Never mount it horizontally or upside down. Check that the assembly's coil
       already has one. MPF 0.80 has no `knockers:` device (not in its
       `config_spec.yaml`), so the knocker is a plain entry under `coils:`
       fired by `coil_player`. Nothing in the Act I rules fires it yet.
