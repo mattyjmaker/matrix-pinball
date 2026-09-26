@@ -24,9 +24,9 @@ has to be checked on the machine.
 | Neuron controller | FP-CPU-2000 (its built-in expansion board is FP-EXP-2000) | 1 | Backbox | USB to host; hosts the NET loop and EXP bus | `controller: neuron`, EXP board `neuron` | Running; enumerates as `/dev/ttyACM0` to `ACM2` |
 | Smart Power Filter Board | FP-PWR-0007 | 1 | Backbox | EXP breakout (5-wire cable to a Neuron breakout header) | Breakout `port: 1` of `neuron` | Not recorded |
 | Playfield Interchange Board | FP-PWR-0030 | 1 | Rear of playfield | None (passive) | None needed | Not recorded |
-| I/O 1616 | FP-I/O-1616 | 2 | Playfield back; playfield middle | NET loop | One declared (`top16`); **the second is missing** | Partly wired |
+| I/O 1616 | FP-I/O-1616 | 2 | Playfield back; playfield middle | NET loop | `top16` (back, order 2) and `mid16` (middle, order 3) | Partly wired |
 | I/O 3208 | FP-I/O-3208 | 1 | Playfield | NET loop | `bottom32` | Flippers and lower third wired |
-| Cabinet I/O | **FP-I/O-0024-5** (silkscreen, photo 2026-09-25; the repo previously said FP-CAB-0001) | 1 | Cabinet | NET loop | `cab` | Mounted, not wired; NET cables not plugged in |
+| Cabinet I/O | **FP-I/O-0024-5** (silkscreen, photo 2026-09-25; the repo previously said FP-CAB-0001) | 1 | Cabinet | NET loop | `cab` | Mounted; buttons wired 2026-09-26; in the NET loop at order 1 |
 | Expansion board, 256 LEDs | FP-EXP-0081 | 1 | Not installed | EXP bus | Not configured | Not wired |
 | Expansion board, 128 LEDs + 4 servos | FP-EXP-0071 | 1 | Not installed | EXP bus | Not configured | Not wired |
 | Opto flipper switch board | FP-SWI-7083-1 (silkscreen, photo 2026-09-25) | 2 | Cabinet, one per side | Switch-level only | None | Blocked: no matching housings |
@@ -43,9 +43,9 @@ first boot on FAST hardware.
 
 1. **Cabinet I/O part number. Done 2026-09-25: FP-I/O-0024-5** (user photo).
    The config's `FP-I/O-0024` is correct. Revision -5 is newer than FAST's
-   documentation; see section 3.6 for what differs. The same photo shows no
-   cables in either NET jack, so the board is not in the loop yet, and
-   `order: 1` in the config is wrong until it is. The background:
+   documentation; see section 3.6 for what differs. Its NET cables were
+   empty in that photo; it has since been cabled into the loop at order 1
+   (user, 2026-09-26). The background:
    - MPF 0.80 compares the model each board reports over the loop with the
      `model:` in `io_loop:` and stops with an `AssertionError` if they differ
      (`mpf/platforms/fast/communicators/net_neuron.py`, `_process_nn`).
@@ -55,7 +55,9 @@ first boot on FAST hardware.
      were built for commercial partners with different pinouts, and that
      revision -4 is the only one sold publicly. FAST's own MPF log example
      shows a cabinet board reporting `FP-I/O-0024-3`. (Official)
-2. **Loop order.** Trace the cables from the Neuron's NODE OUT through each
+2. **Loop order. Done 2026-09-26:** Neuron, Cabinet I/O, Interchange, back
+   1616, middle 1616, front 3208, Interchange, Neuron. Still to record: the
+   part number and revision of both 1616s and the 3208. Original check: trace the cables from the Neuron's NODE OUT through each
    board's IN and OUT and back to the Neuron's IN. Record which physical board
    is 1, 2, 3 and 4. Also record the full part number and revision of both
    1616s and the 3208.
@@ -526,12 +528,13 @@ Ordered by impact.
 
 1. **The Cabinet I/O model in the config was wrong, and is now fixed.** It
    said `FP-CAB-0001`; the board reads FP-I/O-0024-5, and MPF 0.80 aborts on
-   a mismatch. The config now says `FP-I/O-0024`. Separately, the board is
-   not yet cabled into the loop, so its `order: 1` is wrong until it is.
+   a mismatch. The config now says `FP-I/O-0024`. It is cabled into the
+   loop at order 1 (2026-09-26).
    Revision -5 also has a header (J8) and designator changes that FAST does
    not document (section 3.6.1).
-2. **The second 1616 is missing from `io_loop:`.** This was already known.
-   It still needs the real loop order (check 2).
+2. **The second 1616 was missing from `io_loop:`.** Fixed 2026-09-26 with
+   the traced loop order: `cab` 1, `top16` (back) 2, `mid16` (middle) 3,
+   `bottom32` (front) 4.
 3. **The knocker and the shaker are both planned on the Cabinet I/O, but it
    has only one high-current driver** (driver 7, D1 on J2).
    - L0 to L5 are current-limited LED drivers, and D5 and D6 are logic

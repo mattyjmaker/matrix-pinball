@@ -573,7 +573,7 @@ def io1616(s, asg):
     s.notes("Which 1616 is this?", [
         "Two 1616s are fitted: back and middle of the playfield. Print one copy per board.",
         "This board: [ ] back   [ ] middle      Loop order: ____      Part no. and rev: ______________",
-        "io_loop name: [ ] top16   [ ] (second 1616, not yet in the config)      No devices are assigned to top16 yet.",
+        "io_loop name: back = top16 (order 2), middle = mid16 (order 3). No devices assigned to either yet.",
     ])
     b = "top16"
     s.cards([
@@ -625,7 +625,7 @@ def cabinet(s, asg):
         "BILL/CARD/TICKET is J11 (FAST: J10). SHAKER PWR is J12 (FAST: J11). J8 (5-pin, in the COIN DOOR group) is undocumented.",
         "On this board, pin 1 of CABINET B and BILL/CARD/TICKET (switch 16 / 21) is at the right-hand end.",
         "No 13-pin header is keyed. Cut a different unused pin on each and fit key plugs. Neuron firmware v2.13+ required.",
-        "The NET jacks were empty on 2026-09-25: plug in before booting, or MPF's order: 1 for cab is wrong.",
+        "In the I/O loop at order 1 (2026-09-26): Neuron > cab > Interchange > back 1616 > middle 1616 > 3208.",
     ])
 
     def sw(n):

@@ -491,11 +491,8 @@ Logs go to `~/matrix-pinball/logs/`.
       important are the physical loop order and the Neuron firmware version
       (v2.13 or newer is needed for the Cabinet I/O). The Cabinet I/O part
       number is done: FP-I/O-0024-5 (2026-09-25).
-- [ ] **Plug the Cabinet I/O into the I/O loop before the first boot on FAST
-      hardware.** Its NET jacks were empty in the 2026-09-25 photo. The config
-      lists it at `order: 1`, so with it out of the loop MPF will find a
-      different board model in position 1 and abort. Either cable it in, or
-      remove `cab` from `io_loop:` and renumber the other boards until it is.
+- [x] **Cabinet I/O cabled into the I/O loop** at order 1 (user,
+      2026-09-26), matching the config.
 - [ ] **48 V enable.** The Smart Power Filter Board's software 48 V enable is
       not released (FAST, as fetched 2026-09-25), so 48 V flows only while its
       J8 (ENA IN) pins 1 and 3 are closed. Wire the coin door interlock to J8
@@ -509,7 +506,7 @@ Logs go to `~/matrix-pinball/logs/`.
       as on the left), LED - to CABINET B pin 11 (L4), as a second
       `platform: drivers` light on `cab-4`. Needs a 12 V LED, or a series
       resistor sized for its rated voltage.
-- [ ] **Add the second 1616 to `io_loop:` in `config/config.yaml`.** The config declares only three boards (`cab`, `top16`, `bottom32`) but two 1616s are installed. Until the fourth entry exists — with `order:` values matching the real daisy-chain order out of the Neuron — switch and driver numbers will land on the wrong boards.
+- [x] **Second 1616 added to `io_loop:`** (2026-09-26), order traced by the user: Neuron, Cabinet I/O, Interchange, back 1616 (`top16`, 2), middle 1616 (`mid16`, 3), front 3208 (`bottom32`, 4), Interchange, Neuron. Neither 1616 has anything plugged in yet.
 - [ ] Run `mpf hardware scan` to confirm the board models and loop order match the config (`FP-I/O-0024`, `FP-I/O-1616` ×2, `FP-I/O-3208`, `FP-EXP-2000` + `FP-PWR-0007`). This is the fastest way to get the true `order:` values.
 - [ ] Wire the Cabinet I/O (FP-I/O-0024-5). It's mounted but unwired.
       Pinouts are in 12-fast-boards.md, section 3.6. None of its 13-pin
@@ -527,7 +524,7 @@ Logs go to `~/matrix-pinball/logs/`.
       strike plate (Community practice, Pinscape build guide). MPF 0.80 has
       no `knockers:` device, so it is a plain entry under `coils:` fired by
       `coil_player`. Nothing in the Act I rules fires it yet.
-- [ ] Check whether the Cabinet I/O's **NET cable** is plugged into the I/O loop. If it isn't, it won't appear in `mpf hardware scan` and the config's `order: 1` for `cab` is wrong — every other board's order shifts.
+- [x] The Cabinet I/O's NET cables are in the I/O loop, at order 1 (user, 2026-09-26).
 - [ ] **Install Godot 4.7.2 on this machine.** `project.godot` is now tagged
       `4.7`, but the editor here is still 4.6.3, which will warn that the
       project was made with a newer version. Download 4.7.2 from

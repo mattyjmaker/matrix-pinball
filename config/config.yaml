@@ -36,17 +36,23 @@ fast:
             # Silkscreen reads FP-I/O-0024-5 (photo, 2026-09-25). MPF 0.80
             # ignores the revision suffix but aborts if the model differs from
             # what the board reports; it does not alias FP-CAB-0001.
-            # TODO(hardware): the board's NET cables were not plugged in at
-            # that date. Until it is in the loop, order: 1 is wrong.
+            # Loop order traced by the user, 2026-09-26: Neuron -> Cabinet I/O
+            # -> Playfield Interchange (pass-through, not listed) -> back 1616
+            # -> middle 1616 -> front 3208 -> Interchange -> Neuron.
+            # Device numbers are board-local (e.g. bottom32-25), so adding a
+            # board here does not renumber existing devices.
             cab:
                 model: FP-I/O-0024
                 order: 1
-            top16:
+            top16:              # back of the playfield
                 model: FP-I/O-1616
                 order: 2
-            bottom32:
-                model: FP-I/O-3208
+            mid16:              # middle of the playfield
+                model: FP-I/O-1616
                 order: 3
+            bottom32:           # front (lower third, flippers)
+                model: FP-I/O-3208
+                order: 4
     port: auto
     baud: 921600
     watchdog: 1s

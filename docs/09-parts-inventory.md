@@ -56,7 +56,7 @@ Both the Smart Power Filter Board and the Playfield Interchange Board ship in th
 
 ✅ The **FP-I/O-3208 does exist** and is installed, even though it never appeared in the BOM or the Feb 2023 FAST cart. The config's `bottom32: FP-I/O-3208` is correct. (The Dropbox `FAST_3208_HEAT_PRESS_M3_v15.stl` mount is presumably for it.)
 
-⚠ **The config is missing a board.** `config/config.yaml`'s `io_loop:` declares only three — `cab` (now FP-I/O-0024, previously FP-CAB-0001), `top16` (FP-I/O-1616) and `bottom32` (FP-I/O-3208) — but there are two 1616s installed. The middle 1616 needs its own entry, and the `order:` values must match the real daisy-chain order out of the Neuron, or every switch and driver number shifts to the wrong board.
+The config's `io_loop:` lists all four NET boards in the order traced by the user on 2026-09-26: `cab` (FP-I/O-0024) 1, `top16` (back 1616) 2, `mid16` (middle 1616) 3, `bottom32` (front 3208) 4. The Playfield Interchange is a pass-through and is not listed.
 
 **Cabinet I/O (FP-I/O-0024-5): installed but not yet wired** (user, 2026-09-20). The config expects it at `order: 1`. Two consequences: the `cab-…` switch numbers (flipper buttons, start) and the cabinet drivers (knocker, button lamps) can't be finalised yet; and if its **NET cable isn't in the I/O loop**, `order: 1` is wrong and every other board's order shifts.
 

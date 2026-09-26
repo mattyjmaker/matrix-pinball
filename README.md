@@ -410,11 +410,12 @@ service-mode switch test after wiring and correct the config if it differs.
 
 Two things must be right before any `cab-…` number resolves at all:
 
-1. The Cabinet I/O board's NET cable has to be in the I/O loop.
+1. The Cabinet I/O board's NET cable has to be in the I/O loop (it is, as
+   of 2026-09-26).
 2. `io_loop:` in `config/config.yaml` must list every board with `order:`
-   values matching the real daisy-chain out of the Neuron. It currently
-   declares three boards but four are installed (the second `FP-I/O-1616` is
-   missing). Run `mpf hardware scan` to get the true order.
+   values matching the real daisy-chain out of the Neuron. It now lists all
+   four (`cab`, `top16` back, `mid16` middle, `bottom32` front), in the order
+   traced on 2026-09-26. Confirm it with `mpf hardware scan` on first boot.
 
 ## Serial terminal access
 
