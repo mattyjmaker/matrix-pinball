@@ -91,12 +91,17 @@ From the silkscreen (user-provided photo):
 
 Planned wiring, one board per Cabinet I/O side header (4 wires):
 
-| Opto board J1 | Cabinet I/O CABINET A (J1, left) | Cabinet I/O CABINET B (right) |
-| --- | --- | --- |
-| 1 SW1 | pin 1, `cab-8` | pin 1, `cab-16` |
-| 2 SW2 | pin 2, `cab-9` | pin 2, `cab-17` |
-| 3 or 4 GND | pin 9, G | pin 9, G |
-| 6 or 7 12V | pin 13, 12 V | pin 13, 12 V |
+| Opto board J1 | Cabinet I/O CABINET A (J1, left) | Cabinet I/O CABINET B (right) | Wire (22 AWG) |
+| --- | --- | --- | --- |
+| 1 SW1 | pin 1, `cab-8` | pin 1, `cab-16` | Orange |
+| 2 SW2 | pin 2, `cab-9` | pin 2, `cab-17` | Orange |
+| 3 or 4 GND | pin 9, G | pin 9, G | Purple |
+| 6 or 7 12V | pin 13, 12 V | pin 13, 12 V | Yellow |
+
+Colours: orange and purple follow this machine's switch convention, which
+matches FAST's. GND is purple rather than black because it lands on the
+switch return pin (G) and is the return for SW1 and SW2; it also carries the
+board's supply current. Yellow is FAST's colour for low-current 12 V.
 
 - This matches FAST's recommended cabinet numbering (flippers on `cab-8/9` and
   `cab-16/17`), and keeps `s_left_flipper` (`cab-8`) and `s_right_flipper`
