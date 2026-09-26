@@ -355,8 +355,13 @@ Open items:
 - [ ] Read the labels on the two existing backbox Mean Wells to confirm they
       are the RSP-500-48 and LRS-150-12.
 - [ ] Decide which device gets the Cabinet I/O's only high-current driver
-      (`cab-7`): the knocker or the shaker. The other needs an FP-EXP-1313
-      (shaker) or a spare playfield I/O driver run to the cabinet.
+      (`cab-7`): the knocker or the shaker. The other needs a FAST shaker
+      board (FP-EXP-1313 in MPF; not on FAST's public part list, ask FAST
+      whether it can be bought) or a spare playfield I/O driver run to the
+      cabinet. On any plain FAST driver, fit the shaker's flyback diode; a
+      diode in the adapter harness rather than on the motor keeps the kit
+      unmodified. Never connect a diode-fitted motor to a driver that
+      reverses polarity.
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
       assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for

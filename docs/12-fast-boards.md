@@ -538,11 +538,14 @@ Ordered by impact.
      outputs (200 mA and 20 mA). By FAST's ratings, none of them can run a
      12 V motor.
    - FAST's shaker guide says a regular driver can work "with caveats around
-     the snubber" and recommends its shaker expansion board, the FP-EXP-1313,
-     which is not owned. MPF's `shakers:` device also needs the EXP-1313.
+     the snubber", and that FAST has an expansion board for shakers that
+     "just works", without naming it. MPF 0.80 supports a shaker breakout,
+     FP-EXP-1313 (`fast_defines.py`), and its `shakers:` device needs it.
+     FP-EXP-1313 is not on FAST's part number index and has no product
+     page (checked 2026-09-26), so its availability is Unknown: ask FAST.
    - Decision for the owner: give driver 7 to the knocker or to the shaker.
-     The alternatives are an FP-EXP-1313 for the shaker, or a spare playfield
-     I/O driver run down to the cabinet.
+     The alternatives are a FAST shaker board if one can be bought, or a
+     spare playfield I/O driver run down to the cabinet.
 4. **48 V enable must be hardware for now.** Software 48 V control is
    unreleased (Official, as fetched), so the filter board needs J8 closed by
    the coin door switch or a jumper. The "smart switch preferred" advice in
