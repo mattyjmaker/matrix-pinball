@@ -354,8 +354,15 @@ Open items:
       third supply's added load.
 - [ ] Read the labels on the two existing backbox Mean Wells to confirm they
       are the RSP-500-48 and LRS-150-12.
-- [ ] Decide which device gets the Cabinet I/O's only high-current driver
-      (`cab-7`): the knocker or the shaker. The other needs a FAST shaker
+- [x] Shaker goes on the Cabinet I/O (user, 2026-09-26): solid yellow (+) to
+      SHAKER PWR + (J12 on the -5 board, always-on 12 V), striped yellow (-)
+      to J2 D1 (driver 7, `cab-7`), 18 AWG, flyback diode in the harness
+      (band to +). SHAKER PWR alone cannot control the motor: + and - are
+      plain 12 V power, so the motor's - must go to a driver. The knocker
+      now needs another driver (a spare 1616 driver run to the cabinet).
+      Not yet in the config: add as a coil once its current is measured.
+- [ ] Earlier note on the choice between knocker and shaker on
+      `cab-7`, kept for reference: the knocker or the shaker. The other needs a FAST shaker
       board (FP-EXP-1313 in MPF; not on FAST's public part list, ask FAST
       whether it can be bought) or a spare playfield I/O driver run to the
       cabinet. On any plain FAST driver, fit the shaker's flyback diode; a
