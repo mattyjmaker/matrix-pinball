@@ -200,7 +200,25 @@ Identifying the leads (meter, button out of circuit):
 3. A common vendor mapping is red = LED +, black = LED -, and the other three
    are the switch (C, NO, NC). That mapping is not verified for this button.
 
-Open decisions are in the to-do list below ("Cabinet power button").
+How the machine is switched today (user, 2026-09-26): a mains rocker
+switch on the back of the backbox (head). Switching it on powers everything
+at once; the cabinet button plays no part. Switching it off also cuts the
+host PC without a shutdown, which risks the Ubuntu install; FAST's soft power
+plus the Neuron's J5 (PC control) header are meant to solve that once the
+firmware ships.
+
+Plan (2026-09-26):
+- LED: wire now as an MPF-controlled light on CABINET B pin 11 (L4, `cab-4`),
+  12 V from the right opto board's spare 12V (J1 pin 7), once the lead
+  mapping and LED voltage are confirmed.
+- Switch contacts: leave unconnected and labelled. If the cabinet is open
+  anyway, pre-run a 2-core 22 AWG cable from the button to the backbox for
+  the Neuron's J4 (PWR SW, pins 2 and 3), with slack for the head to fold.
+- Soft power itself (SSR, thermal fuse, CR2032, a 3-position ON/OFF/SOFT
+  mains switch per FAST's guide) waits for FAST's firmware. The existing
+  rocker stays the power switch until then.
+
+Open items are in the to-do list below ("Cabinet power button").
 
 ### Audio wiring (decided 2026-09-23, not yet installed)
 
@@ -418,10 +436,9 @@ Logs go to `~/matrix-pinball/logs/`.
       (and optionally J9 ENA OUT to a Cabinet I/O switch input), or jumper J8
       for testing.
 - [ ] **Cabinet power button.** Identify its leads and whether it is
-      momentary (see "Cabinet power button"). Record how the machine is
-      switched on today. Decide whether to run its switch pair to the
-      Neuron's J4 now (for FAST soft power once the firmware ships), and what
-      its LED should show. The FAST-style option is MPF control: LED + from
+      momentary (see "Cabinet power button"). Optionally pre-run a 2-core
+      cable to the backbox for the Neuron's J4. For the LED, the plan is MPF
+      control: LED + from
       the right opto board's spare 12V (J1 pin 7, if pins 6 and 7 are joined
       as on the left), LED - to CABINET B pin 11 (L4), as a second
       `platform: drivers` light on `cab-4`. Needs a 12 V LED, or a series
