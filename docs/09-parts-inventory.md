@@ -203,6 +203,8 @@ The anti-sway 1" frosted square standup targets have diodes. Across all areas th
 | 12 mm birch plywood (playfield) | HAVE |
 | M5 heat-set inserts (50) and M5 stainless screws (20× 20 mm, 10× 10 mm) | Listed; status unknown |
 | Spade bolts 20-9284 ×20 | Listed; status unknown |
+| 1N4007 diodes x100 (coil and motor flyback) | ORDERED (Amazon, user, 2026-09-26) |
+| 1N4001G-T diodes (quantity not recorded) | HAVE. 50 V rating: use on 12 V loads only (shaker); 1N4007 for 48 V coils |
 | Artwork: cabinet, playfield, plastics, translite acrylic and printing | Not costed ("?") |
 
 ## Measurements sheet
