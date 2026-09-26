@@ -366,11 +366,14 @@ Open items:
       practice, unverified for this motor; confirm against the terminal
       component's polarity marking if it is a polarised capacitor). A black cylindrical part sits at the motor terminals
       (photo, 2026-09-26), marked "CKHM", "2M45" and "R105 deg C T", with
-      a scored end like an electrolytic capacitor's vent. Its type, value,
-      polarity and connection are Unknown. If it is a capacitor across the
-      motor, a PWM-driven driver (MPF hold power) would charge it hard on
-      every pulse (engineering inference, not from FAST), so identify it
-      before choosing PWM. It does not replace a flyback diode. Its current is not
+      a scored end like an electrolytic capacitor's vent. It connects from
+      the motor's + terminal to the motor frame (user, 2026-09-26), the
+      usual layout for a noise-suppression capacitor. Value and polarity
+      marking: Unknown. With the low side switched (driver or EXP-1313),
+      the + terminal sits at a steady 12 V, so PWM does not charge and
+      discharge this capacitor on every pulse (engineering inference). If
+      it is a polarised electrolytic, its minus stripe must face the frame
+      lead. It does not replace a flyback diode across the motor. Its current is not
       published, so read the fitted motor's label or measure its winding
       resistance (stall current is roughly 12 V / R). Planned wiring: motor +
       to Cabinet I/O SHAKER PWR (J12 on this -5 board, 12 V; confirm polarity with a meter), motor - to driver 7 (J2 D1) if
