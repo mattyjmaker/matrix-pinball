@@ -351,7 +351,7 @@ Open items:
       (about 9.4 A RMS at the sub's 350 W into 4 ohms; 12 AWG if the run
       is over about 3 m).
 - [x] 3 m 3.5 mm to 2 x RCA lead for the MC101 sub pre-out to the AMP1501
-      (ordered, Amazon, A$14, user, 2026-09-26). If only one RCA carries
+      (ordered, Amazon, $14, user, 2026-09-26). If only one RCA carries
       signal (mono pre-out), that is expected. If it hums, try a
       ground-loop isolator.
 - [ ] Mount the RSP-500-12 in the backbox with its fan clear, and print a
