@@ -37,18 +37,23 @@ against FAST's wiring standard on 2026-09-25 (12-fast-boards.md, section 4).
 | --- | --- | --- |
 | Switches (cabinet buttons, playfield switches) | Feed out of the board input | Orange |
 | Switches | Return back to the board | Purple |
-| Solenoids, coils and similar drivers | Negative (to the driver pin) | Black on wiring done before 2026-09-26; **white (FAST standard) from 2026-09-26** |
-| Solenoids, coils and similar drivers | Positive run | Blue |
+| Solenoids, coils and similar drivers | Negative (to the driver pin) | Black |
+| Solenoids, coils and similar drivers | Positive run | Blue (48 V only) |
 
 So a cabinet flipper button is orange out to the button and purple back, and a
-flipper coil is blue on the positive run. Its driver wire is black on the
-existing playfield wiring and white on anything wired from 2026-09-26.
+flipper coil is blue on the positive run and black on the negative.
 
-Decision (user, 2026-09-26): follow FAST's colour standard for new wiring.
-Driver lines (coil, motor or lamp to a driver pin) are white or grey, 18 AWG
-on 0.156" driver headers and 22 AWG on 0.100" headers; black is kept for
-ground returns only. Existing black driver wires stay as they are; when
-fault-finding on older wiring, remember black may be a driver line.
+Decision (user, 2026-09-26): keep this machine's own convention for driver
+lines (black), to match the existing wiring, rather than FAST's grey/white.
+- The positive colour follows the voltage, not the device: blue means 48 V
+  only. A 12 V load on a driver (the shaker) has a yellow positive and a
+  black driver wire.
+- Exception already installed: the start lamp's return to CABINET A L2 is
+  white 22 AWG (wired 2026-09-26 when white was advised). It works as is;
+  change it to black only if you want the harness uniform.
+- Since black also means ground returns in FAST's scheme, label driver wires
+  where they could be confused with a ground (for example on 0.156" driver
+  headers next to the GND pins).
 
 Compared with FAST's standard (Official, fastpinball.com/wiring/standards):
 - Orange, purple and blue match.
@@ -57,7 +62,8 @@ Compared with FAST's standard (Official, fastpinball.com/wiring/standards):
   returns. That includes the 48 V toxic ground from each I/O board's GND pins
   back to the Playfield Interchange Board.
 - Using black for driver lines makes a control line look like a ground
-  return. Resolved 2026-09-26: new wiring uses white (see above).
+  return. The user chose to keep black for consistency (2026-09-26); label
+  where it matters.
 - FAST's other colours: yellow for 12 V, red for 5 V, white for LED data,
   and black for all DC ground returns.
 
@@ -372,7 +378,8 @@ Open items:
       return) with the strike plate (01-7525) above the plunger.
       Wiring, 18 AWG: Playfield Interchange J10 H2 (48 V, fuse F1) to the
       coil lug on the diode band side (blue); other coil lug to a spare
-      driver pin on the back 1616's J3 or J4 (white, FAST standard). The 1616's driver GND pins already return to the
+      driver pin on the back 1616's J3 or J4 (black, this machine's
+      convention). The 1616's driver GND pins already return to the
       interchange TG pins. 1N4007 across the coil, band to the H2 lug.
       A 2-pin 0.156" inline connector where the pair crosses from
       playfield to backbox, with slack for the head to fold and the
