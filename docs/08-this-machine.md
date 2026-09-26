@@ -361,14 +361,10 @@ Open items:
       plain 12 V power, so the motor's - must go to a driver. The knocker
       now needs another driver (a spare 1616 driver run to the cabinet).
       Not yet in the config: add as a coil once its current is measured.
-- [ ] Earlier note on the choice between knocker and shaker on
-      `cab-7`, kept for reference: the knocker or the shaker. The other needs a FAST shaker
-      board (FP-EXP-1313 in MPF; not on FAST's public part list, ask FAST
-      whether it can be bought) or a spare playfield I/O driver run to the
-      cabinet. On any plain FAST driver, fit the shaker's flyback diode; a
-      diode in the adapter harness rather than on the motor keeps the kit
-      unmodified. Never connect a diode-fitted motor to a driver that
-      reverses polarity.
+- [ ] Find a driver for the knocker: a spare 1616 driver run to the
+      cabinet, or a FAST shaker board freeing `cab-7` (FP-EXP-1313 in MPF;
+      not on FAST's public part list, ask FAST). Never connect the
+      diode-fitted shaker harness to a driver that reverses polarity.
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
       assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
