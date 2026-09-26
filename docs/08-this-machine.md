@@ -345,9 +345,15 @@ Open items:
       a genuine Anderson SB50 pair with 8 AWG contacts, 8 AWG ferrules for
       the amp end, short 12 AWG leads with ring terminals and a small -V
       junction block for the supply end, a hex crimp tool, heatshrink, a
-      grommet and cable clips, a 3.5 mm to 2 x RCA lead, and a short
-      18 to 22 AWG REM jumper (not blue, which this machine uses for coil
-      positive runs).
+      grommet and cable clips, a short 18 to 22 AWG REM jumper (not blue,
+      which this machine uses for coil positive runs), and 14 AWG
+      (2 to 2.5 mm²) pure copper speaker cable for the amp to the sub
+      (about 9.4 A RMS at the sub's 350 W into 4 ohms; 12 AWG if the run
+      is over about 3 m).
+- [x] 3 m 3.5 mm to 2 x RCA lead for the MC101 sub pre-out to the AMP1501
+      (ordered, Amazon, A$14, user, 2026-09-26). If only one RCA carries
+      signal (mono pre-out), that is expected. If it hums, try a
+      ground-loop isolator.
 - [ ] Mount the RSP-500-12 in the backbox with its fan clear, and print a
       mount like the existing LRS-150 mounts if needed.
 - [ ] Check the existing mains fuse rating (and slow-blow type) against the
