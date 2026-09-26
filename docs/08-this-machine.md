@@ -143,6 +143,16 @@ Left side harness, start button fed from the opto board (decided 2026-09-26):
 - The start lamp is not in the config yet (FAST's recipe drives it as a
   `platform: drivers` light on `cab-2`).
 
+Wiring status (user, 2026-09-26):
+- Left side harness installed as in the table above: flipper opto board,
+  start button switch and start lamp. The lamp is in the config as `l_start`
+  (`platform: drivers` on `c_start_lamp`, `cab-2`); nothing drives it yet.
+- Right side installed: flipper button and opto board, to CABINET B pins 1, 2,
+  9 and 13.
+- Still to confirm: opto J1 pins 3 and 4 continuity (the start button's
+  return uses pin 4), the start lamp type and current, and the opto bench
+  test result. None of it is powered or switch-tested yet.
+
 Bench test before connecting to the Cabinet I/O (output type is Unverified):
 1. Power one board from a 12 V bench supply on J1 pins 6 and 3.
 2. Measure the current draw.
@@ -157,6 +167,40 @@ Bench test before connecting to the Cabinet I/O (output type is Unverified):
 
 - Fallback: the owned Stern 500-6890-01 leaf switches wire straight to the
   Cabinet I/O headers with no board and need no config change.
+
+### Cabinet power button (user photos, 2026-09-26)
+
+A round stainless push button with an LED ring is fitted under the cabinet,
+front right (the usual machine power switch position). It has a 5-wire blue
+plug with red, yellow, blue, green and black leads. This is the common
+"anti-vandal" LED push button style; its part number, whether it is momentary
+or latching, the LED's rated voltage and the lead colour mapping are all
+Unknown. Identify them with a meter before wiring (see below).
+
+How FAST intends this button to be used (Official, FAST "SSR & soft power
+switch" wiring guide):
+- It is the soft power button: a low-voltage momentary push button wired to
+  the Neuron's J4 (PWR SW), pins 2 and 3. The Neuron then switches the AC
+  supply through a solid state relay (SSR) on J3, pins 1 and 3, with a
+  thermal fuse and a CR2032 battery on the Neuron for power-on.
+- FAST's soft power firmware is "coming soon" (as fetched 2026-09-25), so the
+  button cannot switch the machine on yet. FAST says to build the hardware
+  now and use a normal AC switch in the meantime.
+- The button must be momentary. A latching button will not work with J4.
+
+Identifying the leads (meter, button out of circuit):
+1. Continuity between pairs with the button released, then pressed. The pair
+   that closes only when pressed is common + normally open (NO); the pair
+   that opens when pressed is common + normally closed (NC). The common lead
+   is in both pairs. If it stays pressed after release, it is latching.
+2. The remaining two leads are the LED. Find its rated voltage (printed on
+   the body or the listing; these are sold as 3 to 6 V, 12 V, 24 V or
+   110/220 V). For a 12 V LED, test on a 12 V supply both ways round with a
+   low current limit; it lights one way only, which gives LED + and -.
+3. A common vendor mapping is red = LED +, black = LED -, and the other three
+   are the switch (C, NO, NC). That mapping is not verified for this button.
+
+Open decisions are in the to-do list below ("Cabinet power button").
 
 ### Audio wiring (decided 2026-09-23, not yet installed)
 
@@ -373,6 +417,15 @@ Logs go to `~/matrix-pinball/logs/`.
       J8 (ENA IN) pins 1 and 3 are closed. Wire the coin door interlock to J8
       (and optionally J9 ENA OUT to a Cabinet I/O switch input), or jumper J8
       for testing.
+- [ ] **Cabinet power button.** Identify its leads and whether it is
+      momentary (see "Cabinet power button"). Record how the machine is
+      switched on today. Decide whether to run its switch pair to the
+      Neuron's J4 now (for FAST soft power once the firmware ships), and what
+      its LED should show. The FAST-style option is MPF control: LED + from
+      the right opto board's spare 12V (J1 pin 7, if pins 6 and 7 are joined
+      as on the left), LED - to CABINET B pin 11 (L4), as a second
+      `platform: drivers` light on `cab-4`. Needs a 12 V LED, or a series
+      resistor sized for its rated voltage.
 - [ ] **Add the second 1616 to `io_loop:` in `config/config.yaml`.** The config declares only three boards (`cab`, `top16`, `bottom32`) but two 1616s are installed. Until the fourth entry exists — with `order:` values matching the real daisy-chain order out of the Neuron — switch and driver numbers will land on the wrong boards.
 - [ ] Run `mpf hardware scan` to confirm the board models and loop order match the config (`FP-I/O-0024`, `FP-I/O-1616` ×2, `FP-I/O-3208`, `FP-EXP-2000` + `FP-PWR-0007`). This is the fastest way to get the true `order:` values.
 - [ ] Wire the Cabinet I/O (FP-I/O-0024-5). It's mounted but unwired.

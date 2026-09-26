@@ -332,6 +332,14 @@ coils:
     platform_settings:
       recycle_ms: 40
 
+  # Cabinet I/O low-current driver L2 (CABINET A pin 11) switches the start
+  # button lamp's return; its 12 V comes from the left opto board J1 pin 7.
+  # Driven through l_start below (FAST's cabinet recipe). Wired 2026-09-26;
+  # not yet tested on the machine.
+  c_start_lamp:
+    number: cab-2
+    allow_enable: true
+
   # Middle Playfield Coils (in EMP)
   # TODO(hardware): pop bumper coil not yet installed.
   # c_emp_pop:
@@ -339,6 +347,12 @@ coils:
   #   default_pulse_ms: 20
   #   platform_settings:
   #     recycle_ms: 40
+
+lights:
+  l_start:
+    number: c_start_lamp
+    platform: drivers
+    type: w
 
 autofire_coils:
   left_slingshot:
