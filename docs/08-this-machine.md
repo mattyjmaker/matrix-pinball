@@ -508,7 +508,9 @@ Logs go to `~/matrix-pinball/logs/`.
       (D1, key, TG, H2): H2 to the coil lug on the diode band side, D1 to the
       other lug. D1 is software driver 7 (`cab-7`). FAST accepts a 1N4001,
       1N4004 or 1N4007 diode; this repo uses a 1N4004 or 1N4007 because a
-      1N4001 is rated only 50 V. Check that the assembly's coil
+      1N4001 is rated only 50 V. The owned coil has no diode (user,
+      2026-09-26): buy and fit one. The black part on the shaker motor is
+      a capacitor, not a diode, and cannot be used. Check that the assembly's coil
       already has one. MPF 0.80 has no `knockers:` device (not in its
       `config_spec.yaml`), so the knocker is a plain entry under `coils:`
       fired by `coil_player`. Nothing in the Act I rules fires it yet.
