@@ -519,26 +519,14 @@ Logs go to `~/matrix-pinball/logs/`.
       headers; the coin door header J4 is `cab-0` to `cab-7`. The board's 8
       drivers (`cab-0` to `cab-7`) are still unconfigured, so no knocker or
       button lamps yet.
-- [ ] Fit the knocker in the cabinet (user wants it there, 2026-09-25): the
-      owned WPC assembly B-10686-1 with an AE-23-800 coil. Per FAST's Cabinet
-      I/O pages, the board takes 12 V and 48 V on J3 (12 V, G, TG, H2) from
-      the Smart Power Filter Board's J10 (4-pin). The knocker goes on J2
-      (D1, key, TG, H2): H2 to the coil lug on the diode band side, D1 to the
-      other lug. D1 is software driver 7 (`cab-7`). FAST accepts a 1N4001,
-      1N4004 or 1N4007 diode; this repo uses a 1N4004 or 1N4007 because a
-      1N4001 is rated only 50 V. The owned coil has no diode (user,
-      2026-09-26): buy and fit one. The black part on the shaker motor is
-      a capacitor, not a diode, and cannot be used.
-      Mounting: this knocker has no return spring and relies on gravity,
-      so it must be mounted vertically with the plunger firing upwards into
-      the strike plate (01-7525, owned). Williams mounts it in the backbox,
-      striking the backbox top (Community practice, Pinscape build guide).
-      In the cabinet there is no solid surface above, so fit a solid wooden
-      block to the cabinet wall above the plunger to carry the strike plate.
-      Never mount it horizontally or upside down. Check that the assembly's coil
-      already has one. MPF 0.80 has no `knockers:` device (not in its
-      `config_spec.yaml`), so the knocker is a plain entry under `coils:`
-      fired by `coil_player`. Nothing in the Act I rules fires it yet.
+- [ ] Knocker background (superseded 2026-09-26 by "Knocker in the
+      backbox, on the back 1616" above): the owned WPC assembly B-10686-1
+      with an AE-23-800 coil, no diode fitted (use a 1N4007; the black part
+      on the shaker motor is a capacitor, not a diode). It has no return
+      spring and must be mounted vertically, plunger firing up into the
+      strike plate (Community practice, Pinscape build guide). MPF 0.80 has
+      no `knockers:` device, so it is a plain entry under `coils:` fired by
+      `coil_player`. Nothing in the Act I rules fires it yet.
 - [ ] Check whether the Cabinet I/O's **NET cable** is plugged into the I/O loop. If it isn't, it won't appear in `mpf hardware scan` and the config's `order: 1` for `cab` is wrong — every other board's order shifts.
 - [ ] **Install Godot 4.7.2 on this machine.** `project.godot` is now tagged
       `4.7`, but the editor here is still 4.6.3, which will warn that the
