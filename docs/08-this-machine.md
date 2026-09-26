@@ -365,6 +365,13 @@ Open items:
 - [ ] **Knocker on Cabinet I/O J2** (decided 2026-09-26): H2 to the coil lug
       on the diode band side, D1 (driver 7, `cab-7`) to the other lug.
       Not yet in the config; add as a coil once fitted.
+      Location and model TBC (user, 2026-09-26). Options: keep the owned
+      Williams B-10686-1 (vertical only, gravity return) on the cabinet
+      back wall under a solid rail or block, or in the backbox; or buy a
+      knocker with a return spring for horizontal mounting (confirm the
+      spring before buying). Diode needed either way: 1N4004 or 1N4007,
+      not the owned 1N4001G-T (keep those for 12 V loads such as the
+      shaker).
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
       assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
