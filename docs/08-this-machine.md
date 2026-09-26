@@ -113,9 +113,35 @@ board's supply current. Yellow is FAST's colour for low-current 12 V.
   question about separate grounds. FAST's guide suggests SHAKER PWR (J11 in FAST's docs, J12 on this -5 board) for opto power
   instead. FAST publishes no current rating for the side header's 12 V and G
   pins (Unverified), so measure the board's current draw on the bench first.
-- The start button (`cab-10`, left header pin 3) also needs pin 9 (G). The
-  header has one G pin, so the start button's purple and the opto board's
-  GND share it (two wires in one crimp, or a splice).
+- The start button (`cab-10`, left header pin 3) also needs pin 9 (G), and
+  its lamp (if fitted) needs 12 V. CABINET A has one G pin and one V+ pin,
+  so the left opto board's spare GND (pin 4) and spare 12V (pin 7) are used
+  as feeds for the start button. That keeps one wire per Cabinet I/O pin.
+
+Left side harness, start button fed from the opto board (decided 2026-09-26):
+
+| From | To | Wire (22 AWG) |
+| --- | --- | --- |
+| CABINET A pin 1 (`cab-8`) | Left opto J1 pin 1 (SW1) | Orange |
+| CABINET A pin 2 (`cab-9`) | Left opto J1 pin 2 (SW2) | Orange |
+| CABINET A pin 9 (G) | Left opto J1 pin 3 (GND) | Purple |
+| CABINET A pin 13 (V+) | Left opto J1 pin 6 (12V) | Yellow |
+| Left opto J1 pin 4 (GND) | Start button switch, common lug | Purple |
+| Start button switch, other lug | CABINET A pin 3 (`cab-10`) | Orange |
+| Left opto J1 pin 7 (12V) | Start lamp, one terminal | Yellow |
+| Start lamp, other terminal | CABINET A pin 11 (L2, driver `cab-2`) | Grey or white |
+
+- Opto J1 pins 6 and 7 (12V) have continuity (user, 2026-09-26).
+- Opto J1 pins 3 and 4 (GND): continuity not yet checked. Check before using
+  pin 4 as the start button's return.
+- Start lamp type in the 500-6388-44 is unknown. An LED lamp is fine through
+  the opto board. For an incandescent bulb, use a 12 V LED replacement or feed
+  it straight from CABINET A pin 13, since the opto board's current rating
+  between pins 6 and 7 is not published.
+- Unplugging the left opto board also disconnects the start button's return
+  and the start lamp's 12 V.
+- The start lamp is not in the config yet (FAST's recipe drives it as a
+  `platform: drivers` light on `cab-2`).
 
 Bench test before connecting to the Cabinet I/O (output type is Unverified):
 1. Power one board from a 12 V bench supply on J1 pins 6 and 3.

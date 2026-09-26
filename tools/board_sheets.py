@@ -631,22 +631,22 @@ def cabinet(s, asg):
     def sw(n):
         return asg["switches"].get("cab-%d" % n, "")
 
-    def side(first, lamps, plan):
+    def side(first, lamps, plan, lamp_use=("", "")):
         labs = ["S%d" % n for n in range(first, first + 8)]
         rows = []
         for i, lab in enumerate(labs, 1):
             n = first + i - 1
             rows.append((i, lab, "sw", plan.get(n, sw(n) or "cab-%d" % n)))
         rows += [(9, "G", "swg", plan.get("G", "")), (10, "5V", "5", ""),
-                 (11, lamps[0], "drv", ""), (12, lamps[1], "drv", ""),
+                 (11, lamps[0], "drv", lamp_use[0]), (12, lamps[1], "drv", lamp_use[1]),
                  (13, "V+ 12V", "12", plan.get("V", ""))]
         return rows
 
     s.cards([
         Card("J1  CABINET A (left)", "13-pin 0.100\"", side(8, ("L2", "L3"), {
             8: "s_left_flipper <- opto SW1", 9: "cab-9 <- opto SW2",
-            10: "s_start (cab-10)", "G": "opto GND + start return",
-            "V": "opto board 12V"})),
+            10: "s_start <- start button", "G": "left opto J1 pin 3 (GND)",
+            "V": "left opto J1 pin 6 (12V)"}, ("start lamp - (cab-2)", ""))),
         Card("CABINET B (right)", "13-pin 0.100\"", side(16, ("L4", "L5"), {
             16: "s_right_flipper <- opto SW1", 17: "cab-17 <- opto SW2",
             21: "cab-21 (also on J11 pin 1)", 22: "cab-22 (also J11 pin 2)",
@@ -759,10 +759,10 @@ def opto(s):
             (1, "SW1", "sw", "Cab A pin 1 (cab-8) / Cab B pin 1 (cab-16)"),
             (2, "SW2", "sw", "Cab A pin 2 (cab-9) / Cab B pin 2 (cab-17)"),
             (3, "GND", "swg", "Cab A/B pin 9 (G)"),
-            (4, "GND", "swg", "(second ground, optional)"),
+            (4, "GND", "swg", "left: start button common lug"),
             (5, "KEY", "key", "check if a pin is fitted"),
             (6, "12V", "12", "Cab A/B pin 13 (V+)"),
-            (7, "12V", "12", "(second 12 V, optional)"),
+            (7, "12V", "12", "left: start lamp +; 6-7 joined"),
         ], widths=(0.07, 0.12, 0.14, 0.5, 0.17),
             note="Pin 1 marked by a triangle on the board. Housing: 15.24 mm pin 1 to 7 = 0.100\"; "
                  "15.0 mm = 2.5 mm (e.g. JST XH)."),
