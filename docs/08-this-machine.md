@@ -373,6 +373,16 @@ Open items:
       third supply's added load.
 - [ ] Read the labels on the two existing backbox Mean Wells to confirm they
       are the RSP-500-48 and LRS-150-12.
+- [ ] **Cabinet I/O power cable** (planned 2026-09-26): Smart Power Filter
+      Board J10 CABINET to Cabinet I/O J3 TO FILTER BOARD, 4 x 18 AWG,
+      straight through by label: 12 to 12 (yellow), G to G (black), TG to TG
+      (black, tagged "TG"), H2 to H2 (blue). Both ends are 4-pin 0.156"
+      housings with no key position; match pins by the printed labels (on
+      the -5 Cabinet I/O, 12 is at the right-hand end). Fuses: F5 CAB12
+      (12 V: opto boards, lamps, SHAKER PWR) and F1 48V_2 (H2, shared with
+      the playfield H2). Record the fitted F5 value. The cable unplugs at
+      both ends, so no inline connector is needed; leave slack for the head
+      to fold.
 - [ ] **Knocker in the backbox, on the back 1616** (decided 2026-09-26,
       option C). The owned Williams B-10686-1, mounted vertically (gravity
       return) with the strike plate (01-7525) above the plunger.
@@ -399,6 +409,9 @@ Open items:
       PWM hold, capped at 50% and 3 s per enable. Revise once the winding
       resistance, running current and fuse F5 (CAB12) value are known.
       Knocker deferred to a later date (user, 2026-09-26).
+      Progress (user, 2026-09-26): harness wires crimped into the J12 and J2
+      housings. Still to do: buy the connector that mates with the shaker's
+      own plug, and fit the diode (band to the solid yellow).
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
       assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
