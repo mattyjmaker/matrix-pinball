@@ -362,7 +362,13 @@ Open items:
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
       JJP shaker kits (041-5029-04) as 12 V DC, 3100 RPM. Its two leads are
       yellow and yellow with a black stripe (user, 2026-09-26); which is +
-      is not marked. Its current is not
+      is not marked. A black cylindrical part sits at the motor terminals
+      (photo, 2026-09-26), marked "CKHM", "2M45" and "R105 deg C T", with
+      a scored end like an electrolytic capacitor's vent. Its type, value,
+      polarity and connection are Unknown. If it is a capacitor across the
+      motor, a PWM-driven driver (MPF hold power) would charge it hard on
+      every pulse (engineering inference, not from FAST), so identify it
+      before choosing PWM. It does not replace a flyback diode. Its current is not
       published, so read the fitted motor's label or measure its winding
       resistance (stall current is roughly 12 V / R). Planned wiring: motor +
       to Cabinet I/O SHAKER PWR (J12 on this -5 board, 12 V; confirm polarity with a meter), motor - to driver 7 (J2 D1) if
