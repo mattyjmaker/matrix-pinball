@@ -373,7 +373,10 @@ Open items:
       the + terminal sits at a steady 12 V, so PWM does not charge and
       discharge this capacitor on every pulse (engineering inference). If
       it is a polarised electrolytic, its minus stripe must face the frame
-      lead. It does not replace a flyback diode across the motor. Its current is not
+      lead. It does not replace a flyback diode across the motor.
+      No diode is visible across the two motor solder tabs (photo,
+      2026-09-26): fit a 1N4004 or 1N4007 across them, band to the solid
+      yellow (+) tab. Its current is not
       published, so read the fitted motor's label or measure its winding
       resistance (stall current is roughly 12 V / R). Planned wiring: motor +
       to Cabinet I/O SHAKER PWR (J12 on this -5 board, 12 V; confirm polarity with a meter), motor - to driver 7 (J2 D1) if
