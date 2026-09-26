@@ -361,8 +361,10 @@ Open items:
       assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
       JJP shaker kits (041-5029-04) as 12 V DC, 3100 RPM. Its two leads are
-      yellow and yellow with a black stripe (user, 2026-09-26); which is +
-      is not marked. A black cylindrical part sits at the motor terminals
+      yellow and yellow with a black stripe (user, 2026-09-26). Solid
+      yellow = +, black-striped = - (user's online sources, Community
+      practice, unverified for this motor; confirm against the terminal
+      component's polarity marking if it is a polarised capacitor). A black cylindrical part sits at the motor terminals
       (photo, 2026-09-26), marked "CKHM", "2M45" and "R105 deg C T", with
       a scored end like an electrolytic capacitor's vent. Its type, value,
       polarity and connection are Unknown. If it is a capacitor across the
