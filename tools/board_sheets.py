@@ -665,16 +665,17 @@ def cabinet(s, asg):
             (12, "L5", "drv", "same as CAB B pin 12"), (13, "V+ 12V", "12", "4 A rated"),
         ], note="No bill acceptor owned. Pinout per FAST -4; -5 pins 1-3 confirmed from photo."),
         Card("J2  KNOCKER", "4-pin 0.156\"", [
-            (1, "D1", "drv", "driver 7 (cab-7): knocker or shaker"),
+            (1, "D1", "drv", "cab-7: shaker striped yellow (-)"),
             (2, "K", "key", ""), (3, "TG", "tg", ""),
-            (4, "H2", "48", "coil lug, diode band side"),
-        ], note="D1 is software driver 7. On this -5 board D1 is at the right-hand end."),
+            (4, "H2", "48", "not used (knocker is on back 1616)"),
+        ], note="D1 is software driver 7. On this -5 board D1 is at the right-hand end. Shaker: 1N4007 across the motor, band to solid yellow."),
         Card("J3  TO FILTER BOARD", "4-pin 0.156\"", [
             (1, "12", "12", "SPFB J10 12"), (2, "G", "gnd", "SPFB J10 G"),
             (3, "TG", "tg", "SPFB J10 TG"), (4, "H2", "48", "SPFB J10 H2"),
         ], note="On this -5 board 12 is at the right-hand end."),
         Card("J12  SHAKER PWR", "3-pin 0.156\" (FAST: J11)", [
-            (1, "K", "key", ""), (2, "+ 12V", "12", ""), (3, "-", "gnd", ""),
+            (1, "K", "key", ""), (2, "+ 12V", "12", "shaker solid yellow (+)"),
+            (3, "-", "gnd", "not used"),
         ], note="FAST -4 order. On -5, K is printed at the right-hand end; + and - not "
                 "legible. Meter before connecting."),
         Card("J8  (undocumented, -5 only)", "5-pin, COIN DOOR group", [
