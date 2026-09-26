@@ -790,8 +790,8 @@ def wiring(s):
              [(r[0], r[1], r[2], r[3] + " AWG") for r in rows], strip=False,
              heads=("Colour", "Purpose", "Swatch", "Gauge", "This machine"),
              widths=(0.16, 0.4, 0.14, 0.14, 0.16),
-             note="This machine uses black for the coil-to-driver wire; FAST uses grey/white "
-                  "there and keeps black for ground returns. 0.156\" = 18 AWG, 7 A. "
+             note="Driver lines: white (FAST) on wiring from 2026-09-26; older playfield wiring used black, "
+                  "so black may be a driver line there. 0.156\" = 18 AWG, 7 A. "
                   "0.100\" = 22 AWG, 3 A."),
         Card("I/O loop order (fill in)", "Neuron OUT ... back to Neuron IN", [
             ("1", "", "", "", ""), ("2", "", "", "", ""),

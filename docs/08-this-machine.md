@@ -37,11 +37,18 @@ against FAST's wiring standard on 2026-09-25 (12-fast-boards.md, section 4).
 | --- | --- | --- |
 | Switches (cabinet buttons, playfield switches) | Feed out of the board input | Orange |
 | Switches | Return back to the board | Purple |
-| Solenoids, coils and similar drivers | Negative | Black |
+| Solenoids, coils and similar drivers | Negative (to the driver pin) | Black on wiring done before 2026-09-26; **white (FAST standard) from 2026-09-26** |
 | Solenoids, coils and similar drivers | Positive run | Blue |
 
 So a cabinet flipper button is orange out to the button and purple back, and a
-flipper coil is blue on the positive run and black on the negative.
+flipper coil is blue on the positive run. Its driver wire is black on the
+existing playfield wiring and white on anything wired from 2026-09-26.
+
+Decision (user, 2026-09-26): follow FAST's colour standard for new wiring.
+Driver lines (coil, motor or lamp to a driver pin) are white or grey, 18 AWG
+on 0.156" driver headers and 22 AWG on 0.100" headers; black is kept for
+ground returns only. Existing black driver wires stay as they are; when
+fault-finding on older wiring, remember black may be a driver line.
 
 Compared with FAST's standard (Official, fastpinball.com/wiring/standards):
 - Orange, purple and blue match.
@@ -50,7 +57,7 @@ Compared with FAST's standard (Official, fastpinball.com/wiring/standards):
   returns. That includes the 48 V toxic ground from each I/O board's GND pins
   back to the Playfield Interchange Board.
 - Using black for driver lines makes a control line look like a ground
-  return. Decide whether to use grey or white for the wiring still to do.
+  return. Resolved 2026-09-26: new wiring uses white (see above).
 - FAST's other colours: yellow for 12 V, red for 5 V, white for LED data,
   and black for all DC ground returns.
 
@@ -365,8 +372,7 @@ Open items:
       return) with the strike plate (01-7525) above the plunger.
       Wiring, 18 AWG: Playfield Interchange J10 H2 (48 V, fuse F1) to the
       coil lug on the diode band side (blue); other coil lug to a spare
-      driver pin on the back 1616's J3 or J4 (black, this machine's
-      convention). The 1616's driver GND pins already return to the
+      driver pin on the back 1616's J3 or J4 (white, FAST standard). The 1616's driver GND pins already return to the
       interchange TG pins. 1N4007 across the coil, band to the H2 lug.
       A 2-pin 0.156" inline connector where the pair crosses from
       playfield to backbox, with slack for the head to fold and the
