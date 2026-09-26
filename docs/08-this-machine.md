@@ -354,17 +354,17 @@ Open items:
       third supply's added load.
 - [ ] Read the labels on the two existing backbox Mean Wells to confirm they
       are the RSP-500-48 and LRS-150-12.
-- [x] Shaker goes on the Cabinet I/O (user, 2026-09-26): solid yellow (+) to
-      SHAKER PWR + (J12 on the -5 board, always-on 12 V), striped yellow (-)
-      to J2 D1 (driver 7, `cab-7`), 18 AWG, flyback diode in the harness
-      (band to +). SHAKER PWR alone cannot control the motor: + and - are
-      plain 12 V power, so the motor's - must go to a driver. The knocker
-      now needs another driver (a spare 1616 driver run to the cabinet).
-      Not yet in the config: add as a coil once its current is measured.
-- [ ] Find a driver for the knocker: a spare 1616 driver run to the
-      cabinet, or a FAST shaker board freeing `cab-7` (FP-EXP-1313 in MPF;
-      not on FAST's public part list, ask FAST). Never connect the
-      diode-fitted shaker harness to a driver that reverses polarity.
+- [ ] **Shaker deferred** (user, 2026-09-26). Plan: FP-EXP-1313 shaker
+      board (FAST shop: shop.fastpinball.com/product/fp-exp-1313-fast-expansion-board-shaker-motor-/58),
+      powered from Cabinet I/O SHAKER PWR (J12 on the -5 board), on the EXP
+      bus, driving the motor; MPF `shakers:`. Deferred because shipping
+      alone is about US$110; add it to a future FAST order to share the
+      postage. Until then the shaker stays disconnected. SHAKER PWR + and -
+      are plain always-on 12 V: never connect the motor straight across
+      them, or it runs whenever the machine is on.
+- [ ] **Knocker on Cabinet I/O J2** (decided 2026-09-26): H2 to the coil lug
+      on the diode band side, D1 (driver 7, `cab-7`) to the other lug.
+      Not yet in the config; add as a coil once fitted.
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
       assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
