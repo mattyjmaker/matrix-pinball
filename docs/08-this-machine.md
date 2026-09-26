@@ -149,6 +149,10 @@ Wiring status (user, 2026-09-26):
   (`platform: drivers` on `c_start_lamp`, `cab-2`); nothing drives it yet.
 - Right side installed: flipper button and opto board, to CABINET B pins 1, 2,
   9 and 13.
+- All cabinet button and lamp wiring finished (user, 2026-09-26). The start
+  lamp return was first landed on the pin labelled "11" (pin 4, switch input
+  11) and has been moved to pin 11 (label L2). Remaining: buy the two 7-pin
+  housings for the opto boards (J1 pitch still to measure).
 - Still to confirm: opto J1 pins 3 and 4 continuity (the start button's
   return uses pin 4), the start lamp type and current, and the opto bench
   test result. None of it is powered or switch-tested yet.
@@ -356,7 +360,9 @@ Open items:
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
       assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
-      JJP shaker kits (041-5029-04) as 12 V DC, 3100 RPM; its current is not
+      JJP shaker kits (041-5029-04) as 12 V DC, 3100 RPM. Its two leads are
+      yellow and yellow with a black stripe (user, 2026-09-26); which is +
+      is not marked. Its current is not
       published, so read the fitted motor's label or measure its winding
       resistance (stall current is roughly 12 V / R). Planned wiring: motor +
       to Cabinet I/O SHAKER PWR (J12 on this -5 board, 12 V; confirm polarity with a meter), motor - to driver 7 (J2 D1) if
