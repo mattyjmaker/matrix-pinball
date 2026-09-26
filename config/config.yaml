@@ -353,6 +353,21 @@ coils:
     number: cab-4
     allow_enable: true
 
+  # JJP shaker motor (12 V DC) on the Cabinet I/O's only high-current driver
+  # (J2 D1, driver 7). Motor + from SHAKER PWR +; this driver switches the
+  # motor's - side. 1N4001/1N4007 flyback diode across the motor, band to +.
+  # TODO(hardware): conservative placeholder values until the motor's winding
+  # resistance and running current are measured. Enabling gives a short
+  # full-power kick to start it, then PWM hold at half power, capped at half
+  # power and 3 s per enable so a stuck enable cannot run it indefinitely.
+  c_shaker:
+    number: cab-7
+    allow_enable: true
+    default_pulse_ms: 50
+    default_hold_power: 0.5
+    max_hold_power: 0.5
+    max_hold_duration: 3s
+
   # Middle Playfield Coils (in EMP)
   # TODO(hardware): pop bumper coil not yet installed.
   # c_emp_pop:

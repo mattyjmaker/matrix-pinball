@@ -381,8 +381,11 @@ Open items:
       the motor straight across SHAKER PWR + and -. This follows FAST's
       "driver output (with proper protection)" route, so no FP-EXP-1313 is
       needed; the motor is driven as a coil (PWM hold power), not MPF's
-      `shakers:` device. Add to the config once its running current is
-      measured.
+      `shakers:` device. In the config as `c_shaker` (`cab-7`) with
+      placeholder limits (2026-09-26): 50 ms full-power start, then 50%
+      PWM hold, capped at 50% and 3 s per enable. Revise once the winding
+      resistance, running current and fuse F5 (CAB12) value are known.
+      Knocker deferred to a later date (user, 2026-09-26).
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
       assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
