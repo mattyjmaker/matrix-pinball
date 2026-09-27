@@ -10,7 +10,9 @@ This is the production cabinet PC, and it is also used for development. Set up o
 ### Boards installed (user, 2026-09-20)
 - **Backbox:** the FAST Smart Power Filter Board (FP-PWR-0007, the "big capacitor board") + the Neuron.
 - **Playfield:** I/O 1616 at the back, the FAST Playfield Interchange Board (FP-PWR-0030, passive — no MPF config needed), the I/O 3208 (flippers and the lower third are primarily wired to it), and the second I/O 1616 in the middle.
-- **Cabinet:** the Cabinet I/O (FP-CAB-0001) **is installed, but not yet wired** (user, 2026-09-20).
+- **Cabinet:** the Cabinet I/O **is installed, but not yet wired** (user, 2026-09-20). Its silkscreen reads **FP-I/O-0024-5** (user photo, 2026-09-25), which confirms the config's `FP-I/O-0024`; the repo previously said FP-CAB-0001. In the same photo neither RJ45 jack has a cable, so the board is not yet in the I/O loop. Revision -5 is newer than FAST's documentation (-4); see 13-fast-boards.md, section 3.6.
+
+Per-board pinouts, FAST's wiring rules and the checks still to do on the machine are in 13-fast-boards.md.
 
 See 09-parts-inventory.md for the capacity analysis. The 3208 is confirmed real, which resolves an earlier open question.
 
@@ -28,51 +30,268 @@ What this means for the MPF side:
 
 ### Wiring colour convention (user, 2026-09-22)
 
-This machine's own convention. Recorded as user-provided; it has not been
-cross-checked against FAST's published wiring guides, which are at
-fastpinball.com/wiring/neuron.
+This machine's own convention, recorded as user-provided. It was checked
+against FAST's wiring standard on 2026-09-25 (13-fast-boards.md, section 4).
 
 | Circuit | Leg | Colour |
 | --- | --- | --- |
 | Switches (cabinet buttons, playfield switches) | Feed out of the board input | Orange |
 | Switches | Return back to the board | Purple |
-| Solenoids, coils and similar drivers | Negative | Black |
-| Solenoids, coils and similar drivers | Positive run | Blue |
+| Solenoids, coils and similar drivers | Negative (to the driver pin) | Black |
+| Solenoids, coils and similar drivers | Positive run | Blue (48 V only) |
 
 So a cabinet flipper button is orange out to the button and purple back, and a
 flipper coil is blue on the positive run and black on the negative.
+
+Decision (user, 2026-09-26): keep this machine's own convention for driver
+lines (black), to match the existing wiring, rather than FAST's grey/white.
+- The positive colour follows the voltage, not the device: blue means 48 V
+  only. A 12 V load on a driver (the shaker) has a yellow positive and a
+  black driver wire.
+- Exception already installed: the start lamp's return to CABINET A L2 is
+  white 22 AWG (wired 2026-09-26 when white was advised). It works as is;
+  change it to black only if you want the harness uniform.
+- Since black also means ground returns in FAST's scheme, label driver wires
+  where they could be confused with a ground (for example on 0.156" driver
+  headers next to the GND pins).
+
+Compared with FAST's standard (Official, fastpinball.com/wiring/standards):
+- Orange, purple and blue match.
+- Black on the coil negative does not match. FAST uses grey or white for the
+  wire from the coil to the I/O board driver pin, and keeps black for ground
+  returns. That includes the 48 V toxic ground from each I/O board's GND pins
+  back to the Playfield Interchange Board.
+- Using black for driver lines makes a control line look like a ground
+  return. The user chose to keep black for consistency (2026-09-26); label
+  where it matters.
+- FAST's other colours: yellow for 12 V, red for 5 V, white for LED data,
+  and black for all DC ground returns.
 
 Not yet recorded, and worth adding here as they are decided: LED and lamp
 wiring, opto power and signal, ground and earth bonding, and whether any
 sub-loom uses a different scheme.
 
-### Cabinet flipper opto boards (user, 2026-09-25)
+### Cabinet flipper opto boards (user, 2026-09-25; silkscreen read 2026-09-25)
 
-Two FAST **FP-SWI-7003-1** boards are installed in the cabinet, one on each
-side, for opto flipper buttons. The part number is not on FAST's published
-part list or product pages (user checked), so the user believes it was a trial
-board that was never released. Treat it as undocumented: its pinout, header
-types and compatibility with the Neuron-generation Cabinet I/O are unknown.
+Two FAST **FP-SWI-7083-1** "OPTO FLIPPER SW" boards are installed in the
+cabinet, one on each side. The part number comes from a photo of the board's
+silkscreen (user-provided, 2026-09-25). It was previously recorded here as
+FP-SWI-7003-1, which was a misreading. FAST's part number index lists no
+FP-SWI boards at all (Official, checked 2026-09-25), so the board is still
+undocumented by FAST. Its full details are in 13-fast-boards.md, section 3.9.
 
-- Blocker: no housings on hand that fit the boards' headers. The header
-  family (pin count, pitch) is not yet identified.
-- One board per side keeps the buttons on separate Cabinet I/O headers, which
-  matches the config: `s_left_flipper` on the left header (`cab-8` to
-  `cab-15`) and `s_right_flipper` on the right (`cab-16` to `cab-23`). The
-  exact input depends on which board channel each button's opto uses, and
-  whether the opto reads NO or NC is unknown until the switch test.
-- Before connecting a board to the Cabinet I/O, get its pinout from FAST
-  support or trace it and bench-test it on a separate supply, so 12 V cannot
-  reach a switch input.
-- Opto power: the left and right Cabinet I/O switch headers each have their
-  own always-on 12 V output (user, 2026-09-25). Power each side's opto board
-  from its own header's 12 V instead of J11 (SHAKER PWR), which keeps the
-  optos off the shaker supply and keeps each side's wiring local. The
-  pin's current rating is not known here; check it in FAST's Cabinet I/O
-  manual. That 12 V pin sits in the same connector as the switch inputs,
-  so check pin 1 orientation before plugging in.
+From the silkscreen (user-provided photo):
+- **Two optos per board** (OP1, OP2). The button's actuator carries two flags,
+  one through each opto, so each board gives two switch outputs, SW1 and SW2.
+  Which output trips first on a press is not known yet.
+- **J1** is a 7-pin white header. Pin 1 is marked with a triangle.
+
+  | J1 pin | Signal |
+  | --- | --- |
+  | 1 | SW1 |
+  | 2 | SW2 |
+  | 3 | GND |
+  | 4 | GND |
+  | 5 | KEY |
+  | 6 | 12V |
+  | 7 | 12V |
+
+- There is also an unpopulated 4-pad alternative (SW1, SW2, 12V, GND) and two
+  test points (IN1, IN2).
+- Blocker: no matching housings. The header's pitch and family are not
+  confirmed. Measure the pin pitch and check whether pin 5 is fitted (see
+  13-fast-boards.md, section 3.9).
+
+Planned wiring, one board per Cabinet I/O side header (4 wires):
+
+| Opto board J1 | Cabinet I/O CABINET A (J1, left) | Cabinet I/O CABINET B (right) | Wire (22 AWG) |
+| --- | --- | --- | --- |
+| 1 SW1 | pin 1, `cab-8` | pin 1, `cab-16` | Orange |
+| 2 SW2 | pin 2, `cab-9` | pin 2, `cab-17` | Orange |
+| 3 or 4 GND | pin 9, G | pin 9, G | Purple |
+| 6 or 7 12V | pin 13, 12 V | pin 13, 12 V | Yellow |
+
+Colours: orange and purple follow this machine's switch convention, which
+matches FAST's. GND is purple rather than black because it lands on the
+switch return pin (G) and is the return for SW1 and SW2; it also carries the
+board's supply current. Yellow is FAST's colour for low-current 12 V.
+
+- This matches FAST's recommended cabinet numbering (flippers on `cab-8/9` and
+  `cab-16/17`), and keeps `s_left_flipper` (`cab-8`) and `s_right_flipper`
+  (`cab-16`) as configured, provided SW1 is the first stage. If SW2 trips
+  first, swap the two wires or change the numbers.
+- The board's GND is both its supply return and the reference for its
+  switch outputs, so it must share ground with the switch inputs. Taking
+  12 V and ground from the same header as the inputs does that with no
+  question about separate grounds. FAST's guide suggests SHAKER PWR (J11 in FAST's docs, J12 on this -5 board) for opto power
+  instead. FAST publishes no current rating for the side header's 12 V and G
+  pins (Unverified), so measure the board's current draw on the bench first.
+- The start button (`cab-10`, left header pin 3) also needs pin 9 (G), and
+  its lamp (if fitted) needs 12 V. CABINET A has one G pin and one V+ pin,
+  so the left opto board's spare GND (pin 4) and spare 12V (pin 7) are used
+  as feeds for the start button. That keeps one wire per Cabinet I/O pin.
+
+Left side harness, start button fed from the opto board (decided 2026-09-26):
+
+| From | To | Wire (22 AWG) |
+| --- | --- | --- |
+| CABINET A pin 1 (`cab-8`) | Left opto J1 pin 1 (SW1) | Orange |
+| CABINET A pin 2 (`cab-9`) | Left opto J1 pin 2 (SW2) | Orange |
+| CABINET A pin 9 (G) | Left opto J1 pin 3 (GND) | Purple |
+| CABINET A pin 13 (V+) | Left opto J1 pin 6 (12V) | Yellow |
+| Left opto J1 pin 4 (GND) | Start button switch, common lug | Purple |
+| Start button switch, other lug | CABINET A pin 3 (`cab-10`) | Orange |
+| Left opto J1 pin 7 (12V) | Start lamp, one terminal | Yellow |
+| Start lamp, other terminal | CABINET A pin 11 (L2, driver `cab-2`) | Grey or white |
+
+- Opto J1 pins 6 and 7 (12V) have continuity (user, 2026-09-26).
+- Opto J1 pins 3 and 4 (GND): continuity not yet checked. Check before using
+  pin 4 as the start button's return.
+- Start lamp type in the 500-6388-44 is unknown. An LED lamp is fine through
+  the opto board. For an incandescent bulb, use a 12 V LED replacement or feed
+  it straight from CABINET A pin 13, since the opto board's current rating
+  between pins 6 and 7 is not published.
+- Unplugging the left opto board also disconnects the start button's return
+  and the start lamp's 12 V.
+- The start lamp is not in the config yet (FAST's recipe drives it as a
+  `platform: drivers` light on `cab-2`).
+
+Wiring status (user, 2026-09-26):
+- Left side harness installed as in the table above: flipper opto board,
+  start button switch and start lamp. The lamp is in the config as `l_start`
+  (`platform: drivers` on `c_start_lamp`, `cab-2`); nothing drives it yet.
+- Right side installed: flipper button and opto board, to CABINET B pins 1, 2,
+  9 and 13.
+- All cabinet button and lamp wiring finished (user, 2026-09-26). The start
+  lamp return was first landed on the pin labelled "11" (pin 4, switch input
+  11) and has been moved to pin 11 (label L2). Remaining: buy the two 7-pin
+  housings for the opto boards (J1 pitch still to measure).
+- Still to confirm: opto J1 pins 3 and 4 continuity (the start button's
+  return uses pin 4), the start lamp type and current, and the opto bench
+  test result. None of it is powered or switch-tested yet.
+
+Bench test before connecting to the Cabinet I/O (output type is Unverified):
+1. Power one board from a 12 V bench supply on J1 pins 6 and 3.
+2. Measure the current draw.
+3. Measure SW1 and SW2 to GND with nothing else connected, button released
+   and pressed. An output that switches between open (no voltage) and near
+   0 V is an open-collector output, which suits a FAST switch input. An output
+   that sits at about 12 V is driven, and must not go to a switch input until
+   FAST confirms it is safe.
+4. Note which output is active when released and which when pressed. If an
+   output is active with the button released (like a plain opto), set
+   `type: NC` on that switch in MPF.
+
 - Fallback: the owned Stern 500-6890-01 leaf switches wire straight to the
   Cabinet I/O headers with no board and need no config change.
+
+### Tilt bob (planned 2026-09-27)
+
+The owned Williams/Bally plumb bob tilt mechanism (A-15361) is a plain
+switch: the pendulum touching the ring closes it. No polarity, 22 AWG.
+
+| From | To | Colour |
+| --- | --- | --- |
+| Tilt bob, either contact | Wired 2026-09-27 to the pin labelled "18" on CABINET B (pin 3, `cab-18`); planned was CABINET A label "11" | Orange |
+| Tilt bob, other contact | Purple daisy-chained via a lead or terminal of the cabinet power button (which lead: not yet recorded), then to the right opto board J1 pin 4 (GND) | Purple |
+
+- Right opto board J1 pins 3 and 4 (GND) have continuity (user, 2026-09-27).
+  The left board is the same part, so its pins 3 and 4 are very likely
+  joined too (inference; not measured).
+- The purple passes through one of the power button's switch leads (blue or
+  yellow; which one not recorded) (user, 2026-09-27).
+- Decision (user, 2026-09-27): use the power button as an ordinary switch
+  until FAST releases soft power. Its other switch lead goes to the pin
+  labelled "19" on CABINET B (pin 4, `cab-19`, orange 22 AWG), so the
+  purple on its first lead is now its switch return as well as the tilt's.
+  In the config as `s_cabinet_button`. When soft power arrives: take both
+  switch leads off (join the two purples directly for the tilt), and move
+  blue and yellow to the Neuron's J4 pins 2 and 3.
+
+- The purple daisy-chain is FAST's standard switch-return practice. It relies
+  on the same return as the start button (left opto J1 pin 4, which depends
+  on opto pins 3 and 4 being joined). If the start button works in the
+  switch test, the tilt return does too.
+- In the config as `s_plumb_bob` (`cab-18`, tag `tilt_warning`). MPF's
+  built-in `tilt` mode is not in the `modes:` list yet; enabling it also
+  needs a GMC slide named `tilt`, which does not exist yet.
+- User decision (2026-09-27): skip the opto board bench test and the left
+  opto pins 3 and 4 continuity check. Accepted risk: the opto outputs are
+  assumed to suit FAST switch inputs (it is a FAST board named OPTO FLIPPER
+  SW), and a missing 3-to-4 link would show up as a dead start button and
+  tilt in the switch test.
+
+### Cabinet power button (user photos, 2026-09-26)
+
+A round stainless push button with an LED ring is fitted under the cabinet,
+front right (the usual machine power switch position). It has a 5-wire blue
+plug with red, yellow, blue, green and black leads. This is the common
+"anti-vandal" LED push button style; its part number, whether it is momentary
+or latching, the LED's rated voltage and the lead colour mapping are all
+Unknown. Identify them with a meter before wiring (see below).
+
+How FAST intends this button to be used (Official, FAST "SSR & soft power
+switch" wiring guide):
+- It is the soft power button: a low-voltage momentary push button wired to
+  the Neuron's J4 (PWR SW), pins 2 and 3. The Neuron then switches the AC
+  supply through a solid state relay (SSR) on J3, pins 1 and 3, with a
+  thermal fuse and a CR2032 battery on the Neuron for power-on.
+- FAST's soft power firmware is "coming soon" (as fetched 2026-09-25), so the
+  button cannot switch the machine on yet. FAST says to build the hardware
+  now and use a normal AC switch in the meantime.
+- The button must be momentary. A latching button will not work with J4.
+
+Identifying the leads (meter, button out of circuit):
+1. Continuity between pairs with the button released, then pressed. The pair
+   that closes only when pressed is common + normally open (NO); the pair
+   that opens when pressed is common + normally closed (NC). The common lead
+   is in both pairs. If it stays pressed after release, it is latching.
+2. The remaining two leads are the LED. Find its rated voltage (printed on
+   the body or the listing; these are sold as 3 to 6 V, 12 V, 24 V or
+   110/220 V). For a 12 V LED, test on a 12 V supply both ways round with a
+   low current limit; it lights one way only, which gives LED + and -.
+3. A common vendor mapping is red = LED +, black = LED -, and the other three
+   are the switch (C, NO, NC). That mapping is not verified for this button.
+
+Lead mapping (user, 2026-09-26, not yet metered): blue and yellow are the
+momentary switch pair; red and black are the LED (red taken as +). Green is
+not accounted for; on these buttons it is usually the normally closed
+contact, so leave it unconnected and insulated. Confirm with a meter that
+blue to yellow closes only while pressed, and that the LED lights with red
+on + and black on -. The LED's rated voltage is still Unknown.
+
+Planned LED wiring (22 AWG):
+
+| Button lead | To | Wire |
+| --- | --- | --- |
+| Red (LED +) | Right opto board J1 pin 7 (12V) | Yellow |
+| Black (LED -) | CABINET B pin 11 (L4, `cab-4`) | Grey or white |
+| Blue, yellow (switch) | Unconnected for now; later the Neuron J4 pins 2 and 3 | 2-core, if pre-run |
+| Green | Unconnected, insulated | |
+
+The button's own black lead is the LED's switched return, not a ground; it
+lands on a driver pin, so label it. The light is in the config as
+`l_power_button` (`platform: drivers` on `c_power_button_led`, `cab-4`).
+
+How the machine is switched today (user, 2026-09-26): a mains rocker
+switch on the back of the backbox (head). Switching it on powers everything
+at once; the cabinet button plays no part. Switching it off also cuts the
+host PC without a shutdown, which risks the Ubuntu install; FAST's soft power
+plus the Neuron's J5 (PC control) header are meant to solve that once the
+firmware ships.
+
+Plan (2026-09-26):
+- LED: wire now as an MPF-controlled light on CABINET B pin 11 (L4, `cab-4`),
+  12 V from the right opto board's spare 12V (J1 pin 7), once the lead
+  mapping and LED voltage are confirmed.
+- Switch contacts: leave unconnected and labelled. If the cabinet is open
+  anyway, pre-run a 2-core 22 AWG cable from the button to the backbox for
+  the Neuron's J4 (PWR SW, pins 2 and 3), with slack for the head to fold.
+- Soft power itself (SSR, thermal fuse, CR2032, a 3-position ON/OFF/SOFT
+  mains switch per FAST's guide) waits for FAST's firmware. The existing
+  rocker stays the power switch until then.
+
+Open items are in the to-do list below ("Cabinet power button").
 
 ### Audio wiring (decided 2026-09-23, not yet installed)
 
@@ -81,7 +300,7 @@ donated car speakers. To add: the Kenwood KFC-WPS1200F 12" sub, driven by the
 Blaupunkt AMP1501.
 
 Neither the audio signal nor the sub amp's power goes through the FAST boards.
-The Cabinet I/O (FP-CAB-0001) only carries switch inputs and low-side drivers.
+The Cabinet I/O only carries switch inputs and low-side drivers.
 The Smart Power Filter Board's 12 V headers are 0.156" parts rated 7 A per pin
 (FAST, "Smart Power Filter Board Wiring"), while the AMP1501 carries
 2 x 20 A fuses. FAST's own audio option is the FAST Audio Interface board
@@ -161,6 +380,12 @@ shake the cabinet, not only background bass. Consequences:
   show (see 04-game-logic-and-mechs.md, "Shakers"). `shakers:` needs the
   FAST EXP-1313, which is not owned. The shaker's voltage, current and
   diode are not yet checked.
+- Conflict: the Cabinet I/O has one high-current driver (driver 7, D1 on J2),
+  and the knocker is also planned for it. Its other outputs are
+  current-limited LED drivers (L0 to L5) and logic outputs (D5, D6), which
+  cannot run a motor by FAST's ratings. FAST's shaker guide says a regular
+  driver works "with caveats around the snubber" and recommends the EXP-1313.
+  See 13-fast-boards.md, section 5, finding 3.
 
 Open items:
 - [x] Order the Mean Well RSP-500-12 and the 50 A fuse (user, 2026-09-23).
@@ -169,24 +394,86 @@ Open items:
       a genuine Anderson SB50 pair with 8 AWG contacts, 8 AWG ferrules for
       the amp end, short 12 AWG leads with ring terminals and a small -V
       junction block for the supply end, a hex crimp tool, heatshrink, a
-      grommet and cable clips, a 3.5 mm to 2 x RCA lead, and a short
-      18 to 22 AWG REM jumper (not blue, which this machine uses for coil
-      positive runs).
+      grommet and cable clips, a short 18 to 22 AWG REM jumper (not blue,
+      which this machine uses for coil positive runs), and 14 AWG
+      (2 to 2.5 mm²) pure copper speaker cable for the amp to the sub
+      (about 9.4 A RMS at the sub's 350 W into 4 ohms; 12 AWG if the run
+      is over about 3 m).
+- [x] 3 m 3.5 mm to 2 x RCA lead for the MC101 sub pre-out to the AMP1501
+      (ordered, Amazon, $14, user, 2026-09-26). If only one RCA carries
+      signal (mono pre-out), that is expected. If it hums, try a
+      ground-loop isolator.
 - [ ] Mount the RSP-500-12 in the backbox with its fan clear, and print a
       mount like the existing LRS-150 mounts if needed.
 - [ ] Check the existing mains fuse rating (and slow-blow type) against the
       third supply's added load.
 - [ ] Read the labels on the two existing backbox Mean Wells to confirm they
       are the RSP-500-48 and LRS-150-12.
+- [x] **Cabinet I/O power cable** (planned 2026-09-26, installed by the user 2026-09-27; pre-power checks not yet reported): Smart Power Filter
+      Board J10 CABINET to Cabinet I/O J3 TO FILTER BOARD, 4 x 18 AWG,
+      straight through by label: 12 to 12 (yellow), G to G (black), TG to TG
+      (black, tagged "TG"), H2 to H2 (blue). Both ends are 4-pin 0.156"
+      housings with no key position; match pins by the printed labels (on
+      the -5 Cabinet I/O, 12 is at the right-hand end). Fuses: F5 CAB12
+      (12 V: opto boards, lamps, SHAKER PWR) and F1 48V_2 (H2, shared with
+      the playfield H2). Record the fitted F5 value. The cable unplugs at
+      both ends, so no inline connector is needed; leave slack for the head
+      to fold.
+- [ ] **Knocker in the backbox, on the back 1616** (decided 2026-09-26,
+      option C). The owned Williams B-10686-1, mounted vertically (gravity
+      return) with the strike plate (01-7525) above the plunger.
+      Wiring, 18 AWG: Playfield Interchange J10 H2 (48 V, fuse F1) to the
+      coil lug on the diode band side (blue); other coil lug to a spare
+      driver pin on the back 1616's J3 or J4 (black, this machine's
+      convention). The 1616's driver GND pins already return to the
+      interchange TG pins. 1N4007 across the coil, band to the H2 lug.
+      A 2-pin 0.156" inline connector where the pair crosses from
+      playfield to backbox, with slack for the head to fold and the
+      playfield to lift; it adds one plug to playfield removal.
+      Config: add as a coil once the loop order gives the back 1616's
+      `io_loop` name and the driver pin is chosen.
+- [ ] **Shaker on the Cabinet I/O, driver 7** (follows from the knocker
+      decision, 2026-09-26). Solid yellow (+) to SHAKER PWR + (J12 on the
+      -5 board; meter its polarity first), striped yellow (-) to J2 D1
+      (`cab-7`), 18 AWG, 1N4007 across the motor with the band on the solid
+      yellow. SHAKER PWR - and J2 H2 and TG stay unconnected; never connect
+      the motor straight across SHAKER PWR + and -. This follows FAST's
+      "driver output (with proper protection)" route, so no FP-EXP-1313 is
+      needed; the motor is driven as a coil (PWM hold power), not MPF's
+      `shakers:` device. In the config as `c_shaker` (`cab-7`) with
+      placeholder limits (2026-09-26): 50 ms full-power start, then 50%
+      PWM hold, capped at 50% and 3 s per enable. Revise once the winding
+      resistance, running current and fuse F5 (CAB12) value are known.
+      Knocker deferred to a later date (user, 2026-09-26).
+      Progress (user, 2026-09-26): harness wires crimped into the J12 and J2
+      housings. Still to do: buy the connector that mates with the shaker's
+      own plug, and fit the diode (band to the solid yellow).
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
-      assigning it a Cabinet I/O driver. It is installed in the cabinet, not
+      assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
-      JJP shaker kits (041-5029-04) as 12 V DC, 3100 RPM; its current is not
+      JJP shaker kits (041-5029-04) as 12 V DC, 3100 RPM. Its two leads are
+      yellow and yellow with a black stripe (user, 2026-09-26). Solid
+      yellow = +, black-striped = - (user's online sources, Community
+      practice, unverified for this motor; confirm against the terminal
+      component's polarity marking if it is a polarised capacitor). A black cylindrical part sits at the motor terminals
+      (photo, 2026-09-26), marked "CKHM", "2M45" and "R105 deg C T", with
+      a scored end like an electrolytic capacitor's vent. It connects from
+      the motor's + terminal to the motor frame (user, 2026-09-26), the
+      usual layout for a noise-suppression capacitor. Value and polarity
+      marking: Unknown. With the low side switched (driver or EXP-1313),
+      the + terminal sits at a steady 12 V, so PWM does not charge and
+      discharge this capacitor on every pulse (engineering inference). If
+      it is a polarised electrolytic, its minus stripe must face the frame
+      lead. It does not replace a flyback diode across the motor.
+      No diode is visible across the two motor solder tabs (photo,
+      2026-09-26): fit a 1N4004 or 1N4007 across them, band to the solid
+      yellow (+) tab. Its current is not
       published, so read the fitted motor's label or measure its winding
       resistance (stall current is roughly 12 V / R). Planned wiring: motor +
-      to Cabinet I/O J11 (SHAKER PWR, 12 V), motor - to a Cabinet I/O driver,
+      to Cabinet I/O SHAKER PWR (J12 on this -5 board, 12 V; confirm polarity with a meter), motor - to driver 7 (J2 D1) if
+      the shaker gets it,
       diode across the motor with the band to +12 V. The flipper optos take
-      12 V from the side switch headers, not J11 (see "Cabinet flipper opto
+      12 V from the side switch headers, not SHAKER PWR (see "Cabinet flipper opto
       boards"). Still run the shaker hard once while watching the flipper
       buttons in the switch test, since both likely come from the board's J3
       12 V input (unverified).
@@ -265,25 +552,44 @@ Logs go to `~/matrix-pinball/logs/`.
       24 inputs the board reports and nothing more, so a wrong-but-in-range
       number reads the wrong input silently. Verify in the service-mode switch
       test once the board is wired.
-- [ ] **Add the second 1616 to `io_loop:` in `config/config.yaml`.** The config declares only three boards (`cab`, `top16`, `bottom32`) but two 1616s are installed. Until the fourth entry exists — with `order:` values matching the real daisy-chain order out of the Neuron — switch and driver numbers will land on the wrong boards.
-- [ ] Run `mpf hardware scan` to confirm the board models and loop order match the config (`FP-CAB-0001`, `FP-I/O-1616` ×2, `FP-I/O-3208`, `FP-EXP-2000` + `FP-PWR-0007`). This is the fastest way to get the true `order:` values.
-- [ ] Wire the Cabinet I/O (FP-CAB-0001). It's mounted but unwired. The config
+- [ ] **Do the board checks in 13-fast-boards.md, section 2.** The most
+      important are the physical loop order and the Neuron firmware version
+      (v2.13 or newer is needed for the Cabinet I/O). The Cabinet I/O part
+      number is done: FP-I/O-0024-5 (2026-09-25).
+- [x] **Cabinet I/O cabled into the I/O loop** at order 1 (user,
+      2026-09-26), matching the config.
+- [ ] **48 V enable.** The Smart Power Filter Board's software 48 V enable is
+      not released (FAST, as fetched 2026-09-25), so 48 V flows only while its
+      J8 (ENA IN) pins 1 and 3 are closed. Wire the coin door interlock to J8
+      (and optionally J9 ENA OUT to a Cabinet I/O switch input), or jumper J8
+      for testing.
+- [ ] **Cabinet power button.** Identify its leads and whether it is
+      momentary (see "Cabinet power button"). Optionally pre-run a 2-core
+      cable to the backbox for the Neuron's J4. For the LED, the plan is MPF
+      control: LED + from
+      the right opto board's spare 12V (J1 pin 7, if pins 6 and 7 are joined
+      as on the left), LED - to CABINET B pin 11 (L4), as a second
+      `platform: drivers` light on `cab-4`. Needs a 12 V LED, or a series
+      resistor sized for its rated voltage.
+- [x] **Second 1616 added to `io_loop:`** (2026-09-26), order traced by the user: Neuron, Cabinet I/O, Interchange, back 1616 (`top16`, 2), middle 1616 (`mid16`, 3), front 3208 (`bottom32`, 4), Interchange, Neuron. Neither 1616 has anything plugged in yet.
+- [ ] Run `mpf hardware scan` to confirm the board models and loop order match the config (`FP-I/O-0024`, `FP-I/O-1616` ×2, `FP-I/O-3208`, `FP-EXP-2000` + `FP-PWR-0007`). This is the fastest way to get the true `order:` values.
+- [ ] Wire the Cabinet I/O (FP-I/O-0024-5). It's mounted but unwired.
+      Pinouts are in 13-fast-boards.md, section 3.6. None of its 13-pin
+      headers are keyed. The config
       now assumes the side flipper buttons and start button land on the
       left-side (`cab-8` to `cab-15`) and right-side (`cab-16` to `cab-23`)
       headers; the coin door header J4 is `cab-0` to `cab-7`. The board's 8
       drivers (`cab-0` to `cab-7`) are still unconfigured, so no knocker or
       button lamps yet.
-- [ ] Fit the knocker in the cabinet (user wants it there, 2026-09-25): the
-      owned WPC assembly B-10686-1 with an AE-23-800 coil. Per FAST's Cabinet
-      I/O wiring page, the board takes 12 V and 48 V on J3 from the Smart
-      Power Filter Board's J10 (4-pin), and a knocker wires from 48 V on the
-      board to one coil lug and from the other lug to a Cabinet I/O driver,
-      with a diode across the coil, band to the 48 V side. The diode must be
-      a 1N4004 or 1N4007, not a 1N4001 (50 V). Check that the assembly's coil
-      already has one. MPF 0.80 has no `knockers:` device (not in its
-      `config_spec.yaml`), so the knocker is a plain entry under `coils:`
-      fired by `coil_player`. Nothing in the Act I rules fires it yet.
-- [ ] Check whether the Cabinet I/O's **NET cable** is plugged into the I/O loop. If it isn't, it won't appear in `mpf hardware scan` and the config's `order: 1` for `cab` is wrong — every other board's order shifts.
+- [ ] Knocker background (superseded 2026-09-26 by "Knocker in the
+      backbox, on the back 1616" above): the owned WPC assembly B-10686-1
+      with an AE-23-800 coil, no diode fitted (use a 1N4007; the black part
+      on the shaker motor is a capacitor, not a diode). It has no return
+      spring and must be mounted vertically, plunger firing up into the
+      strike plate (Community practice, Pinscape build guide). MPF 0.80 has
+      no `knockers:` device, so it is a plain entry under `coils:` fired by
+      `coil_player`. Nothing in the Act I rules fires it yet.
+- [x] The Cabinet I/O's NET cables are in the I/O loop, at order 1 (user, 2026-09-26).
 - [ ] **Install Godot 4.7.2 on this machine.** `project.godot` is now tagged
       `4.7`, but the editor here is still 4.6.3, which will warn that the
       project was made with a newer version. Download 4.7.2 from

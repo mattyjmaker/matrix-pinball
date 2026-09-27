@@ -33,15 +33,26 @@ fast:
     debug: false      # change to true to see full NET serial communication in the log. Search for `[NET]`
     controller: neuron
     io_loop:
+            # Silkscreen reads FP-I/O-0024-5 (photo, 2026-09-25). MPF 0.80
+            # ignores the revision suffix but aborts if the model differs from
+            # what the board reports; it does not alias FP-CAB-0001.
+            # Loop order traced by the user, 2026-09-26: Neuron -> Cabinet I/O
+            # -> Playfield Interchange (pass-through, not listed) -> back 1616
+            # -> middle 1616 -> front 3208 -> Interchange -> Neuron.
+            # Device numbers are board-local (e.g. bottom32-25), so adding a
+            # board here does not renumber existing devices.
             cab:
-                model: FP-CAB-0001
+                model: FP-I/O-0024
                 order: 1
-            top16:
+            top16:              # back of the playfield
                 model: FP-I/O-1616
                 order: 2
-            bottom32:
-                model: FP-I/O-3208
+            mid16:              # middle of the playfield
+                model: FP-I/O-1616
                 order: 3
+            bottom32:           # front (lower third, flippers)
+                model: FP-I/O-3208
+                order: 4
     port: auto
     baud: 921600
     watchdog: 1s
@@ -256,15 +267,17 @@ settings:
 
 
 switches:
-  ## Cabinet Buttons (FP-CAB-0001, io_loop name "cab")
+  ## Cabinet Buttons (Cabinet I/O FP-I/O-0024, io_loop name "cab")
   # Wire colours: orange out of the board input, purple on the return. See
   # docs/08-this-machine.md, "Wiring colour convention".
-  # The Cabinet I/O board is internally an FP-I/O-0024: 24 switch inputs
-  # (cab-0 .. cab-23) and 8 drivers (cab-0 .. cab-7).
-  # Header layout per FAST's recommended cabinet recipe:
-  #   coin door (J4)          cab-0  .. cab-7
-  #   left-side cabinet header  cab-8  .. cab-15
-  #   right-side cabinet header cab-16 .. cab-23
+  # FP-I/O-0024: 24 switch inputs (cab-0 .. cab-23) and 8 drivers
+  # (cab-0 .. cab-7; the high-current driver D1 on J2 is cab-7, the shaker).
+  # Header layout per FAST's pinout (pin 1 = lowest input):
+  #   coin door (J4)            cab-0  .. cab-7
+  #   CABINET A (J1)            cab-8  .. cab-15
+  #   CABINET B                 cab-16 .. cab-23 (21-23 also on BILL/CARD/TICKET)
+  # (FAST's docs call A and B "left" and "right"; the -5 board prints A and B.)
+  # Full pinouts: docs/13-fast-boards.md, section 3.6.
   # TODO(hardware): these three numbers are the recommended defaults, not yet
   # confirmed against this machine. After wiring, verify each one in the MPF
   # service-mode switch test and correct the number if it differs.
@@ -277,6 +290,22 @@ switches:
   s_start:
     number: cab-10
     tags: start
+  # Williams plumb bob tilt (A-15361), wired by the user 2026-09-27 to the
+  # pin labelled "18" on CABINET B (pin 3, switch 18). The tilt_warning tag is
+  # what MPF's built-in tilt mode reads; that mode is not enabled yet (it
+  # needs a GMC "tilt" slide).
+  # TODO(hardware): confirm in the switch test.
+  s_plumb_bob:
+    number: cab-18
+    tags: tilt_warning
+  # Cabinet power button (front right, LED ring), used as an ordinary switch
+  # until FAST releases soft power (then its switch pair moves to the Neuron's
+  # J4). One switch lead is on the tilt's purple return; the other goes to the
+  # pin labelled "19" on CABINET B (pin 4, switch 19). Not used by any rule yet.
+  # TODO(hardware): planned 2026-09-27, not yet wired or switch-tested. If it
+  # reads active when released, the pair is normally closed: add type: NC.
+  s_cabinet_button:
+    number: cab-19
 
   ## Flipper EOS Switches
   s_left_flipper_eos: # End of Stroke
@@ -423,6 +452,36 @@ coils:
     platform_settings:
       recycle_ms: 40
 
+  # Cabinet I/O low-current driver L2 (CABINET A pin 11) switches the start
+  # button lamp's return; its 12 V comes from the left opto board J1 pin 7.
+  # Driven through l_start below (FAST's cabinet recipe). Wired 2026-09-26;
+  # not yet tested on the machine.
+  c_start_lamp:
+    number: cab-2
+    allow_enable: true
+
+  # Cabinet I/O low-current driver L4 (CABINET B pin 11) switches the LED
+  # ring of the cabinet power button (black lead); its red lead takes 12 V
+  # from the right opto board J1 pin 7. Planned 2026-09-26; not yet wired.
+  c_power_button_led:
+    number: cab-4
+    allow_enable: true
+
+  # JJP shaker motor (12 V DC) on the Cabinet I/O's only high-current driver
+  # (J2 D1, driver 7). Motor + from SHAKER PWR +; this driver switches the
+  # motor's - side. 1N4001/1N4007 flyback diode across the motor, band to +.
+  # TODO(hardware): conservative placeholder values until the motor's winding
+  # resistance and running current are measured. Enabling gives a short
+  # full-power kick to start it, then PWM hold at half power, capped at half
+  # power and 3 s per enable so a stuck enable cannot run it indefinitely.
+  c_shaker:
+    number: cab-7
+    allow_enable: true
+    default_pulse_ms: 50
+    default_hold_power: 0.5
+    max_hold_power: 0.5
+    max_hold_duration: 3s
+
   # Pop bumper area
   # TODO(hardware): pop bumper coil not yet installed.
   # c_pop_bumper_1:
@@ -430,6 +489,16 @@ coils:
   #   default_pulse_ms: 20
   #   platform_settings:
   #     recycle_ms: 40
+
+lights:
+  l_start:
+    number: c_start_lamp
+    platform: drivers
+    type: w
+  l_power_button:
+    number: c_power_button_led
+    platform: drivers
+    type: w
 
 autofire_coils:
   left_slingshot:
