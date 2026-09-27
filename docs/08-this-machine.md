@@ -346,10 +346,34 @@ the boards have none (13-fast-boards.md, sections 3.4 and 3.5):
 
 **Driver capacity.** The 3208's 8 drivers are all assigned (`bottom32-0` to
 `bottom32-7`), so every remaining playfield coil goes on the two 1616s: the
-15 coils in `config/playfield_pending.yaml` plus the knocker is 16 of their
-32 drivers, plus 2 for the upper playfield's mini flipper if it is
-dual-wound. Each 1616 needs two 12-pin 0.156" driver housings (J3 and J4,
+15 coils in `config/playfield_pending.yaml`, plus 3 more because each Hobbit
+pop-up needs a power and a hold driver (see "Hobbit pop-up wiring"), plus
+the knocker, is 19 of their 32 drivers. Add 2 for the upper playfield's
+mini flipper if it is dual-wound. Each 1616 needs two 12-pin 0.156" driver housings (J3 and J4,
 keys at different positions).
+
+**Hobbit pop-up wiring** (Official, JJP The Hobbit operation manual rev.
+3.4, pop-up assembly parts list and Pop-Up Mechanisms Test; confirmed as
+the Hobbit assemblies by the user, 2026-09-27). Each assembly has:
+
+| Part | JJP part | Wires at the assembly | FAST connection |
+| --- | --- | --- | --- |
+| Coil: FL-11753 flipper coil, driven as "Pop-up Power" and "Pop-up Hold" | 23-2004-01 | 3: common, power winding, hold winding | Common to 48 V (blue); power and hold windings to 2 driver pins (black) |
+| Up switch: microswitch with internal roller actuator | 18-3005-01 | 2 | 1 switch input (orange), return (purple) |
+| Hit switch: leaf switch behind the head | 18-0006-00 (in 18-7019-0X) | 2 | 1 switch input (orange), return (purple) |
+
+- 7 wires per assembly. Per assembly on FAST: 2 drivers and 2 switch
+  inputs. For the three: 6 drivers and 6 switch inputs, all on a 1616.
+  The 48 V and the purple return can be daisy-chained between assemblies.
+- The Hobbit ran these coils at 70 V (manual coil table). FAST runs them at
+  48 V, so the lift will be weaker. Whether it still raises the head
+  reliably is Unverified: bench-test one assembly on 48 V before wiring all
+  three.
+- Check the diodes on each coil before wiring. FAST requires a flyback
+  diode on every coil (13-fast-boards.md, section 4).
+- The config does not match this yet: `config/playfield_pending.yaml`
+  models each pop-up as a drop target with one pulsed coil and one switch.
+  It needs a power and a hold coil and an up switch per pop-up.
 
 **12 V on the playfield** is for devices, not I/O boards: the LED expansion
 boards take 12 V from interchange J2 to J4 (7 A each), and opto emitter

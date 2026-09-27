@@ -160,7 +160,7 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 
 | Area / feature | Parts | Status |
 |---|---|---|
-| **Agents** (mid-field pop-ups) | Hobbit pop-up beast assemblies ×3: one Orc, one Warg, one Spider. The user confirmed this on 2026-09-19; the spreadsheet is wrong on both sheets. | HAVE |
+| **Agents** (mid-field pop-ups) | Hobbit pop-up beast assemblies ×3: one Orc, one Warg, one Spider. The user confirmed this on 2026-09-19; the spreadsheet is wrong on both sheets. Each has a dual-wound FL-11753 coil (power and hold drivers), an up microswitch and a hit leaf switch; wiring in 08-this-machine.md, "Hobbit pop-up wiring". | HAVE |
 | **Matrix Team** (5 pop-up targets) | Gottlieb 5-bank drop targets, second-hand (Solar City 1976–77) | HAVE |
 | **EMP pop bumper** area | Standup targets ×6, 3-bank drop target assembly (frosted) | HAVE (2nd) |
 | **Trinity Ramp** | Stern ball lock assembly, left spinner with switch, IR LED opto set | HAVE (2nd) |
