@@ -373,7 +373,7 @@ Open items:
       third supply's added load.
 - [ ] Read the labels on the two existing backbox Mean Wells to confirm they
       are the RSP-500-48 and LRS-150-12.
-- [ ] **Cabinet I/O power cable** (planned 2026-09-26): Smart Power Filter
+- [x] **Cabinet I/O power cable** (planned 2026-09-26, installed by the user 2026-09-27; pre-power checks not yet reported): Smart Power Filter
       Board J10 CABINET to Cabinet I/O J3 TO FILTER BOARD, 4 x 18 AWG,
       straight through by label: 12 to 12 (yellow), G to G (black), TG to TG
       (black, tagged "TG"), H2 to H2 (blue). Both ends are 4-pin 0.156"
