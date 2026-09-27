@@ -192,14 +192,14 @@ switch: the pendulum touching the ring closes it. No polarity, 22 AWG.
 
 | From | To | Colour |
 | --- | --- | --- |
-| Tilt bob, either contact | CABINET A pin 4 (label "11", `cab-11`) | Orange |
-| Tilt bob, other contact | Start button switch, common lug (daisy-chain) | Purple |
+| Tilt bob, either contact | Wired 2026-09-27 to the pin labelled "18" on CABINET B (pin 3, `cab-18`); planned was CABINET A label "11" | Orange |
+| Tilt bob, other contact | Return: not yet recorded (planned: start button common lug) | Purple |
 
 - The purple daisy-chain is FAST's standard switch-return practice. It relies
   on the same return as the start button (left opto J1 pin 4, which depends
   on opto pins 3 and 4 being joined). If the start button works in the
   switch test, the tilt return does too.
-- In the config as `s_plumb_bob` (`cab-11`, tag `tilt_warning`). MPF's
+- In the config as `s_plumb_bob` (`cab-18`, tag `tilt_warning`). MPF's
   built-in `tilt` mode is not in the `modes:` list yet; enabling it also
   needs a GMC slide named `tilt`, which does not exist yet.
 - User decision (2026-09-27): skip the opto board bench test and the left
