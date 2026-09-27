@@ -293,6 +293,72 @@ Plan (2026-09-26):
 
 Open items are in the to-do list below ("Cabinet power button").
 
+### Playfield power distribution (planned 2026-09-27)
+
+**The playfield I/O boards take no power cable.** Each board's logic runs on
+12 V delivered over the I/O loop (RJ45) cables: "This loop is used to power
+the I/O boards themselves (via 12V which is delivered via the loop)"
+(Official, FAST I/O board wiring guide). The loop was closed on 2026-09-26,
+so the back 1616, middle 1616 and front 3208 should all have logic power
+already. `mpf hardware scan` reporting all four NET boards confirms it.
+
+What each board needs before its coils can fire is the coil circuit, which
+has three runs. None of them lands on a 48 V pin on the I/O board, because
+the boards have none (13-fast-boards.md, sections 3.4 and 3.5):
+
+| Run | From | To | Wire |
+| --- | --- | --- | --- |
+| 48 V feed | Playfield Interchange H1 pin (J5, J6 or J11), or H2 (J10) | Coil lug on the diode band side, daisy-chained coil to coil | Blue, 18 AWG |
+| Driver line | Other coil lug | Driver pin on the I/O board's driver header | Black, 18 AWG (this machine's convention) |
+| Toxic ground | I/O board driver header GND pins | Playfield Interchange TG pins | Black, 18 AWG, tagged "TG" |
+
+- FAST: "All playfield power comes from the playfield interchange board,
+  including the always-on 48V and toxic ground returns", and from each I/O
+  board run "one toxic ground per high current solenoid from that I/O board.
+  One toxic ground to cover 'everything else' from that I/O board"
+  (Official, FAST driver wiring guide). For a heavily loaded 48 V daisy
+  chain, FAST suggests a parallel wire rather than a thicker one.
+- A board with no toxic ground wired has no return path for its drivers, so
+  none of its coils will fire even though the board is on the loop and
+  reports normally (engineering inference from FAST keeping toxic ground
+  separate from logic ground).
+- Tag every TG wire. Under this machine's convention a black TG wire and a
+  black driver wire look the same, and both land on the same 12-pin header.
+
+**Proposed header allocation** (one H1 header per board, so each board's
+48 V chain and its toxic grounds unplug together):
+
+| Interchange header | Circuit | Pins | Serves |
+| --- | --- | --- | --- |
+| J5, J6 or J11 (whichever is in use now) | H1 | 1x 48 V, 3x TG | Front 3208: flippers, slings, trough eject, auto plunge (already wired; header not yet recorded) |
+| Next free H1 header | H1 | 1x 48 V, 3x TG | Middle 1616 |
+| Last H1 header | H1 | 1x 48 V, 3x TG | Back 1616 |
+| J10 | H2 | 1x 48 V, 2x TG, key | Platform magnet and knocker (both isolated on H2, per FAST's advice for magnets); returns from the board(s) driving them |
+
+- Toxic ground pin budget: 11 on the interchange in total (3 each on J5, J6
+  and J11, 2 on J10). FAST's one-per-high-current-solenoid rule will not fit
+  every board once the playfield is complete, so give the extra TG pins to
+  the boards driving flippers, VUKs and scoops.
+- Whether all the interchange's TG pins are joined on the board is not
+  stated by FAST (Unverified). Meter continuity between a TG pin on each of
+  J5, J6, J11 and J10, with the machine off, before relying on a return
+  landing on another header's TG pin.
+
+**Driver capacity.** The 3208's 8 drivers are all assigned (`bottom32-0` to
+`bottom32-7`), so every remaining playfield coil goes on the two 1616s: the
+15 coils in `config/playfield_pending.yaml` plus the knocker is 16 of their
+32 drivers, plus 2 for the upper playfield's mini flipper if it is
+dual-wound. Each 1616 needs two 12-pin 0.156" driver housings (J3 and J4,
+keys at different positions).
+
+**12 V on the playfield** is for devices, not I/O boards: the LED expansion
+boards take 12 V from interchange J2 to J4 (7 A each), and opto emitter
+boards from the four low-current headers (2.5 A combined).
+
+Still to record: which interchange header feeds the 3208's coils now, and
+how many TG wires return from its J4 GND pins. See the to-do list below
+("Playfield power").
+
 ### Audio wiring (decided 2026-09-23, not yet installed)
 
 Current chain (user): NUC headphone out -> Fosi MC101 RCA line input -> the
@@ -425,8 +491,10 @@ Open items:
       Wiring, 18 AWG: Playfield Interchange J10 H2 (48 V, fuse F1) to the
       coil lug on the diode band side (blue); other coil lug to a spare
       driver pin on the back 1616's J3 or J4 (black, this machine's
-      convention). The 1616's driver GND pins already return to the
-      interchange TG pins. 1N4007 across the coil, band to the H2 lug.
+      convention). The back 1616's driver GND pins must return to the
+      interchange TG pins; nothing is plugged into that board yet
+      (2026-09-27), see "Playfield power distribution". 1N4007 across the
+      coil, band to the H2 lug.
       A 2-pin 0.156" inline connector where the pair crosses from
       playfield to backbox, with slack for the head to fold and the
       playfield to lift; it adds one plug to playfield removal.
@@ -574,6 +642,14 @@ Logs go to `~/matrix-pinball/logs/`.
       `platform: drivers` light on `cab-4`. Needs a 12 V LED, or a series
       resistor sized for its rated voltage.
 - [x] **Second 1616 added to `io_loop:`** (2026-09-26), order traced by the user: Neuron, Cabinet I/O, Interchange, back 1616 (`top16`, 2), middle 1616 (`mid16`, 3), front 3208 (`bottom32`, 4), Interchange, Neuron. Neither 1616 has anything plugged in yet.
+- [ ] **Playfield power** (planned 2026-09-27; see "Playfield power
+      distribution"). The I/O boards need no power cable (12 V comes over
+      the loop). Record which interchange H1 header feeds the 3208's coils
+      and how many TG wires leave its J4 GND pins. Meter the interchange TG
+      pins for continuity across headers. Then, per 1616, as its first coils
+      are wired: an H1 header's 48 V (blue) daisy-chained to its coils, and
+      TG (black, tagged) from its J3 and J4 GND pins to that header's TG
+      pins.
 - [ ] Run `mpf hardware scan` to confirm the board models and loop order match the config (`FP-I/O-0024`, `FP-I/O-1616` ×2, `FP-I/O-3208`, `FP-EXP-2000` + `FP-PWR-0007`). This is the fastest way to get the true `order:` values.
 - [ ] Wire the Cabinet I/O (FP-I/O-0024-5). It's mounted but unwired.
       Pinouts are in 13-fast-boards.md, section 3.6. None of its 13-pin
