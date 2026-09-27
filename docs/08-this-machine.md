@@ -193,7 +193,15 @@ switch: the pendulum touching the ring closes it. No polarity, 22 AWG.
 | From | To | Colour |
 | --- | --- | --- |
 | Tilt bob, either contact | Wired 2026-09-27 to the pin labelled "18" on CABINET B (pin 3, `cab-18`); planned was CABINET A label "11" | Orange |
-| Tilt bob, other contact | Return: not yet recorded (planned: start button common lug) | Purple |
+| Tilt bob, other contact | Purple daisy-chained via a lead or terminal of the cabinet power button (which lead: not yet recorded), then to the right opto board J1 pin 4 (GND) | Purple |
+
+- Right opto board J1 pins 3 and 4 (GND) have continuity (user, 2026-09-27).
+  The left board is the same part, so its pins 3 and 4 are very likely
+  joined too (inference; not measured).
+- Open question: which power button lead carries the purple. If it is the
+  switch pair or the LED's black lead, move the tilt return straight to
+  right opto J1 pin 4, so the power button's leads stay free for soft power
+  (Neuron J4) and the L4 lamp driver.
 
 - The purple daisy-chain is FAST's standard switch-return practice. It relies
   on the same return as the start button (left opto J1 pin 4, which depends
