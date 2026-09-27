@@ -196,6 +196,14 @@ switches:
   s_start:
     number: cab-10
     tags: start
+  # Williams plumb bob tilt (A-15361) on CABINET A pin 4 (label "11"), per
+  # FAST's cabinet recipe. Return daisy-chained from the start button's
+  # common lug. The tilt_warning tag is what MPF's built-in tilt mode reads;
+  # that mode is not enabled yet (it needs a GMC "tilt" slide).
+  # TODO(hardware): planned 2026-09-27, not yet wired or switch-tested.
+  s_plumb_bob:
+    number: cab-11
+    tags: tilt_warning
 
   ## Flipper EOS Switches
   s_left_flipper_eos: # End of Stroke

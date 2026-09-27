@@ -185,6 +185,29 @@ Bench test before connecting to the Cabinet I/O (output type is Unverified):
 - Fallback: the owned Stern 500-6890-01 leaf switches wire straight to the
   Cabinet I/O headers with no board and need no config change.
 
+### Tilt bob (planned 2026-09-27)
+
+The owned Williams/Bally plumb bob tilt mechanism (A-15361) is a plain
+switch: the pendulum touching the ring closes it. No polarity, 22 AWG.
+
+| From | To | Colour |
+| --- | --- | --- |
+| Tilt bob, either contact | CABINET A pin 4 (label "11", `cab-11`) | Orange |
+| Tilt bob, other contact | Start button switch, common lug (daisy-chain) | Purple |
+
+- The purple daisy-chain is FAST's standard switch-return practice. It relies
+  on the same return as the start button (left opto J1 pin 4, which depends
+  on opto pins 3 and 4 being joined). If the start button works in the
+  switch test, the tilt return does too.
+- In the config as `s_plumb_bob` (`cab-11`, tag `tilt_warning`). MPF's
+  built-in `tilt` mode is not in the `modes:` list yet; enabling it also
+  needs a GMC slide named `tilt`, which does not exist yet.
+- User decision (2026-09-27): skip the opto board bench test and the left
+  opto pins 3 and 4 continuity check. Accepted risk: the opto outputs are
+  assumed to suit FAST switch inputs (it is a FAST board named OPTO FLIPPER
+  SW), and a missing 3-to-4 link would show up as a dead start button and
+  tilt in the switch test.
+
 ### Cabinet power button (user photos, 2026-09-26)
 
 A round stainless push button with an LED ring is fitted under the cabinet,
