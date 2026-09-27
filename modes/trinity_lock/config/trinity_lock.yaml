@@ -1,9 +1,9 @@
 #config_version=6
 
-# Trinity lock (VPX): the Trinity Ramp lock takes three balls. The third
-# requests Trinity Multiball, which the Act I controller starts now or queues
-# behind a running multiball. Runs whenever Act I's features are on, which is
-# every Act I ball except while The One runs.
+# Trinity lock (VPX): the left lock (the post on the Trinity Ramp) takes three
+# balls. The third requests Trinity Multiball, which the Act I controller
+# starts now or queues behind a running multiball. Runs whenever Act I's
+# features are on, which is every Act I ball except while The One runs.
 # See docs/11-rules-act-1.md, section 6.
 
 mode:
@@ -13,7 +13,7 @@ mode:
 
 multiball_locks:
   trinity_lock:
-    lock_devices: bd_trinity_lock
+    lock_devices: bd_left_lock
     balls_to_lock: 3
     locked_ball_counting_strategy: virtual_only
     enable_events: mode_trinity_lock_started

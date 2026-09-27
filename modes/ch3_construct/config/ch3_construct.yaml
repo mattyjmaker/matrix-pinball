@@ -58,7 +58,7 @@ state_machines:
     transitions:
       - source: kung_fu
         target: sparring
-        events: drop_target_bank_matrix_team_down
+        events: drop_target_bank_five_bank_down
         events_when_transitioning: ch3_kung_fu_won
       - source: kung_fu
         target: sparring
@@ -120,7 +120,7 @@ shot_profiles:
 
 shots:
   ch3_woman_1:
-    hit_events: trinity_ramp_hit
+    hit_events: left_lock_ramp_hit
     profile: ch3_woman
     enable_events: ch3_sparring_started
     disable_events: ch3_done
@@ -128,31 +128,32 @@ shots:
       - events: ch3_sparring_started
         state: 1
   ch3_woman_2:
-    hit_events: dejavu_ramp_hit
+    hit_events: middle_loop_ramp_hit
     profile: ch3_woman
     enable_events: ch3_sparring_started
     disable_events: ch3_done
   ch3_woman_3:
-    hit_events: real_world_ramp_hit
+    hit_events: right_loop_ramp_hit
     profile: ch3_woman
     enable_events: ch3_sparring_started
     disable_events: ch3_done
   ch3_woman_4:
-    hit_events: sentinel_ramp_hit
+    hit_events: backboard_ramp_hit
     profile: ch3_woman
     enable_events: ch3_sparring_started
     disable_events: ch3_done
 
 shot_groups:
+  # She walks the four ramps: left lock, middle loop, right loop, backboard.
   ch3_woman:
     shots: ch3_woman_1, ch3_woman_2, ch3_woman_3, ch3_woman_4
     rotate_right_events: timer_ch3_walk_tick{ticks > 0}
 
 event_player:
-  mode_ch3_construct_started: matrix_team_reset
-  ch3_woman_here_hit: agent_2_raise, ch3_agent_raised
-  drop_target_agent_2_down{current_player.ch3_agent_armed==1}: ch3_woman_bonus
-  real_world_target_hit{device.state_machines.ch3_round.state=="jump" and current_player.ch3_jumping==1}: ch3_jump_made
+  mode_ch3_construct_started: five_bank_reset
+  ch3_woman_here_hit: popup_2_raise, ch3_agent_raised
+  drop_target_popup_2_down{current_player.ch3_agent_armed==1}: ch3_woman_bonus
+  upper_target_hit{device.state_machines.ch3_round.state=="jump" and current_player.ch3_jumping==1}: ch3_jump_made
   ch3_done{current_player.ch3_won_kung_fu==1 and current_player.ch3_won_sparring==1}: ch3_completed
   ch3_done: ch3_finish|500ms
 
@@ -199,7 +200,7 @@ variable_player:
     ch3_agent_armed:
       action: set
       int: 0
-  real_world_ramp_hit{device.state_machines.ch3_round.state=="jump"}:
+  right_loop_ramp_hit{device.state_machines.ch3_round.state=="jump"}:
     ch3_jumping:
       action: set
       int: 1

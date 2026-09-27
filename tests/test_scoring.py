@@ -12,13 +12,13 @@ class TestScoring(ActOneTestCase):
     def test_mission_drop_and_empty_scoop(self):
         self.start()
         self.assertEqual(5000, self.gained(self.open_mission))
-        self.player()["mission_ready"] = 0
+        self.player()["mode_ready"] = 0
         self.assertEqual(10000, self.gained(self.shoot_mission))
 
     def test_chapter_one_jumps(self):
         self.start()
         self.start_chapter(1)
-        self.assertEqual(50000, self.gained(lambda: self.ramp("trinity")))
+        self.assertEqual(50000, self.gained(lambda: self.ramp("left_lock")))
 
     def test_roster_name_and_the_one_lit(self):
         self.start()
@@ -28,26 +28,26 @@ class TestScoring(ActOneTestCase):
 
     def test_trinity_lock(self):
         self.start()
-        self.assertEqual(10000, self.gained(lambda: self.enter_device("s_trinity_lock_1", 3)))
+        self.assertEqual(10000, self.gained(lambda: self.enter_device("s_left_lock_1", 3)))
 
-    def test_sentinel_gate_opens(self):
+    def test_platform_gate_opens(self):
         self.start()
 
         def four_hits():
             for _ in range(4):
-                self.hit_and_release_switch("s_sentinel_left")
+                self.hit_and_release_switch("s_platform_gate_left")
             self.advance_time_and_run(.5)
         self.assertEqual(100000, self.gained(four_hits))
 
     def test_gate_and_count_reset_at_ball_end(self):
         self.start()
         for _ in range(4):
-            self.hit_and_release_switch("s_sentinel_left")
+            self.hit_and_release_switch("s_platform_gate_left")
         self.advance_time_and_run(.5)
-        self.assertTrue(self.machine.diverters["sentinel_gate"].active)
+        self.assertTrue(self.machine.diverters["platform_gate"].active)
         self.drain_all_balls()
         self.advance_time_and_run(5)
         self.assertBallNumber(2)
-        self.assertFalse(self.machine.diverters["sentinel_gate"].active)
-        self.enter_device("s_sentinel_vuk")
+        self.assertFalse(self.machine.diverters["platform_gate"].active)
+        self.enter_device("s_platform_vuk")
         self.assertModeNotRunning("sentinel_mb")

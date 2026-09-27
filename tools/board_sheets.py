@@ -7,7 +7,7 @@ printouts/.cache/ and are not committed: they are FAST's images and this repo
 is public. Optional photos of this machine's own boards are read from
 printouts/photos/ (cabinet_io.jpg, opto_flipper.jpg) if present.
 
-Pinouts come from docs/12-fast-boards.md (FAST's product pages and board
+Pinouts come from docs/13-fast-boards.md (FAST's product pages and board
 silkscreens). "This machine" columns are read from config/config.yaml, so
 re-run this after changing switch or coil numbers.
 
@@ -820,7 +820,7 @@ def cover(path, index, rev, date):
     c.setFont("Helvetica-Bold", 26)
     c.drawString(MARGIN, PAGE_H - 50, "Matrix Pinball: FAST board reference sheets")
     c.setFont("Helvetica", 11)
-    c.drawString(MARGIN, PAGE_H - 72, "Generated %s from matrix-pinball %s. Pinouts: docs/12-fast-boards.md."
+    c.drawString(MARGIN, PAGE_H - 72, "Generated %s from matrix-pinball %s. Pinouts: docs/13-fast-boards.md."
                  % (date, rev))
     y = PAGE_H - 125
     c.setFillColor(INK)

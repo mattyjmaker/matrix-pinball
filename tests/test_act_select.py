@@ -8,7 +8,10 @@ ACTS = "modes.act_select.code.act_select.AVAILABLE_ACTS"
 class TestActSelect(MatrixTestCase):
 
     def begin(self):
+        """Start a game and choose the Matrix at the game select."""
         self.fill_troughs()
+        self.hit_and_release_switch("s_start")
+        self.advance_time_and_run(1)
         self.hit_and_release_switch("s_start")
         self.advance_time_and_run(1)
 

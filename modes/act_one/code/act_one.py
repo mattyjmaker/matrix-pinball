@@ -3,8 +3,8 @@
 The individual chapters, multiballs and The One are ordinary YAML modes. This
 mode decides which of them may start, and records what each one achieved:
 
-- Chapters play in film order from the Mission scoop. After chapter 4, the
-  scoop replays the first chapter not yet completed.
+- Chapters play in film order from the mode scoop (the Mission scoop). After
+  chapter 4, the scoop replays the first chapter not yet completed.
 - One multiball at a time. A multiball requested while another runs waits in
   the player's `mb_pending` queue and starts when the running one ends.
 - Each completed chapter or multiball frees one crew member. Enough names
@@ -52,9 +52,9 @@ ROSTER = {
     "sentinel_mb_completed": "freed_dozer",
 }
 
-# How long a ball sits in the Mission scoop while a mode intro starts.
-MISSION_RELEASE_MS = 2000
-MISSION_AWARD_RELEASE_MS = 750
+# How long a ball sits in the mode scoop (the Mission scoop) while a mode intro starts.
+MODE_SCOOP_RELEASE_MS = 2000
+MODE_SCOOP_AWARD_RELEASE_MS = 750
 
 
 class ActOne(Mode):
@@ -69,7 +69,7 @@ class ActOne(Mode):
 
     def mode_start(self, **kwargs):
         self._chapter_running = None
-        self.player["mission_ready"] = 0
+        self.player["mode_ready"] = 0
 
         for event in ROSTER:
             self.add_mode_event_handler(event, self._roster_award, event_name=event)
@@ -78,8 +78,8 @@ class ActOne(Mode):
         for name, mode in MULTIBALLS.items():
             self.add_mode_event_handler("request_{}_mb".format(name), self._request_multiball, name=name)
             self.add_mode_event_handler("mode_{}_stopped".format(mode), self._multiball_stopped, name=name)
-        self.add_mode_event_handler("drop_target_mission_drop_down", self._mission_drop_down)
-        self.add_mode_event_handler("ball_hold_mission_hold_held_ball", self._mission_scoop)
+        self.add_mode_event_handler("drop_target_mode_drop_down", self._mode_drop_down)
+        self.add_mode_event_handler("ball_hold_mode_scoop_hold_held_ball", self._mode_scoop)
         self.add_mode_event_handler("mode_ch4_rescue_lock_stopped", self._rescue_lock_stopped)
         self.add_mode_event_handler("the_one_emp", self._act_complete)
 
@@ -143,45 +143,45 @@ class ActOne(Mode):
     def _rescue_starting(self):
         return self.player["rescue_mb_starting"] == 1
 
-    # --- Mission Drop and scoop -------------------------------------------------
+    # --- Mode drop and scoop (the Mission Drop and scoop) ----------------------
 
-    def _mission_drop_down(self, **kwargs):
+    def _mode_drop_down(self, **kwargs):
         del kwargs
-        self.player["mission_ready"] = 1
+        self.player["mode_ready"] = 1
         self._update_idle_objective()
 
-    def _mission_scoop(self, **kwargs):
-        """A ball is held in the Mission scoop: start what is lit, if anything."""
+    def _mode_scoop(self, **kwargs):
+        """A ball is held in the mode scoop: start what is lit, if anything."""
         del kwargs
-        startable = self.player["mission_ready"] and not self._multiball_running() and \
+        startable = self.player["mode_ready"] and not self._multiball_running() and \
             not self._chapter_active()
 
         if startable and self.player["the_one_lit"] and not self.player["the_one_stage"]:
-            self._consume_mission()
+            self._consume_mode_drop()
             self.machine.events.post("act_one_features_stop")
             self._start_multiball("the_one")
-            self._release_mission(MISSION_RELEASE_MS)
+            self._release_mode_scoop(MODE_SCOOP_RELEASE_MS)
             return
 
         chapter = self._next_chapter() if startable else None
         if chapter is None:
-            self.machine.events.post("mission_scoop_award")
-            self._release_mission(MISSION_AWARD_RELEASE_MS)
+            self.machine.events.post("mode_scoop_award")
+            self._release_mode_scoop(MODE_SCOOP_AWARD_RELEASE_MS)
             return
 
-        self._consume_mission()
+        self._consume_mode_drop()
         self._chapter_running = chapter
         self.machine.events.post("start_ch{}".format(chapter))
         # Chapter 2 holds the ball through the pill choice and releases it itself.
         if chapter != 2:
-            self._release_mission(MISSION_RELEASE_MS)
+            self._release_mode_scoop(MODE_SCOOP_RELEASE_MS)
 
-    def _consume_mission(self):
-        self.player["mission_ready"] = 0
-        self.machine.events.post("mission_drop_reset")
+    def _consume_mode_drop(self):
+        self.player["mode_ready"] = 0
+        self.machine.events.post("mode_drop_reset")
 
-    def _release_mission(self, ms):
-        self.delay.add(ms=ms, callback=self.machine.events.post, event="mission_release")
+    def _release_mode_scoop(self, ms):
+        self.delay.add(ms=ms, callback=self.machine.events.post, event="mode_scoop_release")
 
     # --- multiballs --------------------------------------------------------
 
@@ -270,7 +270,7 @@ class ActOne(Mode):
             target = CHAPTERS[chapter][2] if chapter else None
         if target is None:
             self.player["objective"] = "FREE THE CREW"
-        elif self.player["mission_ready"]:
+        elif self.player["mode_ready"]:
             self.player["objective"] = "SHOOT THE MISSION SCOOP: " + target
         else:
             self.player["objective"] = "KNOCK DOWN THE MISSION DROP: " + target

@@ -10,9 +10,9 @@ This is the production cabinet PC, and it is also used for development. Set up o
 ### Boards installed (user, 2026-09-20)
 - **Backbox:** the FAST Smart Power Filter Board (FP-PWR-0007, the "big capacitor board") + the Neuron.
 - **Playfield:** I/O 1616 at the back, the FAST Playfield Interchange Board (FP-PWR-0030, passive — no MPF config needed), the I/O 3208 (flippers and the lower third are primarily wired to it), and the second I/O 1616 in the middle.
-- **Cabinet:** the Cabinet I/O **is installed, but not yet wired** (user, 2026-09-20). Its silkscreen reads **FP-I/O-0024-5** (user photo, 2026-09-25), which confirms the config's `FP-I/O-0024`; the repo previously said FP-CAB-0001. In the same photo neither RJ45 jack has a cable, so the board is not yet in the I/O loop. Revision -5 is newer than FAST's documentation (-4); see 12-fast-boards.md, section 3.6.
+- **Cabinet:** the Cabinet I/O **is installed, but not yet wired** (user, 2026-09-20). Its silkscreen reads **FP-I/O-0024-5** (user photo, 2026-09-25), which confirms the config's `FP-I/O-0024`; the repo previously said FP-CAB-0001. In the same photo neither RJ45 jack has a cable, so the board is not yet in the I/O loop. Revision -5 is newer than FAST's documentation (-4); see 13-fast-boards.md, section 3.6.
 
-Per-board pinouts, FAST's wiring rules and the checks still to do on the machine are in 12-fast-boards.md.
+Per-board pinouts, FAST's wiring rules and the checks still to do on the machine are in 13-fast-boards.md.
 
 See 09-parts-inventory.md for the capacity analysis. The 3208 is confirmed real, which resolves an earlier open question.
 
@@ -31,7 +31,7 @@ What this means for the MPF side:
 ### Wiring colour convention (user, 2026-09-22)
 
 This machine's own convention, recorded as user-provided. It was checked
-against FAST's wiring standard on 2026-09-25 (12-fast-boards.md, section 4).
+against FAST's wiring standard on 2026-09-25 (13-fast-boards.md, section 4).
 
 | Circuit | Leg | Colour |
 | --- | --- | --- |
@@ -78,7 +78,7 @@ cabinet, one on each side. The part number comes from a photo of the board's
 silkscreen (user-provided, 2026-09-25). It was previously recorded here as
 FP-SWI-7003-1, which was a misreading. FAST's part number index lists no
 FP-SWI boards at all (Official, checked 2026-09-25), so the board is still
-undocumented by FAST. Its full details are in 12-fast-boards.md, section 3.9.
+undocumented by FAST. Its full details are in 13-fast-boards.md, section 3.9.
 
 From the silkscreen (user-provided photo):
 - **Two optos per board** (OP1, OP2). The button's actuator carries two flags,
@@ -100,7 +100,7 @@ From the silkscreen (user-provided photo):
   test points (IN1, IN2).
 - Blocker: no matching housings. The header's pitch and family are not
   confirmed. Measure the pin pitch and check whether pin 5 is fitted (see
-  12-fast-boards.md, section 3.9).
+  13-fast-boards.md, section 3.9).
 
 Planned wiring, one board per Cabinet I/O side header (4 wires):
 
@@ -385,7 +385,7 @@ shake the cabinet, not only background bass. Consequences:
   current-limited LED drivers (L0 to L5) and logic outputs (D5, D6), which
   cannot run a motor by FAST's ratings. FAST's shaker guide says a regular
   driver works "with caveats around the snubber" and recommends the EXP-1313.
-  See 12-fast-boards.md, section 5, finding 3.
+  See 13-fast-boards.md, section 5, finding 3.
 
 Open items:
 - [x] Order the Mean Well RSP-500-12 and the 50 A fuse (user, 2026-09-23).
@@ -552,7 +552,7 @@ Logs go to `~/matrix-pinball/logs/`.
       24 inputs the board reports and nothing more, so a wrong-but-in-range
       number reads the wrong input silently. Verify in the service-mode switch
       test once the board is wired.
-- [ ] **Do the board checks in 12-fast-boards.md, section 2.** The most
+- [ ] **Do the board checks in 13-fast-boards.md, section 2.** The most
       important are the physical loop order and the Neuron firmware version
       (v2.13 or newer is needed for the Cabinet I/O). The Cabinet I/O part
       number is done: FP-I/O-0024-5 (2026-09-25).
@@ -574,7 +574,7 @@ Logs go to `~/matrix-pinball/logs/`.
 - [x] **Second 1616 added to `io_loop:`** (2026-09-26), order traced by the user: Neuron, Cabinet I/O, Interchange, back 1616 (`top16`, 2), middle 1616 (`mid16`, 3), front 3208 (`bottom32`, 4), Interchange, Neuron. Neither 1616 has anything plugged in yet.
 - [ ] Run `mpf hardware scan` to confirm the board models and loop order match the config (`FP-I/O-0024`, `FP-I/O-1616` ×2, `FP-I/O-3208`, `FP-EXP-2000` + `FP-PWR-0007`). This is the fastest way to get the true `order:` values.
 - [ ] Wire the Cabinet I/O (FP-I/O-0024-5). It's mounted but unwired.
-      Pinouts are in 12-fast-boards.md, section 3.6. None of its 13-pin
+      Pinouts are in 13-fast-boards.md, section 3.6. None of its 13-pin
       headers are keyed. The config
       now assumes the side flipper buttons and start button land on the
       left-side (`cab-8` to `cab-15`) and right-side (`cab-16` to `cab-23`)

@@ -2,8 +2,9 @@
 
 # Chapter 4: Rescue Morpheus, lock phase (merges the VPX Morpheus Rescue lock).
 #   Deja vu: the Deja Vu VUK plays the black cat and lights the Ammo Lock.
-#   "Guns. Lots of guns.": lock three balls at the Ammo Lock (virtual count;
-#   the lock holds one ball physically). The third starts ch4_rescue_mb.
+#   "Guns. Lots of guns.": lock three balls at the Ammo Lock (the right
+#   outlane lock; virtual count, it holds one ball physically). The third
+#   starts ch4_rescue_mb.
 # The base mode's Ammo drain save stands down while this runs.
 # See docs/11-rules-act-1.md, section 4.
 
@@ -14,14 +15,14 @@ mode:
 
 multiball_locks:
   rescue_lock:
-    lock_devices: bd_ammo_lock
+    lock_devices: bd_right_outlane_lock
     balls_to_lock: 3
     locked_ball_counting_strategy: virtual_only
     enable_events: ch4_lock_lit
     reset_count_for_current_player_events: mode_ch4_rescue_lock_started
 
 event_player:
-  balldevice_bd_dejavu_vuk_ball_entered{current_player.ch4_lock_lit==0}: ch4_lock_lit
+  balldevice_bd_middle_loop_vuk_ball_entered{current_player.ch4_lock_lit==0}: ch4_lock_lit
   multiball_lock_rescue_lock_full: request_rescue_mb
 
 variable_player:

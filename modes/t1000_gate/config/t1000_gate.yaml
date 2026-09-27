@@ -1,0 +1,49 @@
+#config_version=6
+
+# T-1000 gate: four hits across the Cruiser targets (the platform gate) open
+# the way ("It's found you"). A ball into the T-1000 VUK (platform VUK) while
+# it is open requests T-1000 Multiball. The gate closes when that multiball
+# ends. (The Matrix's Sentinel gate on the same hardware.)
+# See docs/12-rules-terminator-2.md, section 8.
+
+mode:
+  start_events: t2_features_start
+  stop_events: t2_features_stop, t2_complete
+  priority: 250
+
+counters:
+  t1k_gate:
+    count_events: platform_gate_hit
+    count_complete_value: 4
+    events_when_complete: t1000_found
+    start_enabled: true
+    reset_events: mode_t1000_mb_stopped
+    enable_events: mode_t1000_mb_stopped
+
+event_player:
+  t1000_found: platform_gate_open
+  balldevice_bd_platform_vuk_ball_entered{current_player.t1000_open==1}: request_t1000_mb, t1000_requested
+  mode_t1000_mb_stopped: platform_gate_close
+
+variable_player:
+  mode_t1000_gate_started:
+    t1000_open:
+      action: set
+      int: 0
+  t1000_found:
+    score: 100000
+    t1000_open:
+      action: set
+      int: 1
+  t1000_requested:
+    t1000_open:
+      action: set
+      int: 0
+
+widget_player:
+  t1000_found:
+    t2_banner:
+      tokens:
+        title: IT HAS FOUND YOU
+        detail: T-1000 VUK STARTS MULTIBALL
+      expire: 3s

@@ -38,8 +38,8 @@ state_machines:
         events: s_right_flipper_active, timer_ch2_choice_complete
 
 event_player:
-  ch2_blue: mission_release, ch2_ended
-  ch2_red: request_unplugged_mb, mission_release
+  ch2_blue: mode_scoop_release, ch2_ended
+  ch2_red: request_unplugged_mb, mode_scoop_release
 
 variable_player:
   mode_ch2_red_pill_started:

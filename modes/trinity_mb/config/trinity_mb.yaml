@@ -13,13 +13,13 @@ multiballs:
   trinity:
     ball_count: 3
     ball_count_type: total
-    ball_locks: bd_trinity_lock
+    ball_locks: bd_left_lock
     shoot_again: 20s
     start_events: mode_trinity_mb_started
 
 counters:
   trinity_jackpots:
-    count_events: trinity_ramp_hit
+    count_events: left_lock_ramp_hit
     count_complete_value: 3
     events_when_complete: trinity_mb_completed
     start_enabled: true
@@ -29,7 +29,7 @@ variable_player:
     objective:
       action: set
       string: "TRINITY MULTIBALL: TRINITY RAMP FOR JACKPOTS"
-  trinity_ramp_hit:
+  left_lock_ramp_hit:
     score: 150000
 
 widget_player:
@@ -45,7 +45,7 @@ widget_player:
         title: TRINITY
         goal: TRINITY RAMP FOR JACKPOTS
       expire: 4s
-  trinity_ramp_hit:
+  left_lock_ramp_hit:
     mode_banner:
       tokens:
         title: TRINITY BONUS

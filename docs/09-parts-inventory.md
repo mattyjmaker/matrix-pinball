@@ -30,7 +30,7 @@ The **Feb 2023 order** was placed through Pinside/Trident Pinball and paid 2023-
 | FAST I/O 1616 (Neuron version) + connectors | 1 | HAVE (2nd) | This is a **second** 1616, so there are 2 in total. |
 | FAST 3 ft network cable | 2 | HAVE | Second Order |
 | FAST vertical mount bracket set | 3 | HAVE | Second Order |
-| FAST Cabinet I/O board + connectors | 1 | HAVE | Third Order. Silkscreen reads **FP-I/O-0024-5** (photo, 2026-09-25); see 12-fast-boards.md. |
+| FAST Cabinet I/O board + connectors | 1 | HAVE | Third Order. Silkscreen reads **FP-I/O-0024-5** (photo, 2026-09-25); see 13-fast-boards.md. |
 | FAST RGB/LED inserts | 50-pack | HAVE | Feb 2023 |
 | Wire, 1,400 ft in 11 colours (wirebot.xyz) | 1 lot | HAVE | |
 
@@ -62,7 +62,7 @@ The config's `io_loop:` lists all four NET boards in the order traced by the use
 
 ⚠ **No LED expansion boards are installed or configured.** The user owns two (FP-EXP-0081 256-LED and FP-EXP-0071 128-LED + 4-servo), and `config/config.yaml`'s `exp:` section lists only the Neuron's own `FP-EXP-2000` plus the power filter breakout. So there are no playfield RGB LEDs or servos wired yet — consistent with wiring being unfinished.
 
-Per-board pinouts, wiring rules and open checks: 12-fast-boards.md.
+Per-board pinouts, wiring rules and open checks: 13-fast-boards.md.
 
 Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/playfield-interchange-board/) · [wiring it](https://fastpinball.com/wiring/neuron/playfield-interchange/) · [Smart Power Filter Board](https://fastpinball.com/products/power/smart-power-filter-board/) · [part number lookup](https://fastpinball.com/products/part-numbers/)
 
@@ -105,7 +105,7 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 | Red start button (500-6388-44) | 1 | HAVE (Feb 2023) |
 | Cabinet flipper buttons, transparent green, with spring | 2 | HAVE (Feb 2023) |
 | Double flip switch assembly 500-6890-01 (EOS/double-stack cabinet switches) | 2 | HAVE |
-| FAST FP-SWI-7083-1 "OPTO FLIPPER SW" board, 2 optos per board (not on FAST's published part list; undocumented). Previously misrecorded as FP-SWI-7003-1. | 2 | HAVE, installed one per cabinet side (user, 2026-09-25). See 08-this-machine.md and 12-fast-boards.md. |
+| FAST FP-SWI-7083-1 "OPTO FLIPPER SW" board, 2 optos per board (not on FAST's published part list; undocumented). Previously misrecorded as FP-SWI-7003-1. | 2 | HAVE, installed one per cabinet side (user, 2026-09-25). See 08-this-machine.md and 13-fast-boards.md. |
 | Nylon pal nuts (button nuts) | 2 | HAVE |
 | Williams/Bally complete tilt mechanism (A-15361) | 1 | HAVE (Feb 2023) |
 | Knocker assembly WPC/WPC-95 (B-10686-1, coil AE-23-800) + strike plate | 1 | HAVE (Feb 2023) |

@@ -32,6 +32,24 @@ subway_smith
 neo_resurrects
 emp_fire
 
+# Terminator 2 clips. Referenced by the T2 mode configs (see
+# docs/12-rules-terminator-2.md, section 12) and not yet cut.
+mall_pursuit
+flood_channel_rescue
+pescadero_breakin
+pescadero_breakout
+dyson_confrontation
+dyson_spared
+cyberdyne_breakin
+cyberdyne_firefight
+dyson_sacrifice
+future_war_flash
+t1000_reveal
+freeway_chase
+steel_mill_arrival
+molten_steel
+t800_farewell
+
 # Crew portrait loops: an AI image-to-video clip of each FREED roster name,
 # made with tools/make_portrait_loop.sh (see README.md, "Crew portrait loops").
 # Not yet made or wired to a widget_player entry.

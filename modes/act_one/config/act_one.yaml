@@ -5,24 +5,24 @@
 # See docs/11-rules-act-1.md.
 
 mode:
-  start_events: ball_started{current_player.act=="I"}
+  start_events: ball_started{machine.game_choice=="matrix" and current_player.act=="I"}
   stop_events: act_one_complete
   priority: 200
   code: act_one.ActOne
 
 ball_holds:
-  # Every ball into the Mission scoop is held while the controller decides
-  # what it starts, then released by `mission_release`.
-  mission_hold:
-    hold_devices: bd_mission_scoop
+  # Every ball into the mode scoop (the Mission scoop) is held while the
+  # controller decides what it starts, then released by `mode_scoop_release`.
+  mode_scoop_hold:
+    hold_devices: bd_mode_scoop
     balls_to_hold: 1
     enable_events: mode_act_one_started
-    release_all_events: mission_release
+    release_all_events: mode_scoop_release
 
 variable_player:
-  drop_target_mission_drop_down:
+  drop_target_mode_drop_down:
     score: 5000
-  mission_scoop_award:
+  mode_scoop_award:
     score: 10000
   crew_freed:
     score: 250000

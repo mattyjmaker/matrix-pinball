@@ -3,8 +3,8 @@
 # ---------------------------------------------------------------------------
 # PENDING PLAYFIELD HARDWARE
 #
-# Every feature the Act I rules use that is not yet built or wired. Included
-# from config.yaml with `config: playfield_pending.yaml`.
+# Every playfield feature that is not yet built or wired. Included from
+# config.yaml with `config: playfield_pending.yaml`.
 #
 # Everything here is on the `virtual` platform (see `hardware: platform:` in
 # config.yaml), so MPF still boots on the real FAST hardware: these switches
@@ -15,311 +15,385 @@
 # To bring a feature online: move its entries into config.yaml, give each
 # switch and coil its real FAST number, and delete the `platform: virtual`
 # line. Keep the switch names and `events_when_activated:` lines as they are.
-# The modes listen to those logical events (for example `trinity_ramp_hit`),
-# never to switch names, so the rules do not change when the wiring does.
 #
-# Numbers here are placeholders. They only need to be unique.
+# NAMES ARE GENERIC. Every switch, coil, device and event here says what the
+# hardware is (`left_lock_ramp`, `platform_gate`, `popup_1`), never what a
+# game calls it. The games share this playfield and listen to the same
+# events; each game's modes and docs carry the mapping to its own names. The
+# Matrix name each feature had before the rename is in a comment beside it.
 #
 # TODO(layout): which side of the playfield each shot is on is a guess until
 # the ramps are installed. The Construct's sparring combos alternate
 # `left_shot_hit` and `right_shot_hit`, so correct those two events per
-# switch once the layout is final.
+# switch once the layout is final. The middle loop ramp counts as a left
+# shot for now.
 # ---------------------------------------------------------------------------
 
 switches:
-  # Agents: three Hobbit pop-up beast assemblies, driven as drop targets.
-  # Active means the Agent is down. Drop target switches take no
-  # playfield_active tag; the device marks the playfield active itself.
-  s_agent_1:
-    number: v-agent-1
+  # Pop-ups: three Hobbit pop-up beast assemblies, driven as drop targets
+  # (the "Agents" in the Matrix design). Active means the pop-up is down.
+  # Drop target switches take no playfield_active tag; the device marks the
+  # playfield active itself.
+  s_popup_1:                      # was s_agent_1
+    number: v-popup-1
     platform: virtual
-  s_agent_2:
-    number: v-agent-2
+  s_popup_2:
+    number: v-popup-2
     platform: virtual
-  s_agent_3:
-    number: v-agent-3
-    platform: virtual
-
-  # Matrix Team: Gottlieb 5-bank drop targets.
-  s_team_1:
-    number: v-team-1
-    platform: virtual
-  s_team_2:
-    number: v-team-2
-    platform: virtual
-  s_team_3:
-    number: v-team-3
-    platform: virtual
-  s_team_4:
-    number: v-team-4
-    platform: virtual
-  s_team_5:
-    number: v-team-5
+  s_popup_3:
+    number: v-popup-3
     platform: virtual
 
-  # Mission Drop: 1-bank smart drop in front of the Mission scoop.
-  s_mission_drop:
-    number: v-mission-drop
+  # Five-bank: Gottlieb 5-bank drop targets (the "Matrix Team" drops).
+  s_five_bank_1:                  # was s_team_1
+    number: v-five-bank-1
     platform: virtual
-  s_mission_scoop:
-    number: v-mission-scoop
+  s_five_bank_2:
+    number: v-five-bank-2
+    platform: virtual
+  s_five_bank_3:
+    number: v-five-bank-3
+    platform: virtual
+  s_five_bank_4:
+    number: v-five-bank-4
+    platform: virtual
+  s_five_bank_5:
+    number: v-five-bank-5
     platform: virtual
 
-  # Agents Coming scoop (Cypher in the VPX).
-  s_cypher_scoop:
-    number: v-cypher-scoop
+  # Three-bank: 3-bank drop target assembly in the pop bumper area (parts
+  # list). No rules use it yet.
+  s_three_bank_1:
+    number: v-three-bank-1
+    platform: virtual
+  s_three_bank_2:
+    number: v-three-bank-2
+    platform: virtual
+  s_three_bank_3:
+    number: v-three-bank-3
     platform: virtual
 
-  # Ramps. Each needs a "made" switch at the top; the parts list has
-  # spinners on three of them and an opto set on the Sentinel ramp.
-  s_trinity_ramp:
-    number: v-trinity-ramp
+  # Mode drop and mode scoop: a 1-bank smart drop in front of the scoop that
+  # starts the game's modes (the "Mission Drop" and "Mission scoop").
+  s_mode_drop:                    # was s_mission_drop
+    number: v-mode-drop
+    platform: virtual
+  s_mode_scoop:                   # was s_mission_scoop
+    number: v-mode-scoop
+    platform: virtual
+
+  # Pop-up scoop: the open-back scoop that raises the pop-ups (the "Agents
+  # Coming" or Cypher scoop).
+  s_popup_scoop:                  # was s_cypher_scoop
+    number: v-popup-scoop
+    platform: virtual
+
+  # Ramps. Four, each with a "made" switch at the top:
+  #   left lock ramp    the left ramp, with the lock post on its return
+  #   middle loop ramp  the middle loop
+  #   right loop ramp   the loop on the far right, up and in front of the
+  #                     backboard onto the upper playfield from the left
+  #   backboard ramp    next to the platform toy, up into the backboard and
+  #                     behind it, out at the top left of the upper playfield
+  # The first three have spinners; the backboard ramp has an opto set.
+  # (The Matrix design's Trinity, Deja Vu, Real World and Sentinel ramps.)
+  s_left_lock_ramp:               # was s_trinity_ramp
+    number: v-left-lock-ramp
     platform: virtual
     tags: playfield_active
-    events_when_activated: trinity_ramp_hit, ramp_hit, left_shot_hit
-  s_trinity_spinner:
-    number: v-trinity-spinner
+    events_when_activated: left_lock_ramp_hit, ramp_hit, left_shot_hit
+  s_left_lock_spinner:            # was s_trinity_spinner
+    number: v-left-lock-spinner
     platform: virtual
     tags: playfield_active
     events_when_activated: spinner_hit
-  s_dejavu_ramp:
-    number: v-dejavu-ramp
+  s_middle_loop_ramp:             # was s_dejavu_ramp
+    number: v-middle-loop-ramp
     platform: virtual
     tags: playfield_active
-    events_when_activated: dejavu_ramp_hit, ramp_hit, left_shot_hit
-  s_dejavu_spinner:
-    number: v-dejavu-spinner
-    platform: virtual
-    tags: playfield_active
-    events_when_activated: spinner_hit
-  s_real_world_ramp:
-    number: v-real-world-ramp
-    platform: virtual
-    tags: playfield_active
-    events_when_activated: real_world_ramp_hit, ramp_hit, right_shot_hit
-  s_real_world_spinner:
-    number: v-real-world-spinner
+    events_when_activated: middle_loop_ramp_hit, ramp_hit, left_shot_hit
+  s_middle_loop_spinner:          # was s_dejavu_spinner
+    number: v-middle-loop-spinner
     platform: virtual
     tags: playfield_active
     events_when_activated: spinner_hit
-  s_sentinel_ramp:
-    number: v-sentinel-ramp
+  s_right_loop_ramp:              # was s_real_world_ramp
+    number: v-right-loop-ramp
     platform: virtual
     tags: playfield_active
-    events_when_activated: sentinel_ramp_hit, ramp_hit, right_shot_hit
+    events_when_activated: right_loop_ramp_hit, ramp_hit, right_shot_hit
+  s_right_loop_spinner:           # was s_real_world_spinner
+    number: v-right-loop-spinner
+    platform: virtual
+    tags: playfield_active
+    events_when_activated: spinner_hit
+  s_backboard_ramp:               # was s_sentinel_ramp
+    number: v-backboard-ramp
+    platform: virtual
+    tags: playfield_active
+    events_when_activated: backboard_ramp_hit, ramp_hit, right_shot_hit
 
-  # Real World upper mini-playfield: three standups.
-  s_real_world_1:
-    number: v-real-world-1
+  # Upper playfield: three standups and a mini left flipper (the "Real
+  # World" playfield). Both the right loop ramp and the backboard ramp feed it.
+  s_upper_target_1:               # was s_real_world_1
+    number: v-upper-target-1
     platform: virtual
     tags: playfield_active
-    events_when_activated: real_world_1_hit, real_world_target_hit
-  s_real_world_2:
-    number: v-real-world-2
+    events_when_activated: upper_target_1_hit, upper_target_hit
+  s_upper_target_2:
+    number: v-upper-target-2
     platform: virtual
     tags: playfield_active
-    events_when_activated: real_world_2_hit, real_world_target_hit
-  s_real_world_3:
-    number: v-real-world-3
+    events_when_activated: upper_target_2_hit, upper_target_hit
+  s_upper_target_3:
+    number: v-upper-target-3
     platform: virtual
     tags: playfield_active
-    events_when_activated: real_world_3_hit, real_world_target_hit
+    events_when_activated: upper_target_3_hit, upper_target_hit
 
-  # Sentinel Boss: the two square standups are the entrance targets, the
-  # rectangular one is the boss target.
-  s_sentinel_left:
-    number: v-sentinel-left
+  # Platform toy (the "Sentinel Boss"): two targets on a rising platform,
+  # two front targets that lower and rise to block the path to it, a magnet,
+  # and a subway under the raised platform. The two front targets are the
+  # gate (the square standups); the two on the platform are the platform
+  # targets (the rectangular standup, and a second one the config did not
+  # have before).
+  s_platform_gate_left:           # was s_sentinel_left
+    number: v-platform-gate-left
     platform: virtual
     tags: playfield_active
-    events_when_activated: sentinel_left_hit, sentinel_entrance_hit
-  s_sentinel_right:
-    number: v-sentinel-right
+    events_when_activated: platform_gate_left_hit, platform_gate_hit
+  s_platform_gate_right:          # was s_sentinel_right
+    number: v-platform-gate-right
     platform: virtual
     tags: playfield_active
-    events_when_activated: sentinel_right_hit, sentinel_entrance_hit
-  s_sentinel_boss:
-    number: v-sentinel-boss
+    events_when_activated: platform_gate_right_hit, platform_gate_hit
+  s_platform_target_1:            # was s_sentinel_boss
+    number: v-platform-target-1
     platform: virtual
     tags: playfield_active
-    events_when_activated: sentinel_boss_hit
-  # Magnet grab switch: a ball is over the Sentinel magnet.
-  s_sentinel_magnet:
-    number: v-sentinel-magnet
+    events_when_activated: platform_target_1_hit, platform_target_hit
+  s_platform_target_2:
+    number: v-platform-target-2
     platform: virtual
     tags: playfield_active
-    events_when_activated: sentinel_magnet_hit
-  s_sentinel_vuk:
-    number: v-sentinel-vuk
+    events_when_activated: platform_target_2_hit, platform_target_hit
+  # Magnet grab switch: a ball is over the platform magnet.
+  s_platform_magnet:              # was s_sentinel_magnet
+    number: v-platform-magnet
+    platform: virtual
+    tags: playfield_active
+    events_when_activated: platform_magnet_hit
+  # TODO(hardware): on the real toy a raised platform reveals a subway that
+  # carries the ball to the middle loop VUK; there is no separate VUK in the
+  # toy. This device stands in for "a ball went under the platform" until
+  # the toy is built. Then decide whether it becomes a subway entrance switch
+  # (with the ball arriving at bd_middle_loop_vuk) and give the rules that
+  # await balldevice_bd_platform_vuk_ball_entered a condition on the platform
+  # being raised.
+  s_platform_vuk:                 # was s_sentinel_vuk
+    number: v-platform-vuk
     platform: virtual
 
-  # Deja Vu VUK (closed-back scoop weldment).
-  s_dejavu_vuk:
-    number: v-dejavu-vuk
+  # Middle loop VUK (the "Deja Vu" VUK): closed-back scoop weldment.
+  s_middle_loop_vuk:              # was s_dejavu_vuk
+    number: v-middle-loop-vuk
     platform: virtual
 
-  # Trinity Ramp lock: Stern ball lock assembly.
-  # TODO(hardware): three positions assumed. Match the switch count to the
-  # assembly as fitted.
-  s_trinity_lock_1:
-    number: v-trinity-lock-1
+  # Left lock: the left lock ramp's return path to the flippers, with a post
+  # that rises to hold balls on it (the "Trinity" lock).
+  # TODO(hardware): the real lock has no position switches. A ball is locked
+  # when it makes the ramp while the post is up, and the lock is assumed full
+  # at three. These three switches let the simulator and the tests count
+  # balls; when the lock is built, replace them with entrance-switch counting
+  # on s_left_lock_ramp gated on the post being up.
+  s_left_lock_1:                  # was s_trinity_lock_1
+    number: v-left-lock-1
     platform: virtual
-  s_trinity_lock_2:
-    number: v-trinity-lock-2
+  s_left_lock_2:
+    number: v-left-lock-2
     platform: virtual
-  s_trinity_lock_3:
-    number: v-trinity-lock-3
+  s_left_lock_3:
+    number: v-left-lock-3
     platform: virtual
 
-  # Ammo Lock: Stern ball lock assembly holding one ball (as in the VPX).
-  s_ammo_lock:
-    number: v-ammo-lock
+  # Right outlane lock: Stern ball lock assembly holding one ball at the
+  # bottom right outlane (the "Ammo" lock).
+  s_right_outlane_lock:           # was s_ammo_lock
+    number: v-right-outlane-lock
     platform: virtual
 
 coils:
-  c_agent_1_raise:
-    number: v-agent-1-raise
+  c_popup_1_raise:                # was c_agent_1_raise
+    number: v-popup-1-raise
     platform: virtual
     default_pulse_ms: 30
-  c_agent_2_raise:
-    number: v-agent-2-raise
+  c_popup_2_raise:
+    number: v-popup-2-raise
     platform: virtual
     default_pulse_ms: 30
-  c_agent_3_raise:
-    number: v-agent-3-raise
+  c_popup_3_raise:
+    number: v-popup-3-raise
     platform: virtual
     default_pulse_ms: 30
-  c_team_reset:
-    number: v-team-reset
+  c_five_bank_reset:              # was c_team_reset
+    number: v-five-bank-reset
     platform: virtual
     default_pulse_ms: 30
-  c_mission_drop_reset:
-    number: v-mission-drop-reset
+  c_three_bank_reset:
+    number: v-three-bank-reset
     platform: virtual
     default_pulse_ms: 30
-  c_mission_scoop:
-    number: v-mission-scoop
+  c_mode_drop_reset:              # was c_mission_drop_reset
+    number: v-mode-drop-reset
+    platform: virtual
+    default_pulse_ms: 30
+  c_mode_scoop:                   # was c_mission_scoop
+    number: v-mode-scoop
     platform: virtual
     default_pulse_ms: 25
-  c_cypher_scoop:
-    number: v-cypher-scoop
+  c_popup_scoop:                  # was c_cypher_scoop
+    number: v-popup-scoop
     platform: virtual
     default_pulse_ms: 25
-  c_dejavu_vuk:
-    number: v-dejavu-vuk
+  c_middle_loop_vuk:              # was c_dejavu_vuk
+    number: v-middle-loop-vuk
     platform: virtual
     default_pulse_ms: 25
-  c_sentinel_vuk:
-    number: v-sentinel-vuk
+  c_platform_vuk:                 # was c_sentinel_vuk
+    number: v-platform-vuk
     platform: virtual
     default_pulse_ms: 25
-  c_trinity_lock_release:
-    number: v-trinity-lock-release
+  # TODO(hardware): the post drops to release every held ball at once, not
+  # one ball per pulse. Revisit with the lock's counting model above.
+  c_left_lock_post:               # was c_trinity_lock_release
+    number: v-left-lock-post
     platform: virtual
     default_pulse_ms: 25
-  c_ammo_lock_release:
-    number: v-ammo-lock-release
+  c_right_outlane_lock_release:   # was c_ammo_lock_release
+    number: v-right-outlane-lock-release
     platform: virtual
     default_pulse_ms: 25
-  c_sentinel_gate:
-    number: v-sentinel-gate
+  c_platform_gate:                # was c_sentinel_gate
+    number: v-platform-gate
     platform: virtual
     allow_enable: true
     default_pulse_ms: 30
     default_hold_power: 0.25
-  c_sentinel_magnet:
-    number: v-sentinel-magnet
+  # TODO(hardware): the platform itself rises to reveal the subway. No rule
+  # drives it yet.
+  c_platform_raise:
+    number: v-platform-raise
+    platform: virtual
+    allow_enable: true
+    default_pulse_ms: 30
+    default_hold_power: 0.25
+  c_platform_magnet:              # was c_sentinel_magnet
+    number: v-platform-magnet
     platform: virtual
     allow_enable: true
     default_pulse_ms: 100
     default_hold_power: 0.375
 
 drop_targets:
-  agent_1:
-    switch: s_agent_1
-    reset_coil: c_agent_1_raise
-    reset_events: agent_1_raise
-  agent_2:
-    switch: s_agent_2
-    reset_coil: c_agent_2_raise
-    reset_events: agent_2_raise
-  agent_3:
-    switch: s_agent_3
-    reset_coil: c_agent_3_raise
-    reset_events: agent_3_raise
-  team_1:
-    switch: s_team_1
-  team_2:
-    switch: s_team_2
-  team_3:
-    switch: s_team_3
-  team_4:
-    switch: s_team_4
-  team_5:
-    switch: s_team_5
-  mission_drop:
-    switch: s_mission_drop
-    reset_coil: c_mission_drop_reset
-    reset_events: machine_reset_phase_3, ball_starting, mission_drop_reset
+  popup_1:                        # was agent_1
+    switch: s_popup_1
+    reset_coil: c_popup_1_raise
+    reset_events: popup_1_raise
+  popup_2:
+    switch: s_popup_2
+    reset_coil: c_popup_2_raise
+    reset_events: popup_2_raise
+  popup_3:
+    switch: s_popup_3
+    reset_coil: c_popup_3_raise
+    reset_events: popup_3_raise
+  five_bank_1:                    # was team_1
+    switch: s_five_bank_1
+  five_bank_2:
+    switch: s_five_bank_2
+  five_bank_3:
+    switch: s_five_bank_3
+  five_bank_4:
+    switch: s_five_bank_4
+  five_bank_5:
+    switch: s_five_bank_5
+  three_bank_1:
+    switch: s_three_bank_1
+  three_bank_2:
+    switch: s_three_bank_2
+  three_bank_3:
+    switch: s_three_bank_3
+  mode_drop:                      # was mission_drop
+    switch: s_mode_drop
+    reset_coil: c_mode_drop_reset
+    reset_events: machine_reset_phase_3, ball_starting, mode_drop_reset
 
 drop_target_banks:
-  agents:
-    drop_targets: agent_1, agent_2, agent_3
-    reset_events: machine_reset_phase_3, ball_starting, agents_raise
-  matrix_team:
-    drop_targets: team_1, team_2, team_3, team_4, team_5
-    reset_coil: c_team_reset
-    reset_events: machine_reset_phase_3, ball_starting, matrix_team_reset
+  popups:                         # was agents
+    drop_targets: popup_1, popup_2, popup_3
+    reset_events: machine_reset_phase_3, ball_starting, popups_raise
+  five_bank:                      # was matrix_team
+    drop_targets: five_bank_1, five_bank_2, five_bank_3, five_bank_4, five_bank_5
+    reset_coil: c_five_bank_reset
+    reset_events: machine_reset_phase_3, ball_starting, five_bank_reset
+  three_bank:
+    drop_targets: three_bank_1, three_bank_2, three_bank_3
+    reset_coil: c_three_bank_reset
+    reset_events: machine_reset_phase_3, ball_starting, three_bank_reset
 
 ball_devices:
-  bd_mission_scoop:
-    ball_switches: s_mission_scoop
-    eject_coil: c_mission_scoop
+  bd_mode_scoop:                  # was bd_mission_scoop
+    ball_switches: s_mode_scoop
+    eject_coil: c_mode_scoop
     eject_timeouts: 3s
-  bd_cypher_scoop:
-    ball_switches: s_cypher_scoop
-    eject_coil: c_cypher_scoop
+  bd_popup_scoop:                 # was bd_cypher_scoop
+    ball_switches: s_popup_scoop
+    eject_coil: c_popup_scoop
     eject_timeouts: 3s
-  bd_dejavu_vuk:
-    ball_switches: s_dejavu_vuk
-    eject_coil: c_dejavu_vuk
+  bd_middle_loop_vuk:             # was bd_dejavu_vuk
+    ball_switches: s_middle_loop_vuk
+    eject_coil: c_middle_loop_vuk
     eject_timeouts: 3s
-  bd_sentinel_vuk:
-    ball_switches: s_sentinel_vuk
-    eject_coil: c_sentinel_vuk
+  bd_platform_vuk:                # was bd_sentinel_vuk; see the TODO on s_platform_vuk
+    ball_switches: s_platform_vuk
+    eject_coil: c_platform_vuk
     eject_timeouts: 3s
-  bd_trinity_lock:
-    ball_switches: s_trinity_lock_1, s_trinity_lock_2, s_trinity_lock_3
-    eject_coil: c_trinity_lock_release
+  bd_left_lock:                   # was bd_trinity_lock
+    ball_switches: s_left_lock_1, s_left_lock_2, s_left_lock_3
+    eject_coil: c_left_lock_post
     eject_timeouts: 3s
-  bd_ammo_lock:
-    ball_switches: s_ammo_lock
-    eject_coil: c_ammo_lock_release
+  bd_right_outlane_lock:          # was bd_ammo_lock
+    ball_switches: s_right_outlane_lock
+    eject_coil: c_right_outlane_lock_release
     eject_timeouts: 3s
 
 diverters:
-  # The Sentinel front gate. Active means open.
-  # TODO(hardware): modelled as a held coil. If the gate is a servo or a
-  # pulse-up/pulse-down mech, change `type` and the coils to match.
-  sentinel_gate:
-    activation_coil: c_sentinel_gate
+  # The platform gate: the two front targets lower to open the path to the
+  # platform and rise to block it. Active means open (targets down).
+  # TODO(hardware): modelled as a held coil, and it is not yet known whether
+  # the energised state is up or down. Change `type` and the coils to match
+  # the mech as built.
+  platform_gate:                  # was sentinel_gate
+    activation_coil: c_platform_gate
     type: hold
     # A diverter ignores activate events until it is enabled.
     enable_events: ball_started
     disable_events: ball_will_end, service_mode_entered
-    activate_events: sentinel_gate_open
-    deactivate_events: sentinel_gate_close, ball_will_end
+    activate_events: platform_gate_open
+    deactivate_events: platform_gate_close, ball_will_end
 
 magnets:
-  sentinel_magnet:
-    magnet_coil: c_sentinel_magnet
-    grab_switch: s_sentinel_magnet
+  platform_magnet:                # was sentinel_magnet
+    magnet_coil: c_platform_magnet
+    grab_switch: s_platform_magnet
     grab_time: 1.5s
     release_time: 500ms
-    grab_ball_events: sentinel_magnet_grab
-    release_ball_events: sentinel_magnet_release
+    grab_ball_events: platform_magnet_grab
+    release_ball_events: platform_magnet_release
 
-# Not yet modelled, because the device ties a FAST switch to a coil through a
+# Not yet modelled, because each ties a FAST switch to a coil through a
 # hardware rule and both halves must be on the same platform:
-# - the kickback coil (left outlane, relit by s_kickback_target), and
-# - the Real World mini flipper on the left flipper button.
+# - the kickback coil (left outlane, relit by s_kickback_target),
+# - the upper right flipper (a third lower-playfield flipper), and
+# - the upper playfield's mini left flipper.
 # Add each as `kickbacks:` / `flippers:` in config.yaml once its coil is wired.

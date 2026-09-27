@@ -1,0 +1,124 @@
+#config_version=6
+
+# Terminator 2 controller. The sequencing lives in code/t2_main.py; this file
+# holds the Command scoop (the mode scoop) and the scores the controller's
+# events pay. See docs/12-rules-terminator-2.md.
+
+mode:
+  start_events: ball_started{machine.game_choice=="t2" and current_player.t2_complete==0}
+  stop_events: t2_complete
+  priority: 200
+  code: t2_main.T2Main
+
+ball_holds:
+  # Every ball into the Command scoop is held while the controller decides
+  # what it starts, then released by `t2_scoop_release`.
+  t2_scoop_hold:
+    hold_devices: bd_mode_scoop
+    balls_to_hold: 1
+    enable_events: mode_t2_main_started
+    release_all_events: t2_scoop_release
+
+variable_player:
+  drop_target_mode_drop_down:
+    score: 5000
+  t2_scoop_award:
+    score: 10000
+  name_saved:
+    score: 250000
+  judgment_day_lit:
+    score: 500000
+
+# Callouts for things that end a chapter live here rather than in the chapter:
+# MPF clears a mode's widgets the moment the mode stops, so a chapter cannot
+# show its own ending.
+widget_player:
+  name_saved{who=="john"}:
+    t2_card:
+      key: saved_card
+      priority: 10
+      tokens:
+        kicker: SAVED
+        title: JOHN CONNOR
+        goal: ARRIVAL COMPLETE
+      expire: 4s
+  name_saved{who=="sarah"}:
+    t2_card:
+      key: saved_card
+      priority: 10
+      tokens:
+        kicker: SAVED
+        title: SARAH CONNOR
+        goal: BREAK-OUT SUPER JACKPOT
+      expire: 4s
+  name_saved{who=="dyson"}:
+    t2_card:
+      key: saved_card
+      priority: 10
+      tokens:
+        kicker: SAVED
+        title: MILES DYSON
+        goal: THE CHOICE COMPLETE
+      expire: 4s
+  name_saved{who=="chip"}:
+    t2_card:
+      key: saved_card
+      priority: 10
+      tokens:
+        kicker: DESTROYED
+        title: THE CHIP
+        goal: CYBERDYNE RAID COMPLETE
+      expire: 4s
+  name_saved{who=="resistance"}:
+    t2_card:
+      key: saved_card
+      priority: 10
+      tokens:
+        kicker: SAVED
+        title: THE RESISTANCE
+        goal: FUTURE WAR MULTIBALL COMPLETE
+      expire: 4s
+  name_saved{who=="skynet"}:
+    t2_card:
+      key: saved_card
+      priority: 10
+      tokens:
+        kicker: DRIVEN OFF
+        title: SKYNET
+        goal: T-1000 MULTIBALL COMPLETE
+      expire: 4s
+  judgment_day_lit:
+    t2_banner:
+      tokens:
+        title: JUDGMENT DAY IS LIT
+        detail: SHOOT THE COMMAND SCOOP
+      expire: 4s
+  multiball_queued:
+    t2_banner:
+      tokens:
+        title: MULTIBALL READY
+        detail: STARTS WHEN THIS MULTIBALL ENDS
+      expire: 3s
+  t2_ch1_completed:
+    video_clip:
+      tokens:
+        clip: flood_channel_rescue
+      expire: 6s
+  t2_ch1_failed:
+    t2_banner:
+      tokens:
+        title: THE T-1000 GETS AWAY
+        detail: IT WILL FIND HIM AGAIN
+      expire: 3s
+  t2_ch3_kill:
+    t2_banner:
+      tokens:
+        title: THAT IS NOT WHO YOU ARE
+        detail: DYSON IS LOST
+      expire: 3s
+  t2_ch3_bypass_failed:
+    t2_banner:
+      tokens:
+        title: SECURITY LOCKS DOWN
+        detail: DYSON IS LOST
+      expire: 3s
