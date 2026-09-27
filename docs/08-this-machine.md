@@ -558,11 +558,13 @@ Logs go to `~/matrix-pinball/logs/`.
       number is done: FP-I/O-0024-5 (2026-09-25).
 - [x] **Cabinet I/O cabled into the I/O loop** at order 1 (user,
       2026-09-26), matching the config.
-- [ ] **48 V enable.** The Smart Power Filter Board's software 48 V enable is
-      not released (FAST, as fetched 2026-09-25), so 48 V flows only while its
-      J8 (ENA IN) pins 1 and 3 are closed. Wire the coin door interlock to J8
-      (and optionally J9 ENA OUT to a Cabinet I/O switch input), or jumper J8
-      for testing.
+- [x] **48 V enable** (user, 2026-09-27): J8 (ENA IN) on the Smart Power
+      Filter Board is jumpered across pins 1 and 3, and the 48V ENA LED is lit.
+      48 V is now live whenever the machine is powered (no coin door
+      interlock). Later: replace the jumper with a coin door interlock switch
+      (closed when the door is shut), optionally wire J9 (ENA OUT) to a spare
+      Cabinet I/O switch input, or move to FAST's software enable once it is
+      released.
 - [ ] **Cabinet power button.** Identify its leads and whether it is
       momentary (see "Cabinet power button"). Optionally pre-run a 2-core
       cable to the backbox for the Neuron's J4. For the LED, the plan is MPF
