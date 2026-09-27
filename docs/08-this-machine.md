@@ -199,10 +199,14 @@ switch: the pendulum touching the ring closes it. No polarity, 22 AWG.
   The left board is the same part, so its pins 3 and 4 are very likely
   joined too (inference; not measured).
 - The purple passes through one of the power button's switch leads (blue or
-  yellow; which one not recorded) (user, 2026-09-27). To do: take it off the
-  button by joining the two purple wires directly (splice or crimp), and
-  insulate the freed button lead, so the power switch stays isolated for
-  soft power (Neuron J4). Works as wired until then.
+  yellow; which one not recorded) (user, 2026-09-27).
+- Decision (user, 2026-09-27): use the power button as an ordinary switch
+  until FAST releases soft power. Its other switch lead goes to the pin
+  labelled "19" on CABINET B (pin 4, `cab-19`, orange 22 AWG), so the
+  purple on its first lead is now its switch return as well as the tilt's.
+  In the config as `s_cabinet_button`. When soft power arrives: take both
+  switch leads off (join the two purples directly for the tilt), and move
+  blue and yellow to the Neuron's J4 pins 2 and 3.
 
 - The purple daisy-chain is FAST's standard switch-return practice. It relies
   on the same return as the start button (left opto J1 pin 4, which depends

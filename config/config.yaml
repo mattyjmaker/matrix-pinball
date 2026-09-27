@@ -204,6 +204,14 @@ switches:
   s_plumb_bob:
     number: cab-18
     tags: tilt_warning
+  # Cabinet power button (front right, LED ring), used as an ordinary switch
+  # until FAST releases soft power (then its switch pair moves to the Neuron's
+  # J4). One switch lead is on the tilt's purple return; the other goes to the
+  # pin labelled "19" on CABINET B (pin 4, switch 19). Not used by any rule yet.
+  # TODO(hardware): planned 2026-09-27, not yet wired or switch-tested. If it
+  # reads active when released, the pair is normally closed: add type: NC.
+  s_cabinet_button:
+    number: cab-19
 
   ## Flipper EOS Switches
   s_left_flipper_eos: # End of Stroke
