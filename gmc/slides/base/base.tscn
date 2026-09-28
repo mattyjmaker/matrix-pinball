@@ -375,7 +375,7 @@ offset_right = 560.0
 offset_bottom = 980.0
 theme_override_constants/separation = 10
 script = ExtResource("13_act_panel")
-acts = PackedStringArray("II", "III")
+acts = PackedStringArray("II")
 
 [node name="Heading" type="Label" parent="Allies"]
 layout_mode = 2
@@ -442,6 +442,85 @@ text = "[ ] GHOST"
 script = ExtResource("9_roster")
 key = "GHOST"
 prefix = "allies"
+freed = false
+
+[node name="Defenders" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 0
+offset_left = 96.0
+offset_top = 300.0
+offset_right = 560.0
+offset_bottom = 980.0
+theme_override_constants/separation = 10
+script = ExtResource("13_act_panel")
+acts = PackedStringArray("III")
+
+[node name="Heading" type="Label" parent="Defenders"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_colors/font_color = Color(0.4, 0.9, 0.5, 0.55)
+theme_override_font_sizes/font_size = 34
+text = "DEFENDERS"
+
+[node name="Underline" type="ColorRect" parent="Defenders"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.16, 0.9, 0.32, 0.3)
+
+[node name="Sati" type="Label" parent="Defenders"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] SATI"
+script = ExtResource("9_roster")
+key = "SATI"
+prefix = "defenders"
+freed = false
+[node name="Lock" type="Label" parent="Defenders"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] LOCK"
+script = ExtResource("9_roster")
+key = "LOCK"
+prefix = "defenders"
+freed = false
+[node name="Mifune" type="Label" parent="Defenders"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] MIFUNE"
+script = ExtResource("9_roster")
+key = "MIFUNE"
+prefix = "defenders"
+freed = false
+[node name="Roland" type="Label" parent="Defenders"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] ROLAND"
+script = ExtResource("9_roster")
+key = "ROLAND"
+prefix = "defenders"
+freed = false
+[node name="Zee" type="Label" parent="Defenders"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] ZEE"
+script = ExtResource("9_roster")
+key = "ZEE"
+prefix = "defenders"
+freed = false
+[node name="Kid" type="Label" parent="Defenders"]
+layout_mode = 2
+theme = ExtResource("6_code")
+theme_override_font_sizes/font_size = 40
+text = "[ ] KID"
+script = ExtResource("9_roster")
+key = "KID"
+prefix = "defenders"
 freed = false
 
 [node name="Locks" type="VBoxContainer" parent="."]

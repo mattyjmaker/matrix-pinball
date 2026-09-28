@@ -155,6 +155,19 @@ widget_player:
         title: SOMETHING IS DIFFERENT
         goal: ACT III
       expire: 6s
+  machine_city_peace:
+    video_clip:
+      tokens:
+        clip: peace_sunrise
+      expire: 8s
+  act_three_complete:
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT III COMPLETE
+        title: THE WAR IS OVER
+        goal: THE MATRIX COMPLETE
+      expire: 8s
   judgment_day_averted:
     video_clip:
       tokens:

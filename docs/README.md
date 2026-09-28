@@ -29,6 +29,7 @@ This is a condensed review of the whole **Mission Pinball Framework** documentat
 | [12-rules-terminator-2.md](12-rules-terminator-2.md) | **Game Select and Terminator 2 rules, as implemented:** the Matrix / Terminator 2 select before the first ball, the generic hardware vocabulary both games share, the shot mapping, and the full T2 rule set (chapters, multiballs, SAVED roster, Judgment Day wizard) with every timer and score, the mode map and the tests. |
 | [13-fast-boards.md](13-fast-boards.md) | **The FAST boards this machine owns:** part numbers, header pinouts and fuse map for each board, how MPF 0.80 sees them, FAST's wiring standard compared with this machine's, the checks still to do on the machine, and the discrepancies found. |
 | [14-rules-act-2.md](14-rules-act-2.md) | **Act II rules (movie 2), as implemented:** the Matrix Reloaded chapters in film order, the re-skinned Logos and Sentinel Hunt multiballs, the ALLIES roster, the Architect wizard with its two doors, how Act II starts, the mode map and the tests. |
+| [15-rules-act-3.md](15-rules-act-3.md) | **Act III rules (movie 3), as implemented:** the Matrix Revolutions chapters in film order (Mobil Avenue, Club Hel, the Siege of Zion, the Hammer), the re-skinned APU Corps and Sentinel Swarm multiballs, the DEFENDERS roster, the Machine City wizard and the Matrix complete, the mode map and the tests. |
 
 Each file ends with the list of source doc pages it was drawn from.
 

@@ -7,12 +7,12 @@ start button does not add a player.
 
 Only acts with rules are offered: add an act to AVAILABLE_ACTS when it has
 rules. With one act the mode steps straight out, so the game starts in Act I
-with no screen. See docs/11-rules-act-1.md, section 5, and
-docs/14-rules-act-2.md, section 1.
+with no screen. See docs/11-rules-act-1.md, section 5,
+docs/14-rules-act-2.md, section 1, and docs/15-rules-act-3.md, section 1.
 """
 from mpf.core.mode import Mode
 
-AVAILABLE_ACTS = ("I", "II")
+AVAILABLE_ACTS = ("I", "II", "III")
 TIMEOUT_SECONDS = 30
 
 

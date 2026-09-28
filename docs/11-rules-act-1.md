@@ -201,12 +201,13 @@ Acts play in order, but a player can skip ahead before play starts.
   game). Flippers step through the acts; start confirms. While it is up,
   start does not add a player. No confirmation in **30 s** starts Act I.
 - Only acts with rules are offered (`AVAILABLE_ACTS` in
-  `modes/act_select/code/act_select.py`), today Acts I and II, so the screen
+  `modes/act_select/code/act_select.py`), today Acts I, II and III, so the screen
   shows on every Matrix game. With one act the mode would step straight out
   and start Act I with no screen.
 - Skipping an act forfeits everything in it: its chapters, multiballs, FREED
   names and wizard. No compensation award.
-- Act II's rules are in docs/14-rules-act-2.md.
+- Act II's rules are in docs/14-rules-act-2.md and Act III's in
+  docs/15-rules-act-3.md.
 
 ## 6. The two standalone multiballs
 

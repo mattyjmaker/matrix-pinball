@@ -25,7 +25,7 @@ class TestActSelect(MatrixTestCase):
 
     def test_acts_on_offer(self):
         from modes.act_select.code.act_select import AVAILABLE_ACTS
-        self.assertEqual(("I", "II"), AVAILABLE_ACTS)
+        self.assertEqual(("I", "II", "III"), AVAILABLE_ACTS)
 
     def test_choose_act_two(self):
         with patch(ACTS, ("I", "II")):

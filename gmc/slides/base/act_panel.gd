@@ -1,7 +1,7 @@
 extends Control
 
 ## A HUD panel that belongs to some acts of the Matrix: the FREED roster in
-## Act I, the ALLIES roster from Act II. Shown only while the player variable
+## Act I, ALLIES in Act II, DEFENDERS in Act III. Shown only while the player variable
 ## `act` is one of `acts`. Reads the current value when the slide is created,
 ## since the slide is rebuilt every ball, and follows updates from then on.
 ## With no game (the editor), it shows while "I" is in `acts`.

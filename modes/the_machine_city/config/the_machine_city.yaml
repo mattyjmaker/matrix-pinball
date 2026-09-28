@@ -1,0 +1,107 @@
+#config_version=6
+
+# The Machine City: the Act III wizard and the end of the Matrix. Stage logic
+# in code/the_machine_city.py; this file holds its multiballs and scores. The
+# Act III controller starts it from the Mission scoop once enough DEFENDERS
+# are found, and restarts it on the player's next ball until Smith is beaten.
+# See docs/15-rules-act-3.md, section 6.
+
+mode:
+  start_events: start_machine_city_mb
+  stop_events: act_three_complete
+  priority: 400
+  code: the_machine_city.TheMachineCity
+
+multiballs:
+  machine_city_clouds:
+    ball_count: 2
+    ball_count_type: total
+    shoot_again: 15s
+    start_events: machine_city_mb_clouds
+  machine_city_city:
+    ball_count: 4
+    ball_count_type: total
+    shoot_again: 15s
+    start_events: machine_city_mb_city
+  machine_city_rain:
+    ball_count: 6
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: machine_city_mb_rain
+
+variable_player:
+  machine_city_cloud:
+    score: 250000
+  machine_city_offer:
+    score: 300000
+  machine_city_jacked_in:
+    score: 1000000
+  machine_city_smith:
+    score: 400000
+  machine_city_peace:
+    score: 10000000
+
+widget_player:
+  machine_city_started:
+    video_clip:
+      tokens:
+        clip: above_the_clouds
+      expire: 8s
+  machine_city_stage_1_started:
+    chapter_card:
+      key: machine_city_card
+      priority: 10
+      tokens:
+        kicker: THE MACHINE CITY  STAGE 1
+        title: ABOVE THE CLOUDS
+        goal: 3 RAMPS
+      expire: 4s
+  machine_city_stage_2_started:
+    chapter_card:
+      key: machine_city_card
+      priority: 10
+      tokens:
+        kicker: THE MACHINE CITY  STAGE 2
+        title: THE MACHINE CITY
+        goal: HIT THE FOUR EMP TARGETS
+      expire: 4s
+  machine_city_offer_made:
+    video_clip:
+      tokens:
+        clip: deus_ex_machina
+      expire: 6s
+    mode_banner:
+      tokens:
+        title: THE OFFER IS MADE
+        detail: JACK IN AT THE SENTINEL VUK
+      expire: 3s
+  machine_city_stage_3_started:
+    video_clip:
+      tokens:
+        clip: smith_rain
+      expire: 6s
+    chapter_card:
+      key: machine_city_card
+      priority: 10
+      tokens:
+        kicker: THE MACHINE CITY  STAGE 3
+        title: THE RAIN
+        goal: HIT THE SMITHS
+      expire: 4s
+  machine_city_smith:
+    mode_banner:
+      tokens:
+        title: SMITH
+        detail: ANOTHER ONE FALLS
+      expire: 1s
+  machine_city_stage_4_started:
+    chapter_card:
+      key: machine_city_card
+      priority: 10
+      tokens:
+        kicker: THE MACHINE CITY  STAGE 4
+        title: THE LAST SMITH
+        goal: SHOOT THE DEJA VU VUK
+      expire: 4s
+# The ending's clip and the Matrix finale are in base.yaml: this mode and
+# act_three both stop on the last shot, which would clear them.

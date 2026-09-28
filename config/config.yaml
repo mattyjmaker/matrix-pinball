@@ -114,6 +114,17 @@ modes:
   - a2_ch4_garage
   - a2_ch4_freeway_mb
   - the_architect
+  # The Matrix, Act III (docs/15-rules-act-3.md)
+  - act_three
+  - apu_lock
+  - apu_mb
+  - swarm_gate
+  - swarm_mb
+  - a3_ch1_mobil_ave
+  - a3_ch2_club_hel
+  - a3_ch3_siege_mb
+  - a3_ch4_hammer
+  - the_machine_city
   # Terminator 2 (docs/12-rules-terminator-2.md)
   - t2_main
   - future_war_lock
@@ -266,6 +277,54 @@ player_vars:
     initial_value: 0
     value_type: int
 
+  # --- The Matrix, Act III (docs/15-rules-act-3.md) ---
+  # Next Act III chapter in film order; 5 once all four have been played.
+  a3_chapter_next:
+    initial_value: 1
+    value_type: int
+  a3_intro_played:
+    initial_value: 0
+    value_type: int
+  defenders_sati:
+    initial_value: 0
+    value_type: int
+  defenders_lock:
+    initial_value: 0
+    value_type: int
+  defenders_mifune:
+    initial_value: 0
+    value_type: int
+  defenders_roland:
+    initial_value: 0
+    value_type: int
+  defenders_zee:
+    initial_value: 0
+    value_type: int
+  defenders_kid:
+    initial_value: 0
+    value_type: int
+  defenders_count:
+    initial_value: 0
+    value_type: int
+  machine_city_lit:
+    initial_value: 0
+    value_type: int
+  # 0 until the Machine City starts, then its stage (1 to 4). Survives ball end.
+  machine_city_stage:
+    initial_value: 0
+    value_type: int
+  machine_city_progress:
+    initial_value: 0
+    value_type: int
+  # The next APU Corps jackpot's value.
+  apu_jackpot_value:
+    initial_value: 150000
+    value_type: int
+  # 1 once Smith is beaten: the Matrix has no more rules for this player.
+  matrix_complete:
+    initial_value: 0
+    value_type: int
+
   # --- Terminator 2 ---
   # The HUD's chapter marker: CHAPTER 1 to 4, JUDGMENT DAY, then COMPLETE.
   chapter:
@@ -329,6 +388,15 @@ settings:
   architect_threshold:
     label: ALLIES to light the Architect
     sort: 105
+    values:
+      4: "4"
+      5: "5"
+      6: "6"
+    key_type: int
+    default: 4
+  machine_city_threshold:
+    label: DEFENDERS to light the Machine City
+    sort: 106
     values:
       4: "4"
       5: "5"

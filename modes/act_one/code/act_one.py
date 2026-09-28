@@ -13,8 +13,9 @@ mode decides which of them may start, and records what each one achieved:
 - The One survives ball end: `the_one_stage` stays set, and it restarts on the
   player's next ball until the EMP moves the player to Act II.
 
-Act II's controller (modes/act_two) is this class with its own tables: every
-act-specific name is a class attribute below.
+Act II's and Act III's controllers (modes/act_two, modes/act_three) are this
+class with their own tables: every act-specific name is a class attribute
+below.
 
 See docs/11-rules-act-1.md.
 """
@@ -300,7 +301,10 @@ class ActOne(Mode):
 
     def _act_complete(self, **kwargs):
         del kwargs
-        self.player["act"] = self.NEXT_ACT
+        # The last act has no next act: `act` stays, and the subclass records
+        # that the story is over.
+        if self.NEXT_ACT:
+            self.player["act"] = self.NEXT_ACT
         self.player[self.WIZARD + "_stage"] = 0
         self.player["objective"] = ""
         # The finale is on screen: the next act holds its intro back.

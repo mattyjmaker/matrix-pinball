@@ -1,0 +1,179 @@
+#config_version=6
+
+# Act III, Chapter 2: Club Hel. Single ball, three timed rounds, built like
+# Act I's Construct: a round lost on time still moves on.
+#   1. The lobby (30 s): the Merovingian's guards. All three pop-ups (the
+#      Agents) down; they are raised when the chapter starts.
+#   2. The ceiling (30 s): the fight upside down. All three Real World
+#      standups on the upper playfield.
+#   3. The standoff (20 s): every gun in the room. Both platform gate targets
+#      and both platform targets, any order.
+# Winning the standoff adds LOCK to the DEFENDERS.
+# See docs/15-rules-act-3.md, section 3.
+
+mode:
+  start_events: start_a3_ch2
+  stop_events: a3_ch2_finish
+  events_when_stopped: a3_ch2_ended
+  priority: 300
+
+timers:
+  a3_ch2_round:
+    start_value: 30
+    end_value: 0
+    direction: down
+    start_running: true
+    control_events:
+      - event: a3_ch2_ceiling_started
+        action: restart
+      - event: a3_ch2_standoff_started
+        action: jump
+        value: 20
+      # The timer has stopped if the last round ran out; start it again.
+      - event: a3_ch2_standoff_started
+        action: start
+      - event: a3_ch2_done
+        action: stop
+
+state_machines:
+  a3_ch2_round:
+    starting_state: lobby
+    states:
+      lobby:
+        label: The lobby
+      ceiling:
+        label: The ceiling
+        events_when_started: a3_ch2_ceiling_started
+      standoff:
+        label: The standoff
+        events_when_started: a3_ch2_standoff_started
+      done:
+        label: Done
+        events_when_started: a3_ch2_done
+    transitions:
+      - source: lobby
+        target: ceiling
+        events: drop_target_bank_popups_down
+        events_when_transitioning: a3_ch2_lobby_won
+      - source: lobby
+        target: ceiling
+        events: timer_a3_ch2_round_complete
+      - source: ceiling
+        target: standoff
+        events: a3_ch2_ceiling_cleared
+        events_when_transitioning: a3_ch2_ceiling_won
+      - source: ceiling
+        target: standoff
+        events: timer_a3_ch2_round_complete
+      - source: standoff
+        target: done
+        events: a3_ch2_standoff_held
+      - source: standoff
+        target: done
+        events: timer_a3_ch2_round_complete
+        events_when_transitioning: a3_ch2_standoff_lost
+
+accruals:
+  a3_ch2_ceiling:
+    events:
+      - upper_target_1_hit
+      - upper_target_2_hit
+      - upper_target_3_hit
+    events_when_complete: a3_ch2_ceiling_cleared
+    enable_events: a3_ch2_ceiling_started
+  a3_ch2_guns:
+    events:
+      - platform_gate_left_hit
+      - platform_gate_right_hit
+      - platform_target_1_hit
+      - platform_target_2_hit
+    events_when_complete: a3_ch2_standoff_held
+    enable_events: a3_ch2_standoff_started
+
+event_player:
+  mode_a3_ch2_club_hel_started: popups_raise
+  a3_ch2_standoff_held: a3_ch2_completed
+  a3_ch2_done: a3_ch2_finish|500ms
+
+variable_player:
+  mode_a3_ch2_club_hel_started:
+    objective:
+      action: set
+      string: "THE LOBBY: ALL THREE AGENTS DOWN"
+  a3_ch2_lobby_won:
+    score: 150000
+  a3_ch2_ceiling_started:
+    objective:
+      action: set
+      string: "THE CEILING: ALL THREE REAL WORLD TARGETS"
+  a3_ch2_ceiling_won:
+    score: 200000
+  a3_ch2_standoff_started:
+    objective:
+      action: set
+      string: "THE STANDOFF: BOTH ENTRANCE AND BOTH BOSS TARGETS"
+  a3_ch2_standoff_held:
+    score: 300000
+
+# The lost standoff's callout is in act_three.yaml: this mode stops half a
+# second after the last round, which would clear it.
+widget_player:
+  mode_a3_ch2_club_hel_started:
+    video_clip:
+      tokens:
+        clip: club_hel
+      expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT III  CHAPTER 2
+        title: CLUB HEL
+        goal: "THE LOBBY: ALL THREE AGENTS DOWN"
+      expire: 5s
+    countdown:
+      key: a3_ch2_clock
+      priority: 10
+      tokens:
+        label: ROUND 1  THE LOBBY
+        event: timer_a3_ch2_round_tick
+        seconds: "30"
+  a3_ch2_lobby_won:
+    mode_banner:
+      tokens:
+        title: THE LOBBY
+        detail: THE GUARDS ARE DOWN
+      expire: 2s
+  a3_ch2_ceiling_started:
+    countdown:
+      key: a3_ch2_clock
+      action: update
+      tokens:
+        label: ROUND 2  THE CEILING
+        event: timer_a3_ch2_round_tick
+        seconds: "30"
+        total: "30"
+  a3_ch2_ceiling_won:
+    mode_banner:
+      tokens:
+        title: THE CEILING
+        detail: UPSIDE DOWN
+      expire: 2s
+  a3_ch2_standoff_started:
+    countdown:
+      key: a3_ch2_clock
+      action: update
+      tokens:
+        label: ROUND 3  THE STANDOFF
+        event: timer_a3_ch2_round_tick
+        seconds: "20"
+        total: "20"
+  a3_ch2_standoff_held:
+    mode_banner:
+      tokens:
+        title: THE STANDOFF
+        detail: NEO IS RELEASED
+      expire: 2s
+  a3_ch2_done:
+    countdown:
+      key: a3_ch2_clock
+      action: remove

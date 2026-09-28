@@ -50,7 +50,7 @@ goes on screen, as docs/11 asks for Act I.
                                         |
   Each chapter and multiball completed lights one name in the ALLIES roster
                                         |
-          four ALLIES -> The Architect (Act II wizard) -> Act III
+          four ALLIES -> The Architect (Act II wizard) -> Act III (docs/15)
 ```
 
 ### The film, in order, and where each part goes
@@ -214,7 +214,7 @@ over; `balls_locked` is set from the Logos lock whenever its mode starts.
 - **HUD:** the base slide has an ALLIES panel in the same place as FREED,
   built from the same `roster_entry.gd` with `prefix = "allies"`.
   `gmc/slides/base/act_panel.gd` shows FREED while `act` is `I` and ALLIES
-  while it is `II` or `III`. NIOBE and LINK were placeholders in the FREED
+  while it is `II` (DEFENDERS takes over in Act III, docs/15). NIOBE and LINK were placeholders in the FREED
   panel that no Act I rule lit; they are now in ALLIES.
 
 ## 6. The Architect (Act II wizard)
@@ -248,8 +248,8 @@ balls served again. Stage logic is in `modes/the_architect/code/the_architect.py
   `trinity`) and survives ball end, so a resumed stage 4 is the same door.
 - A resumed stage 2 keeps the last door lit if it was; a resumed stage 3
   restarts its 15 s; a resumed stage 4 restarts its clock.
-- Stage 5 sets `act` to `III`, ends Act II and leaves the remaining balls in
-  play under the base mode, as the EMP does for Act I. Act III has no rules.
+- Stage 5 sets `act` to `III`, ends Act II and starts Act III on the same
+  ball, with the remaining balls in play (docs/15-rules-act-3.md, section 1).
 - The shaker is not wired yet, so the mode does not drive it.
 
 ## 7. Display
@@ -339,7 +339,8 @@ out, the jump round had no clock and the chapter ran until the ball drained.
 
     python -m unittest discover -s tests -t .
 
-159 tests at the time of writing, all passing on MPF 0.80.0 and the
+159 tests when Act II was written (docs/15-rules-act-3.md, section 9, has the
+current count), all passing on MPF 0.80.0 and the
 smart_virtual platform. `tests/test_act_two.py` covers both ways into Act II,
 the intro, every chapter's win, time-out and drain paths, the Brawl queued
 behind another multiball, both re-skinned multiballs, the roster threshold

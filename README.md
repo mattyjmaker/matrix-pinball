@@ -140,6 +140,11 @@ after 15 s with no choice the Matrix starts.
   the ALLIES roster and the Architect wizard with its two doors. It starts on
   the ball The One's EMP is fired, or from the act select before the first
   ball. The rules are in `docs/14-rules-act-2.md`.
+- **The Matrix, Act III** (the third film, *Revolutions*): Mobil Avenue, Club
+  Hel, the Siege of Zion and the Hammer in film order, the APU Corps and
+  Sentinel Swarm multiballs, the DEFENDERS roster and the Machine City
+  wizard. Beating it completes the Matrix; the player plays on in the base
+  mode. The rules are in `docs/15-rules-act-3.md`.
 - **Terminator 2**: four chapter modes in film order, the Future War and
   T-1000 multiballs, the SAVED roster and the Judgment Day wizard, on the same
   hardware under its own names. The rules and the game select are in
@@ -230,8 +235,8 @@ by the attract slide. Swap it back in by replacing the `Rain` ColorRect with a
 takes over with `widget_player:`; nothing permanent is drawn there, so the score
 reads when nothing is happening and a mode owns the screen when it is. The
 persistent HUD sits around it: player and ball top left, act top centre, player
-scores top right, the roster down the left (FREED in Act I, ALLIES from Act
-II), power station locks bottom
+scores top right, the roster down the left (FREED in Act I, ALLIES in Act
+II, DEFENDERS in Act III), power station locks bottom
 right, and the objective line above the score.
 
 While the stage is idle it runs ambient effects, which `slides/base/stage.gd`
@@ -253,11 +258,13 @@ follows; until then each element shows its authored placeholder.
 | `objective` | str | The objective line above the score |
 | `balls_locked` | int | How many lock cells are lit (both games) |
 | `freed_trinity`, `freed_tank`, … | bool | Lights that name in the FREED roster |
-| `allies_link`, `allies_seraph` and the rest | bool | Lights that name in the ALLIES roster, shown while `act` is `II` or `III` |
+| `allies_link`, `allies_seraph` and the rest | bool | Lights that name in the ALLIES roster, shown while `act` is `II` |
+| `defenders_sati`, `defenders_kid` and the rest | bool | Lights that name in the DEFENDERS roster, shown while `act` is `III` |
 | `saved_john`, `saved_sarah`, … | bool | Lights that name in the SAVED roster |
 
 The Act I modes set all of these (docs/11-rules-act-1.md, section 9), Act II
-sets its roster (docs/14-rules-act-2.md, section 5); the
+sets its roster (docs/14-rules-act-2.md, section 5), and so does Act III
+(docs/15-rules-act-3.md, section 5); the
 Terminator 2 modes set theirs (docs/12-rules-terminator-2.md, section 11).
 
 #### Stage widgets

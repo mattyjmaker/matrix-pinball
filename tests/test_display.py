@@ -224,3 +224,43 @@ class TestActTwoDisplay(DisplayTestCase):
         self.assertIn("base", [c for n, c, s in played if n == "video_clip"])
         self.assertIn("ACT II COMPLETE", [s["tokens"]["kicker"] for n, c, s in played if n == "chapter_card"])
         self.assertPlayerVarEqual("III", "act")
+
+
+class TestActThreeDisplay(DisplayTestCase):
+
+    def start(self):
+        self.start_matrix_game(act="III")
+
+    def test_intro_card(self):
+        self.start()
+        self.advance_time_and_run(1)
+        cards = [s["tokens"]["title"] for n, c, s in self.widgets_played() if n == "chapter_card"]
+        self.assertIn("REVOLUTIONS", cards)
+
+    def test_defender_card_survives_the_chapter_stopping(self):
+        self.start()
+        self.player()["a3_chapter_next"] = 4
+        self.open_mission()
+        self.shoot_mission()
+        for ramp in ("left_lock", "middle_loop", "right_loop", "backboard"):
+            self.ramp(ramp)
+        self.sent = []
+        self.enter_device("s_middle_loop_vuk")
+        played = self.widgets_played()
+        cards = [(c, s["tokens"]["title"]) for n, c, s in played if n == "chapter_card"]
+        self.assertIn(("act_three", "ROLAND"), cards)
+        self.assertIn(("video_clip", "act_three"), [(n, c) for n, c, s in played if n == "video_clip"])
+        self.assertNotIn("act_three", self.contexts_cleared())
+
+    def test_matrix_finale_survives(self):
+        self.start()
+        self.player()["machine_city_lit"] = 1
+        self.player()["machine_city_stage"] = 4
+        self.drain_all_balls()
+        self.advance_time_and_run(5)
+        self.confirm_playfield()
+        self.sent = []
+        self.enter_device("s_middle_loop_vuk")
+        played = self.widgets_played()
+        self.assertIn("base", [c for n, c, s in played if n == "video_clip"])
+        self.assertIn("THE MATRIX COMPLETE", [s["tokens"]["goal"] for n, c, s in played if n == "chapter_card"])
