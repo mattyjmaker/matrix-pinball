@@ -15,3 +15,6 @@ __pycache__/
 # Printable board sheets (tools/board_sheets.py). Not committed: they embed
 # FAST Pinball's diagrams and photos of this machine, and this repo is public.
 printouts/
+
+# MPF Monitor's per-user window layout, not project state. See monitor/README.md.
+monitor/settings.ini
