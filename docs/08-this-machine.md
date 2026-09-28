@@ -101,6 +101,13 @@ From the silkscreen (user-provided photo):
 - Blocker: no matching housings. The header's pitch and family are not
   confirmed. Measure the pin pitch and check whether pin 5 is fitted (see
   13-fast-boards.md, section 3.9).
+- Plan (user, 2026-09-28): use the two 8-way female housings on hand as
+  7-way, housing position 1 on J1 pin 1 and position 8 left empty and
+  overhanging past pin 7. Before crimping: check the 8-way housing fits
+  inside J1's shroud (the header looked shrouded in the photo) and matches
+  its pitch. If J1 has no pin at position 5, fit a key plug in housing
+  position 5 so the housing cannot mate one position off. Result not yet
+  reported.
 
 Planned wiring, one board per Cabinet I/O side header (4 wires):
 
