@@ -1,9 +1,10 @@
 extends Label
 
-## One name in a roster: the Matrix's FREED list or Terminator 2's SAVED list.
+## One name in a roster: the Matrix's FREED (Act I), ALLIES (Act II) or
+## DEFENDERS (Act III) list, or Terminator 2's SAVED list.
 ##
 ## Dim until the player has earned that name, then lit. Bound to the player
-## variable `<prefix>_<key>` (`freed_trinity`, `saved_john`): it reads the
+## variable `<prefix>_<key>` (`freed_trinity`, `allies_link`, `saved_john`): it reads the
 ## current value when the slide is created, since the slide is rebuilt every
 ## ball, and follows updates from then on.
 

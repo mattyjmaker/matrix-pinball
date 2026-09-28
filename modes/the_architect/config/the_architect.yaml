@@ -1,0 +1,178 @@
+#config_version=6
+
+# The Architect: the Act II wizard. Stage logic in code/the_architect.py; this
+# file holds its multiballs and scores. The Act II controller starts it from
+# the Mission scoop once enough ALLIES are found, and restarts it on the
+# player's next ball until the Sentinels are stopped.
+# See docs/14-rules-act-2.md, section 6.
+
+mode:
+  start_events: start_architect_mb
+  stop_events: act_two_complete
+  priority: 400
+  code: the_architect.TheArchitect
+
+multiballs:
+  architect_power:
+    ball_count: 2
+    ball_count_type: total
+    shoot_again: 15s
+    start_events: architect_mb_power
+  architect_hallway:
+    ball_count: 4
+    ball_count_type: total
+    shoot_again: 15s
+    start_events: architect_mb_hallway
+  architect_source:
+    ball_count: 6
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: architect_mb_source
+
+variable_player:
+  architect_power_cut:
+    score: 250000
+  architect_door_opened:
+    score: 500000
+  architect_last_door:
+    score: 1000000
+  architect_super_jackpot:
+    score: 750000
+  architect_trinity_caught:
+    score:
+      int: current_player.architect_value
+  architect_sentinels_stopped:
+    score: 5000000
+
+widget_player:
+  architect_started:
+    video_clip:
+      tokens:
+        clip: power_plant
+      expire: 8s
+  architect_stage_1_started:
+    chapter_card:
+      key: architect_card
+      priority: 10
+      tokens:
+        kicker: THE ARCHITECT  STAGE 1
+        title: THE POWER PLANT
+        goal: HIT THE FOUR EMP TARGETS
+      expire: 4s
+  architect_power_cut:
+    mode_banner:
+      tokens:
+        title: POWER CUT
+        detail: ""
+      expire: 1s
+  architect_stage_2_started:
+    video_clip:
+      tokens:
+        clip: backdoor_hallway
+      expire: 6s
+    chapter_card:
+      key: architect_card
+      priority: 10
+      tokens:
+        kicker: THE ARCHITECT  STAGE 2
+        title: THE HALLWAY
+        goal: OPEN ALL THREE DOORS
+      expire: 4s
+  architect_doors_closed:
+    mode_banner:
+      tokens:
+        title: THE SMITHS CLOSE THE DOORS
+        detail: ""
+      expire: 2s
+  architect_last_door_lit:
+    mode_banner:
+      tokens:
+        title: THE KEYMAKER'S DOOR
+        detail: SHOOT THE DEJA VU VUK
+      expire: 3s
+  architect_stage_3_started:
+    video_clip:
+      tokens:
+        clip: architect_doors
+      expire: 15s
+    doors_choice:
+      key: architect_doors
+      priority: 10
+      tokens:
+        label: THE ARCHITECT
+        event: architect_choice_tick
+        seconds: "15"
+  architect_stage_4_started:
+    doors_choice:
+      key: architect_doors
+      action: remove
+  architect_stage_4_started{door=="source"}:
+    chapter_card:
+      key: architect_card
+      priority: 10
+      tokens:
+        kicker: THE ARCHITECT  LEFT DOOR
+        title: THE SOURCE
+        goal: EVERY RAMP IS A SUPER JACKPOT
+      expire: 4s
+    countdown:
+      key: architect_clock
+      priority: 10
+      tokens:
+        label: THE SOURCE
+        event: architect_source_tick
+        seconds: "30"
+  architect_stage_4_started{door=="trinity"}:
+    video_clip:
+      tokens:
+        clip: trinity_falls
+      expire: 6s
+    chapter_card:
+      key: architect_card
+      priority: 10
+      tokens:
+        kicker: THE ARCHITECT  RIGHT DOOR
+        title: TRINITY FALLS
+        goal: REAL WORLD RAMP, THEN THE SENTINEL MAGNET
+      expire: 4s
+    countdown:
+      key: architect_clock
+      priority: 10
+      tokens:
+        label: TRINITY FALLS
+        event: architect_trinity_tick
+        seconds: "40"
+        value_base: "1000000"
+        value_step: "100000"
+  architect_super_jackpot:
+    mode_banner:
+      tokens:
+        title: SUPER JACKPOT
+        detail: THE SOURCE
+      expire: 2s
+  architect_flying:
+    mode_banner:
+      tokens:
+        title: NEO FLIES
+        detail: CATCH HER AT THE SENTINEL MAGNET
+      expire: 3s
+  architect_trinity_caught:
+    mode_banner:
+      tokens:
+        title: HE CATCHES HER
+        detail: ""
+      expire: 3s
+  architect_stage_5_started:
+    countdown:
+      key: architect_clock
+      action: remove
+    chapter_card:
+      key: architect_card
+      priority: 10
+      tokens:
+        kicker: THE ARCHITECT  STAGE 5
+        title: SOMETHING IS DIFFERENT
+        goal: SENTINEL VUK
+      expire: 4s
+# The Sentinels' clip and the Act II finale are in base.yaml: this mode and
+# act_two both stop on the last shot, which would clear them.

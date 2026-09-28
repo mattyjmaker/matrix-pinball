@@ -27,6 +27,9 @@ timers:
       - event: ch3_jump_started
         action: jump
         value: 20
+      # The timer has stopped if the last round ran out; start it again.
+      - event: ch3_jump_started
+        action: start
       - event: ch3_done
         action: stop
   # The Woman in the Red Dress moves to the next ramp on each tick.

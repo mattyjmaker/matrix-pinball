@@ -1,0 +1,49 @@
+#config_version=6
+
+# APU Corps lock: Act III's re-skin of the Trinity lock (Acts I) and Logos
+# lock (Act II): the armoured personnel units loading for the dock. The left
+# lock (the post on the Trinity Ramp) takes three balls. The third requests
+# APU Corps Multiball. Runs whenever Act III's features are on, which is
+# every Act III ball except while the Machine City runs.
+# See docs/15-rules-act-3.md, section 4.
+
+mode:
+  start_events: act_three_features_start
+  stop_events: act_three_features_stop, act_three_complete
+  priority: 250
+
+multiball_locks:
+  apu_lock:
+    lock_devices: bd_left_lock
+    balls_to_lock: 3
+    locked_ball_counting_strategy: virtual_only
+    enable_events: mode_apu_lock_started
+    reset_count_for_current_player_events: multiball_apu_started
+
+event_player:
+  multiball_lock_apu_lock_full: request_apu_mb
+
+variable_player:
+  mode_apu_lock_started:
+    # Drives the power station cells on the HUD. Act II's Logos lock count
+    # does not carry over.
+    balls_locked:
+      action: set
+      int: device.multiball_locks.apu_lock.locked_balls
+  multiball_lock_apu_lock_locked_ball:
+    score: 10000
+    balls_locked:
+      action: set
+      int: total_balls_locked
+  multiball_apu_started:
+    balls_locked:
+      action: set
+      int: 0
+
+widget_player:
+  multiball_lock_apu_lock_locked_ball:
+    mode_banner:
+      tokens:
+        title: APU LOCK
+        detail: BALL LOCKED
+      expire: 2s

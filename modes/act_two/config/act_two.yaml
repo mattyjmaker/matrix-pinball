@@ -1,0 +1,139 @@
+#config_version=6
+
+# Act II (the second film, The Matrix Reloaded). The sequencing lives in
+# code/act_two.py, which is Act I's controller with Act II's tables; this
+# file holds the Mission scoop and the scores the controller's events pay.
+# Act II starts on the ball the EMP ends Act I, and on every ball after.
+# See docs/14-rules-act-2.md.
+
+mode:
+  start_events: ball_started{machine.game_choice=="matrix" and current_player.act=="II"}, act_one_complete
+  stop_events: act_two_complete
+  priority: 200
+  code: act_two.ActTwo
+
+ball_holds:
+  # Every ball into the mode scoop (the Mission scoop) is held while the
+  # controller decides what it starts, then released by `mode_scoop_release`.
+  a2_scoop_hold:
+    hold_devices: bd_mode_scoop
+    balls_to_hold: 1
+    enable_events: mode_act_two_started
+    release_all_events: mode_scoop_release
+
+variable_player:
+  drop_target_mode_drop_down:
+    score: 5000
+  mode_scoop_award:
+    score: 10000
+  ally_joined:
+    score: 250000
+  architect_lit:
+    score: 500000
+
+# Callouts for things that end a chapter live here rather than in the chapter:
+# MPF clears a mode's widgets the moment the mode stops, so a chapter cannot
+# show its own ending.
+widget_player:
+  act_two_intro:
+    video_clip:
+      tokens:
+        clip: trinity_dream
+      expire: 8s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT II
+        title: RELOADED
+        goal: FIND YOUR ALLIES
+      expire: 5s
+  ally_joined{ally=="link"}:
+    chapter_card:
+      key: ally_card
+      priority: 10
+      tokens:
+        kicker: ALLY
+        title: LINK
+        goal: ZION COMPLETE
+      expire: 4s
+  ally_joined{ally=="seraph"}:
+    chapter_card:
+      key: ally_card
+      priority: 10
+      tokens:
+        kicker: ALLY
+        title: SERAPH
+        goal: THE BURLY BRAWL WON
+      expire: 4s
+  ally_joined{ally=="persephone"}:
+    chapter_card:
+      key: ally_card
+      priority: 10
+      tokens:
+        kicker: ALLY
+        title: PERSEPHONE
+        goal: THE KEYMAKER FOUND
+      expire: 4s
+  ally_joined{ally=="keymaker"}:
+    chapter_card:
+      key: ally_card
+      priority: 10
+      tokens:
+        kicker: ALLY
+        title: KEYMAKER
+        goal: THE FREEWAY COMPLETE
+      expire: 4s
+  ally_joined{ally=="niobe"}:
+    chapter_card:
+      key: ally_card
+      priority: 10
+      tokens:
+        kicker: ALLY
+        title: NIOBE
+        goal: LOGOS MULTIBALL COMPLETE
+      expire: 4s
+  ally_joined{ally=="ghost"}:
+    chapter_card:
+      key: ally_card
+      priority: 10
+      tokens:
+        kicker: ALLY
+        title: GHOST
+        goal: SENTINEL HUNT COMPLETE
+      expire: 4s
+  architect_lit:
+    mode_banner:
+      tokens:
+        title: THE ARCHITECT IS LIT
+        detail: SHOOT THE MISSION SCOOP
+      expire: 4s
+  multiball_queued:
+    mode_banner:
+      tokens:
+        title: MULTIBALL READY
+        detail: STARTS WHEN THIS MULTIBALL ENDS
+      expire: 3s
+  a2_ch1_failed:
+    mode_banner:
+      tokens:
+        title: THE DOCK IS CLOSED
+        detail: THE NEBUCHADNEZZAR WAITS OUTSIDE
+      expire: 3s
+  a2_ch1_temple_over:
+    mode_banner:
+      tokens:
+        title: THE DRUMS FALL SILENT
+        detail: ""
+      expire: 3s
+  a2_ch3_keymaker_lost:
+    mode_banner:
+      tokens:
+        title: THE KEYMAKER IS GONE
+        detail: ""
+      expire: 3s
+  a2_ch4_failed:
+    mode_banner:
+      tokens:
+        title: THE TWINS WIN
+        detail: ""
+      expire: 3s

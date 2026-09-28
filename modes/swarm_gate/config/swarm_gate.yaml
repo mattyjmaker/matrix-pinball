@@ -1,0 +1,49 @@
+#config_version=6
+
+# Sentinel Swarm gate: Act III's re-skin of the Sentinel gate. Six hits across
+# the two platform gate targets (the Sentinel entrance targets) open the gate,
+# two more than Acts I and II. A ball into the platform VUK (the Sentinel
+# VUK) while it is open requests the Sentinel Swarm. The gate closes when
+# that multiball ends. See docs/15-rules-act-3.md, section 4.
+
+mode:
+  start_events: act_three_features_start
+  stop_events: act_three_features_stop, act_three_complete
+  priority: 250
+
+counters:
+  swarm_entrance:
+    count_events: platform_gate_hit
+    count_complete_value: 6
+    events_when_complete: swarm_opened
+    start_enabled: true
+    reset_events: mode_swarm_mb_stopped
+    enable_events: mode_swarm_mb_stopped
+
+event_player:
+  swarm_opened: platform_gate_open
+  balldevice_bd_platform_vuk_ball_entered{current_player.swarm_open==1}: request_swarm_mb, swarm_requested
+  mode_swarm_mb_stopped: platform_gate_close
+
+variable_player:
+  mode_swarm_gate_started:
+    swarm_open:
+      action: set
+      int: 0
+  swarm_opened:
+    score: 100000
+    swarm_open:
+      action: set
+      int: 1
+  swarm_requested:
+    swarm_open:
+      action: set
+      int: 0
+
+widget_player:
+  swarm_opened:
+    mode_banner:
+      tokens:
+        title: THE SWARM IS COMING
+        detail: SENTINEL VUK STARTS THE SWARM
+      expire: 3s

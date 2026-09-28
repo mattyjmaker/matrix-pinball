@@ -1,0 +1,139 @@
+#config_version=6
+
+# Act III (the third film, The Matrix Revolutions). The sequencing lives in
+# code/act_three.py, which is Act I's controller with Act III's tables; this
+# file holds the Mission scoop and the scores the controller's events pay.
+# Act III starts on the ball the Architect's last shot ends Act II, and on
+# every ball after until the Matrix is complete.
+# See docs/15-rules-act-3.md.
+
+mode:
+  start_events: ball_started{machine.game_choice=="matrix" and current_player.act=="III" and current_player.matrix_complete==0}, act_two_complete
+  stop_events: act_three_complete
+  priority: 200
+  code: act_three.ActThree
+
+ball_holds:
+  # Every ball into the mode scoop (the Mission scoop) is held while the
+  # controller decides what it starts, then released by `mode_scoop_release`.
+  a3_scoop_hold:
+    hold_devices: bd_mode_scoop
+    balls_to_hold: 1
+    enable_events: mode_act_three_started
+    release_all_events: mode_scoop_release
+
+variable_player:
+  drop_target_mode_drop_down:
+    score: 5000
+  mode_scoop_award:
+    score: 10000
+  defender_joined:
+    score: 250000
+  machine_city_lit:
+    score: 500000
+
+# Callouts for things that end a chapter live here rather than in the chapter:
+# MPF clears a mode's widgets the moment the mode stops, so a chapter cannot
+# show its own ending.
+widget_player:
+  act_three_intro:
+    video_clip:
+      tokens:
+        clip: mobil_avenue
+      expire: 8s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT III
+        title: REVOLUTIONS
+        goal: DEFEND ZION
+      expire: 5s
+  defender_joined{defender=="sati"}:
+    chapter_card:
+      key: defender_card
+      priority: 10
+      tokens:
+        kicker: DEFENDER
+        title: SATI
+        goal: MOBIL AVENUE COMPLETE
+      expire: 4s
+  defender_joined{defender=="lock"}:
+    chapter_card:
+      key: defender_card
+      priority: 10
+      tokens:
+        kicker: DEFENDER
+        title: LOCK
+        goal: CLUB HEL COMPLETE
+      expire: 4s
+  defender_joined{defender=="mifune"}:
+    chapter_card:
+      key: defender_card
+      priority: 10
+      tokens:
+        kicker: DEFENDER
+        title: MIFUNE
+        goal: THE DOCK HELD
+      expire: 4s
+  defender_joined{defender=="roland"}:
+    chapter_card:
+      key: defender_card
+      priority: 10
+      tokens:
+        kicker: DEFENDER
+        title: ROLAND
+        goal: THE HAMMER COMPLETE
+      expire: 4s
+  defender_joined{defender=="zee"}:
+    chapter_card:
+      key: defender_card
+      priority: 10
+      tokens:
+        kicker: DEFENDER
+        title: ZEE
+        goal: APU CORPS COMPLETE
+      expire: 4s
+  defender_joined{defender=="kid"}:
+    chapter_card:
+      key: defender_card
+      priority: 10
+      tokens:
+        kicker: DEFENDER
+        title: KID
+        goal: SENTINEL SWARM COMPLETE
+      expire: 4s
+  machine_city_lit:
+    mode_banner:
+      tokens:
+        title: THE MACHINE CITY IS LIT
+        detail: SHOOT THE MISSION SCOOP
+      expire: 4s
+  multiball_queued:
+    mode_banner:
+      tokens:
+        title: MULTIBALL READY
+        detail: STARTS WHEN THIS MULTIBALL ENDS
+      expire: 3s
+  a3_ch1_failed:
+    mode_banner:
+      tokens:
+        title: THE TRAIN LEAVES WITHOUT YOU
+        detail: ""
+      expire: 3s
+  a3_ch2_standoff_lost:
+    mode_banner:
+      tokens:
+        title: THE MEROVINGIAN WALKS AWAY
+        detail: ""
+      expire: 3s
+  a3_ch4_emp_fired:
+    video_clip:
+      tokens:
+        clip: hammer_emp
+      expire: 6s
+  a3_ch4_failed:
+    mode_banner:
+      tokens:
+        title: THE HAMMER IS LATE
+        detail: ""
+      expire: 3s

@@ -49,7 +49,7 @@ clip before it goes on screen.
                                         |
   Each chapter and multiball completed lights one name in the FREED roster
                                         |
-            four names FREED -> The One (Act I wizard) -> Act II
+            four names FREED -> The One (Act I wizard) -> Act II (docs/14)
 ```
 
 Of the four VPX multiballs, two stay as standalone features and two are merged
@@ -201,11 +201,13 @@ Acts play in order, but a player can skip ahead before play starts.
   game). Flippers step through the acts; start confirms. While it is up,
   start does not add a player. No confirmation in **30 s** starts Act I.
 - Only acts with rules are offered (`AVAILABLE_ACTS` in
-  `modes/act_select/code/act_select.py`). With one act the mode steps straight
-  out, so today the game starts in Act I with no screen.
+  `modes/act_select/code/act_select.py`), today Acts I, II and III, so the screen
+  shows on every Matrix game. With one act the mode would step straight out
+  and start Act I with no screen.
 - Skipping an act forfeits everything in it: its chapters, multiballs, FREED
   names and wizard. No compensation award.
-- An Act II player gets the base mode only until Act II has rules.
+- Act II's rules are in docs/14-rules-act-2.md and Act III's in
+  docs/15-rules-act-3.md.
 
 ## 6. The two standalone multiballs
 
@@ -271,8 +273,8 @@ and the Sentinel gate are off.
   restarts its 60 s timer. If the game ends first, Act I stays incomplete.
 - The flippers stay live when Neo dies. Disabling them in multiball throws
   balls away and feels like a fault, not a story beat.
-- The EMP sets `act` to `II`, ends Act I and leaves the remaining balls in play
-  under the base mode.
+- The EMP sets `act` to `II`, ends Act I and starts Act II on the same ball,
+  with the remaining balls in play (docs/14-rules-act-2.md, section 1).
 - The sub build-ups and shaker in 08-this-machine.md were sized for this
   mode. The shaker is not wired yet, so the mode drives neither.
 
@@ -416,7 +418,8 @@ platform with no hardware or Godot:
 
     python -m unittest discover -s tests -t .
 
-66 tests at the time of writing. They cover every chapter, both standalone
+66 tests when Act I was written; docs/14-rules-act-2.md section 9 has the
+current count. They cover every chapter, both standalone
 multiballs, the multiball queue, the roster threshold, The One (including
 resuming after a drain and the EMP) and the act select, plus spot checks of
 the scores and timers in this document (`tests/test_scoring.py` and the

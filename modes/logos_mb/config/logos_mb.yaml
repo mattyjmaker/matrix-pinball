@@ -1,0 +1,83 @@
+#config_version=6
+
+# Logos Multiball: Act II's re-skin of Trinity Multiball. 3 balls, released
+# from the left lock. The jackpot starts on the Trinity Ramp and moves to the
+# Deja Vu Ramp after every jackpot, then back. Three jackpots ally NIOBE.
+# See docs/14-rules-act-2.md, section 4.
+
+mode:
+  start_events: start_logos_mb
+  stop_events: multiball_logos_ended
+  priority: 320
+
+multiballs:
+  logos:
+    ball_count: 3
+    ball_count_type: total
+    ball_locks: bd_left_lock
+    shoot_again: 20s
+    start_events: mode_logos_mb_started
+
+# Which ramp carries the jackpot.
+state_machines:
+  logos_jackpot:
+    starting_state: left_lock
+    states:
+      left_lock:
+        label: Trinity Ramp
+      middle_loop:
+        label: Deja Vu Ramp
+    transitions:
+      - source: left_lock
+        target: middle_loop
+        events: logos_jackpot_left_lock
+      - source: middle_loop
+        target: left_lock
+        events: logos_jackpot_middle_loop
+
+counters:
+  logos_jackpots:
+    count_events: logos_jackpot
+    count_complete_value: 3
+    events_when_complete: logos_mb_completed
+    start_enabled: true
+
+event_player:
+  left_lock_ramp_hit{device.state_machines.logos_jackpot.state=="left_lock"}: logos_jackpot_left_lock, logos_jackpot
+  middle_loop_ramp_hit{device.state_machines.logos_jackpot.state=="middle_loop"}: logos_jackpot_middle_loop, logos_jackpot
+
+variable_player:
+  mode_logos_mb_started:
+    objective:
+      action: set
+      string: "LOGOS MULTIBALL: JACKPOT ON THE TRINITY RAMP"
+  logos_jackpot:
+    score: 150000
+  logos_jackpot_left_lock:
+    objective:
+      action: set
+      string: "LOGOS MULTIBALL: JACKPOT ON THE DEJA VU RAMP"
+  logos_jackpot_middle_loop:
+    objective:
+      action: set
+      string: "LOGOS MULTIBALL: JACKPOT ON THE TRINITY RAMP"
+
+widget_player:
+  mode_logos_mb_started:
+    video_clip:
+      tokens:
+        clip: logos_mb_intro
+      expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: MULTIBALL
+        title: LOGOS
+        goal: JACKPOT ON THE TRINITY RAMP
+      expire: 4s
+  logos_jackpot:
+    mode_banner:
+      tokens:
+        title: JACKPOT
+        detail: THE JACKPOT MOVES
+      expire: 2s

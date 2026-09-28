@@ -16,11 +16,16 @@ class TestActSelect(MatrixTestCase):
         self.advance_time_and_run(1)
 
     def test_skipped_with_one_act(self):
-        self.mock_event("ball_started")
-        self.begin()
-        self.assertEventCalled("ball_started")
-        self.assertModeNotRunning("act_select")
-        self.assertModeRunning("act_one")
+        with patch(ACTS, ("I",)):
+            self.mock_event("ball_started")
+            self.begin()
+            self.assertEventCalled("ball_started")
+            self.assertModeNotRunning("act_select")
+            self.assertModeRunning("act_one")
+
+    def test_acts_on_offer(self):
+        from modes.act_select.code.act_select import AVAILABLE_ACTS
+        self.assertEqual(("I", "II", "III"), AVAILABLE_ACTS)
 
     def test_choose_act_two(self):
         with patch(ACTS, ("I", "II")):
@@ -39,6 +44,7 @@ class TestActSelect(MatrixTestCase):
             self.assertEventCalled("ball_started")
             self.assertPlayerVarEqual("II", "act")
             self.assertModeNotRunning("act_one")
+            self.assertModeRunning("act_two")
             # Start confirmed the act; it did not add a player.
             self.assertPlayerCount(1)
 

@@ -1,0 +1,67 @@
+#config_version=6
+
+# APU Corps Multiball: Act III's re-skin of Trinity Multiball. 3 balls,
+# released from the left lock. Jackpots on the Trinity Ramp, starting at
+# 150,000 and rising 50,000 with each one. Three jackpots add ZEE to the
+# DEFENDERS. See docs/15-rules-act-3.md, section 4.
+
+mode:
+  start_events: start_apu_mb
+  stop_events: multiball_apu_ended
+  priority: 320
+
+multiballs:
+  apu:
+    ball_count: 3
+    ball_count_type: total
+    ball_locks: bd_left_lock
+    shoot_again: 20s
+    start_events: mode_apu_mb_started
+
+counters:
+  apu_jackpots:
+    count_events: apu_jackpot
+    count_complete_value: 3
+    events_when_complete: apu_mb_completed
+    start_enabled: true
+
+event_player:
+  left_lock_ramp_hit: apu_jackpot
+
+variable_player:
+  mode_apu_mb_started:
+    objective:
+      action: set
+      string: "APU CORPS: TRINITY RAMP FOR JACKPOTS"
+    apu_jackpot_value:
+      action: set
+      int: 150000
+  # The score is paid before the value rises: the counter posts its hit
+  # event after the jackpot event is handled.
+  apu_jackpot:
+    score:
+      int: current_player.apu_jackpot_value
+  logicblock_apu_jackpots_hit:
+    apu_jackpot_value:
+      action: add
+      int: 50000
+
+widget_player:
+  mode_apu_mb_started:
+    video_clip:
+      tokens:
+        clip: apu_corps
+      expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: MULTIBALL
+        title: APU CORPS
+        goal: TRINITY RAMP FOR JACKPOTS
+      expire: 4s
+  apu_jackpot:
+    mode_banner:
+      tokens:
+        title: JACKPOT
+        detail: THE NEXT ONE IS WORTH MORE
+      expire: 2s

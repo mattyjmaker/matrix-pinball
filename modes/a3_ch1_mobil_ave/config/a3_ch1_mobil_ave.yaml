@@ -1,0 +1,96 @@
+#config_version=6
+
+# Act III, Chapter 1: Mobil Avenue. Single ball, two timed stages.
+#   The tunnel (30 s): Neo runs the tunnel and comes out on the same
+#     platform. 25 spinner spins, any spinners.
+#   The train (20 s hurry-up): the Trainman's train is leaving. The Real World
+#     Ramp boards it, for 300,000 plus 25,000 per second left.
+# Either running out of time ends the chapter, played but not completed.
+# Boarding adds SATI to the DEFENDERS. See docs/15-rules-act-3.md, section 3.
+
+mode:
+  start_events: start_a3_ch1
+  stop_events: a3_ch1_completed, a3_ch1_failed
+  events_when_stopped: a3_ch1_ended
+  priority: 300
+
+counters:
+  a3_ch1_spins:
+    count_events: spinner_hit
+    count_complete_value: 25
+    events_when_complete: a3_ch1_tunnel_done
+    start_enabled: true
+
+timers:
+  a3_ch1_tunnel:
+    start_value: 30
+    end_value: 0
+    direction: down
+    start_running: true
+    control_events:
+      - event: a3_ch1_tunnel_done
+        action: stop
+  a3_ch1_train:
+    start_value: 20
+    end_value: 0
+    direction: down
+    control_events:
+      - event: a3_ch1_tunnel_done
+        action: start
+
+event_player:
+  timer_a3_ch1_tunnel_complete: a3_ch1_failed
+  timer_a3_ch1_train_complete: a3_ch1_failed
+  right_loop_ramp_hit{device.timers.a3_ch1_train.running}: a3_ch1_boarded
+  a3_ch1_boarded: a3_ch1_completed
+
+variable_player:
+  mode_a3_ch1_mobil_ave_started:
+    objective:
+      action: set
+      string: "THE TUNNEL: 25 SPINNER SPINS"
+  logicblock_a3_ch1_spins_hit:
+    score: 2000
+  a3_ch1_tunnel_done:
+    score: 150000
+    objective:
+      action: set
+      string: "THE TRAIN: BOARD IT ON THE REAL WORLD RAMP"
+  # The train pays more the sooner it is boarded.
+  a3_ch1_boarded:
+    score:
+      int: 300000 + device.timers.a3_ch1_train.ticks * 25000
+
+# The failure callout is in act_three.yaml: this mode's widgets are cleared
+# when it stops.
+widget_player:
+  mode_a3_ch1_mobil_ave_started:
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT III  CHAPTER 1
+        title: MOBIL AVENUE
+        goal: 25 SPINNER SPINS
+      expire: 5s
+    countdown:
+      key: a3_ch1_clock
+      priority: 10
+      tokens:
+        label: THE TUNNEL
+        event: timer_a3_ch1_tunnel_tick
+        seconds: "30"
+  a3_ch1_tunnel_done:
+    video_clip:
+      tokens:
+        clip: trainman
+      expire: 6s
+    countdown:
+      key: a3_ch1_clock
+      action: update
+      tokens:
+        label: THE TRAIN IS LEAVING
+        event: timer_a3_ch1_train_tick
+        seconds: "20"
+        total: "20"
+        value_base: "300000"
+        value_step: "25000"

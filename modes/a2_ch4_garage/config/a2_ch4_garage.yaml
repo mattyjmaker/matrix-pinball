@@ -1,0 +1,88 @@
+#config_version=6
+
+# Act II, Chapter 4: The Freeway, first phase. The garage, single ball, 30 s.
+# The Twins phase back through: the five-bank (the Matrix Team drops) resets
+# every 8 s. All five down between resets reaches the car and requests the
+# Freeway multiball. Timing out ends the chapter, played but not completed.
+# This mode ends when the multiball starts; if the ball drains first, the
+# Act II controller ends the chapter as played.
+# See docs/14-rules-act-2.md, section 3.
+
+mode:
+  start_events: start_a2_ch4
+  stop_events: a2_ch4_failed, mode_a2_ch4_freeway_mb_started
+  priority: 300
+
+timers:
+  a2_ch4_garage:
+    start_value: 30
+    end_value: 0
+    direction: down
+    start_running: true
+    control_events:
+      - event: a2_ch4_escaped
+        action: stop
+  # The Twins reset the bank on each tick.
+  a2_twins_phase:
+    start_value: 0
+    direction: up
+    tick_interval: 8s
+    start_running: true
+    control_events:
+      - event: a2_ch4_escaped
+        action: stop
+
+event_player:
+  mode_a2_ch4_garage_started: five_bank_reset
+  timer_a2_twins_phase_tick{ticks > 0}: five_bank_reset
+  drop_target_bank_five_bank_down{current_player.a2_ch4_escaped==0}: a2_ch4_escaped
+  a2_ch4_escaped: request_freeway_mb
+  timer_a2_ch4_garage_complete: a2_ch4_failed
+
+variable_player:
+  mode_a2_ch4_garage_started:
+    objective:
+      action: set
+      string: "THE GARAGE: ALL 5 MATRIX TEAM TARGETS BEFORE THE TWINS RESET THEM"
+    a2_ch4_escaped:
+      action: set
+      int: 0
+  a2_ch4_escaped:
+    score: 250000
+    a2_ch4_escaped:
+      action: set
+      int: 1
+    objective:
+      action: set
+      string: "THE FREEWAY IS NEXT"
+
+# The Twins' win is called out in act_two.yaml: this mode stops on it.
+widget_player:
+  mode_a2_ch4_garage_started:
+    video_clip:
+      tokens:
+        clip: twins_garage
+      expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT II  CHAPTER 4
+        title: THE FREEWAY
+        goal: "THE GARAGE: ALL 5 MATRIX TEAM TARGETS"
+      expire: 5s
+    countdown:
+      key: a2_ch4_clock
+      priority: 10
+      tokens:
+        label: THE GARAGE
+        event: timer_a2_ch4_garage_tick
+        seconds: "30"
+  a2_ch4_escaped:
+    countdown:
+      key: a2_ch4_clock
+      action: remove
+    mode_banner:
+      tokens:
+        title: TO THE CAR
+        detail: THE FREEWAY
+      expire: 2s
