@@ -1,0 +1,103 @@
+#config_version=6
+
+# Act II, Chapter 2: The Oracle, the Burly Brawl multiball. 3 balls, 20 s
+# ball save, or 30 s if Seraph was beaten. The three pop-ups (the Agents) are
+# Smith copies: each rises again 1 s after it drops. After 12 Smiths the
+# backboard ramp (the Sentinel ramp, up and away) is lit once: Neo flies out
+# for the super jackpot, which allies SERAPH. The chapter ends when the
+# multiball does. See docs/14-rules-act-2.md, section 3.
+
+mode:
+  start_events: start_brawl_mb
+  stop_events: multiball_brawl_ended
+  events_when_stopped: a2_ch2_ended
+  priority: 310
+
+multiballs:
+  brawl:
+    ball_count: 3
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: mode_a2_ch2_brawl_mb_started
+
+ball_saves:
+  # Beating Seraph covers every drain for the first 30 s.
+  a2_brawl_seraph:
+    active_time: 30s
+    balls_to_save: -1
+    auto_launch: true
+    enable_events: a2_brawl_long_save
+
+counters:
+  a2_smiths:
+    count_events: a2_smith
+    count_complete_value: 12
+    events_when_complete: a2_brawl_fly_lit
+    start_enabled: true
+
+event_player:
+  mode_a2_ch2_brawl_mb_started: popups_raise
+  mode_a2_ch2_brawl_mb_started{current_player.a2_seraph_won==1}: a2_brawl_long_save
+  drop_target_popup_1_down: a2_smith, popup_1_raise|1s
+  drop_target_popup_2_down: a2_smith, popup_2_raise|1s
+  drop_target_popup_3_down: a2_smith, popup_3_raise|1s
+  backboard_ramp_hit{current_player.a2_brawl_fly==1}: a2_brawl_super
+  a2_brawl_super: a2_ch2_completed
+
+variable_player:
+  mode_a2_ch2_brawl_mb_started:
+    objective:
+      action: set
+      string: "THE BURLY BRAWL: HIT THE SMITHS"
+    a2_brawl_fly:
+      action: set
+      int: 0
+  a2_smith:
+    score: 25000
+  a2_brawl_fly_lit:
+    a2_brawl_fly:
+      action: set
+      int: 1
+    objective:
+      action: set
+      string: "THE BURLY BRAWL: FLY OUT ON THE SENTINEL RAMP"
+  a2_brawl_super:
+    score: 1000000
+    a2_brawl_fly:
+      action: set
+      int: 2
+    objective:
+      action: set
+      string: "THE BURLY BRAWL: HIT THE SMITHS"
+
+widget_player:
+  mode_a2_ch2_brawl_mb_started:
+    video_clip:
+      tokens:
+        clip: burly_brawl
+      expire: 8s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: THE ORACLE  MULTIBALL
+        title: THE BURLY BRAWL
+        goal: HIT THE SMITHS
+      expire: 5s
+  a2_smith:
+    mode_banner:
+      tokens:
+        title: SMITH
+        detail: ANOTHER ONE ARRIVES
+      expire: 1s
+  a2_brawl_fly_lit:
+    mode_banner:
+      tokens:
+        title: TOO MANY SMITHS
+        detail: FLY OUT ON THE SENTINEL RAMP
+      expire: 3s
+  a2_brawl_super:
+    mode_banner:
+      tokens:
+        title: SUPER JACKPOT
+        detail: NEO FLIES OUT
+      expire: 3s

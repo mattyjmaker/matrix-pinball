@@ -46,7 +46,7 @@ class TestDisplayAssets(TestCase):
 
     def test_countdowns_name_their_event(self):
         for path, name, settings in _widget_player_entries():
-            if name in ("countdown", "t2_countdown", "pill_choice", "dyson_choice", "act_select", "game_select") and settings.get("action", "play") == "play":
+            if name in ("countdown", "t2_countdown", "pill_choice", "doors_choice", "dyson_choice", "act_select", "game_select") and settings.get("action", "play") == "play":
                 self.assertTrue(settings.get("tokens", {}).get("event"), "{}: {} has no event".format(path, name))
 
     def test_no_placeholder_tokens(self):
@@ -167,3 +167,60 @@ class TestDisplay(DisplayTestCase):
             screens = self.tokens("act_select")
             self.assertEqual("act_select_show", screens[0]["event"])
             self.assertEqual("seconds", screens[0]["arg"])
+
+
+class TestActTwoDisplay(DisplayTestCase):
+
+    def start(self):
+        self.start_matrix_game(act="II")
+
+    def played(self, widget, context=None):
+        return [(ctx, settings) for name, ctx, settings in self.widgets_played()
+                if name == widget and (context is None or ctx == context)]
+
+    def test_intro_card(self):
+        self.start()
+        self.advance_time_and_run(1)
+        cards = [s["tokens"]["title"] for n, c, s in self.widgets_played() if n == "chapter_card"]
+        self.assertIn("RELOADED", cards)
+
+    def test_ally_card_survives_the_chapter_stopping(self):
+        self.start()
+        self.player()["a2_chapter_next"] = 1
+        self.open_mission()
+        self.shoot_mission()
+        self.ramp("right_loop")
+        self.hit_and_release_switch("s_upper_target_1")
+        for n in (1, 2, 3, 4):
+            self.hit_and_release_switch("s_pop_target_{}".format(n))
+        self.advance_time_and_run(.5)
+        self.sent = []
+        self.enter_device("s_middle_loop_vuk")
+        cards = [(c, s["tokens"]["title"]) for n, c, s in self.widgets_played() if n == "chapter_card"]
+        self.assertIn(("act_two", "LINK"), cards)
+        cleared = self.contexts_cleared()
+        self.assertIn("a2_ch1_zion", cleared)
+        self.assertNotIn("act_two", cleared)
+
+    def test_architect_doors_and_finale(self):
+        self.start()
+        self.player()["architect_lit"] = 1
+        self.player()["architect_stage"] = 3
+        self.drain_all_balls()
+        self.advance_time_and_run(5)
+        self.assertBallNumber(2)
+        choices = [s["tokens"] for n, c, s in self.widgets_played() if n == "doors_choice"]
+        self.assertEqual("architect_choice_tick", choices[-1]["event"])
+        self.hit_and_release_switch("s_right_loop_ramp")
+        self.advance_time_and_run(.5)
+        played = self.widgets_played()
+        clocks = [s["tokens"] for n, c, s in played if n == "countdown"]
+        self.assertEqual("architect_trinity_tick", clocks[-1]["event"])
+        self.assertEqual("1000000", clocks[-1]["value_base"])
+        self.player()["architect_stage"] = 5
+        self.post_event("platform_gate_open", .5)
+        self.enter_device("s_platform_vuk")
+        played = self.widgets_played()
+        self.assertIn("base", [c for n, c, s in played if n == "video_clip"])
+        self.assertIn("ACT II COMPLETE", [s["tokens"]["kicker"] for n, c, s in played if n == "chapter_card"])
+        self.assertPlayerVarEqual("III", "act")

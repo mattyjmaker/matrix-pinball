@@ -1,0 +1,147 @@
+#config_version=6
+
+# Act II, Chapter 1: Zion. Single ball, two timed stages.
+#   The dock (30 s): the Real World Ramp, the long way onto the upper
+#     playfield, then any Real World standup. Timing out ends the chapter,
+#     played but not completed.
+#   The Temple (30 s frenzy): every playfield switch pays the frenzy value,
+#     which starts at 5,000 and rises 5,000 with every ramp. The four EMP
+#     standups (the drums) light a collect on the Deja Vu VUK, which completes
+#     the chapter and allies LINK.
+# See docs/14-rules-act-2.md, section 3.
+
+mode:
+  start_events: start_a2_ch1
+  stop_events: a2_ch1_completed, a2_ch1_failed, a2_ch1_temple_over
+  events_when_stopped: a2_ch1_ended
+  priority: 300
+
+timers:
+  a2_ch1_dock:
+    start_value: 30
+    end_value: 0
+    direction: down
+    start_running: true
+    control_events:
+      - event: a2_ch1_docked
+        action: stop
+  a2_ch1_temple:
+    start_value: 30
+    end_value: 0
+    direction: down
+    control_events:
+      - event: a2_ch1_docked
+        action: start
+
+state_machines:
+  a2_ch1_stage:
+    starting_state: dock
+    states:
+      dock:
+        label: The dock
+      temple:
+        label: The Temple
+        events_when_started: a2_ch1_temple_started
+    transitions:
+      - source: dock
+        target: temple
+        events: a2_ch1_docked
+
+accruals:
+  a2_ch1_drums:
+    events:
+      - pop_target_1_hit
+      - pop_target_2_hit
+      - pop_target_3_hit
+      - pop_target_4_hit
+    events_when_complete: a2_ch1_drums_done
+    enable_events: a2_ch1_temple_started
+
+event_player:
+  upper_target_hit{device.state_machines.a2_ch1_stage.state=="dock" and current_player.a2_ch1_approach==1}: a2_ch1_docked
+  timer_a2_ch1_dock_complete: a2_ch1_failed
+  timer_a2_ch1_temple_complete: a2_ch1_temple_over
+  balldevice_bd_middle_loop_vuk_ball_entered{current_player.a2_ch1_collect_lit==1}: a2_ch1_collect
+  a2_ch1_collect: a2_ch1_completed
+
+variable_player:
+  mode_a2_ch1_zion_started:
+    objective:
+      action: set
+      string: "THE DOCK: REAL WORLD RAMP, THEN A STANDUP"
+    a2_ch1_approach:
+      action: set
+      int: 0
+    a2_ch1_collect_lit:
+      action: set
+      int: 0
+    a2_ch1_frenzy:
+      action: set
+      int: 5000
+  right_loop_ramp_hit{device.state_machines.a2_ch1_stage.state=="dock"}:
+    a2_ch1_approach:
+      action: set
+      int: 1
+  a2_ch1_docked:
+    score: 250000
+    objective:
+      action: set
+      string: "THE TEMPLE: EVERY SWITCH PAYS, RAMPS BUILD, HIT THE DRUMS"
+  sw_playfield_active{device.state_machines.a2_ch1_stage.state=="temple"}:
+    score:
+      int: current_player.a2_ch1_frenzy
+  ramp_hit{device.state_machines.a2_ch1_stage.state=="temple"}:
+    a2_ch1_frenzy:
+      action: add
+      int: 5000
+  a2_ch1_drums_done:
+    a2_ch1_collect_lit:
+      action: set
+      int: 1
+    objective:
+      action: set
+      string: "THE TEMPLE: COLLECT AT THE DEJA VU VUK"
+  a2_ch1_collect:
+    score: 500000
+
+# The failure callouts are in act_two.yaml: this mode's widgets are cleared
+# when it stops.
+widget_player:
+  mode_a2_ch1_zion_started:
+    video_clip:
+      tokens:
+        clip: zion_dock
+      expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT II  CHAPTER 1
+        title: ZION
+        goal: REAL WORLD RAMP, THEN A STANDUP
+      expire: 5s
+    countdown:
+      key: a2_ch1_clock
+      priority: 10
+      tokens:
+        label: THE DOCK
+        event: timer_a2_ch1_dock_tick
+        seconds: "30"
+  a2_ch1_docked:
+    video_clip:
+      tokens:
+        clip: zion_temple
+      expire: 6s
+    countdown:
+      key: a2_ch1_clock
+      action: update
+      tokens:
+        label: THE TEMPLE
+        event: timer_a2_ch1_temple_tick
+        seconds: "30"
+        total: "30"
+  a2_ch1_drums_done:
+    mode_banner:
+      tokens:
+        title: THE DRUMS
+        detail: COLLECT AT THE DEJA VU VUK
+      expire: 3s

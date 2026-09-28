@@ -101,6 +101,19 @@ modes:
   - ch4_rescue_lock
   - ch4_rescue_mb
   - the_one
+  # The Matrix, Act II (docs/14-rules-act-2.md)
+  - act_two
+  - logos_lock
+  - logos_mb
+  - hunt_gate
+  - hunt_mb
+  - a2_ch1_zion
+  - a2_ch2_seraph
+  - a2_ch2_brawl_mb
+  - a2_ch3_merovingian
+  - a2_ch4_garage
+  - a2_ch4_freeway_mb
+  - the_architect
   # Terminator 2 (docs/12-rules-terminator-2.md)
   - t2_main
   - future_war_lock
@@ -194,6 +207,64 @@ player_vars:
   rescue_mb_starting:
     initial_value: 0
     value_type: int
+  # 1 while an act's finale is on screen, so the next act holds its intro.
+  act_finale:
+    initial_value: 0
+    value_type: int
+
+  # --- The Matrix, Act II (docs/14-rules-act-2.md) ---
+  # Next Act II chapter in film order; 5 once all four have been played.
+  a2_chapter_next:
+    initial_value: 1
+    value_type: int
+  a2_intro_played:
+    initial_value: 0
+    value_type: int
+  allies_link:
+    initial_value: 0
+    value_type: int
+  allies_seraph:
+    initial_value: 0
+    value_type: int
+  allies_persephone:
+    initial_value: 0
+    value_type: int
+  allies_keymaker:
+    initial_value: 0
+    value_type: int
+  allies_niobe:
+    initial_value: 0
+    value_type: int
+  allies_ghost:
+    initial_value: 0
+    value_type: int
+  allies_count:
+    initial_value: 0
+    value_type: int
+  architect_lit:
+    initial_value: 0
+    value_type: int
+  # 0 until the Architect starts, then its stage (1 to 5). Survives ball end.
+  architect_stage:
+    initial_value: 0
+    value_type: int
+  architect_progress:
+    initial_value: 0
+    value_type: int
+  # The door taken at the Architect: "", "source" or "trinity".
+  architect_door:
+    initial_value: ""
+    value_type: str
+  # The Trinity hurry-up's current value.
+  architect_value:
+    initial_value: 0
+    value_type: int
+  brawl_mb_starting:
+    initial_value: 0
+    value_type: int
+  freeway_mb_starting:
+    initial_value: 0
+    value_type: int
 
   # --- Terminator 2 ---
   # The HUD's chapter marker: CHAPTER 1 to 4, JUDGMENT DAY, then COMPLETE.
@@ -249,6 +320,15 @@ settings:
   the_one_threshold:
     label: FREED names to light The One
     sort: 100
+    values:
+      4: "4"
+      5: "5"
+      6: "6"
+    key_type: int
+    default: 4
+  architect_threshold:
+    label: ALLIES to light the Architect
+    sort: 105
     values:
       4: "4"
       5: "5"

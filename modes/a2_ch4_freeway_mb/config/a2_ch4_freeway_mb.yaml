@@ -1,0 +1,163 @@
+#config_version=6
+
+# Act II, Chapter 4: The Freeway multiball, three stages.
+#   The Twins (3 balls): all five Matrix Team drops again.
+#   The Ducati (4 balls): Trinity and the Keymaker against the traffic. The
+#     three spinner ramps (Trinity, Deja Vu, Real World) inside 20 s, any
+#     order; running out of time starts the three again.
+#   The trucks (5 balls): Neo arrives before the trucks collide, the Sentinel
+#     ramp (the backboard ramp). The super jackpot allies KEYMAKER.
+# The chapter ends when the multiball does. No lock, so the base mode's Ammo
+# Lock drain save stays on. See docs/14-rules-act-2.md, section 3.
+
+mode:
+  start_events: start_freeway_mb
+  stop_events: multiball_freeway_ended
+  events_when_stopped: a2_ch4_ended
+  priority: 310
+
+multiballs:
+  freeway:
+    ball_count: 3
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: mode_a2_ch4_freeway_mb_started
+    add_a_ball_events: a2_ducati_started, a2_trucks_started
+    add_a_ball_shoot_again: 10s
+
+state_machines:
+  a2_freeway_stage:
+    starting_state: twins
+    states:
+      twins:
+        label: The Twins
+      ducati:
+        label: The Ducati
+        events_when_started: a2_ducati_started
+      trucks:
+        label: The trucks
+        events_when_started: a2_trucks_started
+      done:
+        label: Neo arrives
+    transitions:
+      - source: twins
+        target: ducati
+        events: drop_target_bank_five_bank_down
+      - source: ducati
+        target: trucks
+        events: a2_ducati_done
+      - source: trucks
+        target: done
+        events: a2_neo_arrives
+
+accruals:
+  a2_ducati_ramps:
+    events:
+      - left_lock_ramp_hit
+      - middle_loop_ramp_hit
+      - right_loop_ramp_hit
+    events_when_complete: a2_ducati_done
+    enable_events: a2_ducati_started
+    reset_events: timer_a2_ducati_complete
+
+timers:
+  a2_ducati:
+    start_value: 20
+    end_value: 0
+    direction: down
+    control_events:
+      - event: a2_ducati_started
+        action: restart
+      - event: timer_a2_ducati_complete
+        action: restart
+      - event: a2_ducati_done
+        action: stop
+
+event_player:
+  mode_a2_ch4_freeway_mb_started: five_bank_reset
+  backboard_ramp_hit{device.state_machines.a2_freeway_stage.state=="trucks"}: a2_neo_arrives
+  a2_neo_arrives: a2_ch4_completed
+
+variable_player:
+  mode_a2_ch4_freeway_mb_started:
+    objective:
+      action: set
+      string: "THE TWINS: ALL 5 MATRIX TEAM TARGETS"
+  drop_target_five_bank_1_down{device.state_machines.a2_freeway_stage.state=="twins"}:
+    score: 75000
+  drop_target_five_bank_2_down{device.state_machines.a2_freeway_stage.state=="twins"}:
+    score: 75000
+  drop_target_five_bank_3_down{device.state_machines.a2_freeway_stage.state=="twins"}:
+    score: 75000
+  drop_target_five_bank_4_down{device.state_machines.a2_freeway_stage.state=="twins"}:
+    score: 75000
+  drop_target_five_bank_5_down{device.state_machines.a2_freeway_stage.state=="twins"}:
+    score: 75000
+  a2_ducati_started:
+    objective:
+      action: set
+      string: "THE DUCATI: TRINITY, DEJA VU AND REAL WORLD RAMPS"
+  left_lock_ramp_hit{device.state_machines.a2_freeway_stage.state=="ducati"}:
+    score: 250000
+  middle_loop_ramp_hit{device.state_machines.a2_freeway_stage.state=="ducati"}:
+    score: 250000
+  right_loop_ramp_hit{device.state_machines.a2_freeway_stage.state=="ducati"}:
+    score: 250000
+  a2_trucks_started:
+    objective:
+      action: set
+      string: "THE TRUCKS: SENTINEL RAMP"
+  a2_neo_arrives:
+    score: 1000000
+    objective:
+      action: set
+      string: "THE KEYMAKER IS SAFE"
+
+widget_player:
+  mode_a2_ch4_freeway_mb_started:
+    video_clip:
+      tokens:
+        clip: freeway_trucks
+      expire: 8s
+    chapter_card:
+      key: a2_freeway_card
+      priority: 10
+      tokens:
+        kicker: THE FREEWAY  STAGE 1
+        title: THE TWINS
+        goal: ALL 5 MATRIX TEAM TARGETS
+      expire: 4s
+  a2_ducati_started:
+    chapter_card:
+      key: a2_freeway_card
+      priority: 10
+      tokens:
+        kicker: THE FREEWAY  STAGE 2
+        title: THE DUCATI
+        goal: TRINITY, DEJA VU AND REAL WORLD RAMPS
+      expire: 4s
+    countdown:
+      key: a2_ducati_clock
+      priority: 10
+      tokens:
+        label: AGAINST THE TRAFFIC
+        event: timer_a2_ducati_tick
+        seconds: "20"
+  a2_ducati_done:
+    countdown:
+      key: a2_ducati_clock
+      action: remove
+  a2_trucks_started:
+    chapter_card:
+      key: a2_freeway_card
+      priority: 10
+      tokens:
+        kicker: THE FREEWAY  STAGE 3
+        title: THE TRUCKS
+        goal: SENTINEL RAMP
+      expire: 4s
+  a2_neo_arrives:
+    video_clip:
+      tokens:
+        clip: neo_flies
+      expire: 6s

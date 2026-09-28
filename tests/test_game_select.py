@@ -49,16 +49,27 @@ class TestGameSelect(MatrixTestCase):
         self.advance_time_and_run(13)
         self.assertModeRunning("game_select")
         self.advance_time_and_run(3)
-        self.assertModeNotRunning("game_select")
         self.assertEqual("matrix", self.machine.variables.get_machine_var("game_choice"))
+        # The Matrix goes on to its act select, which also times out to Act I.
+        self.assertModeRunning("act_select")
+        self.advance_time_and_run(31)
+        self.assertModeNotRunning("game_select")
         self.assertModeRunning("act_one")
 
     def test_matrix_runs_the_act_select_before_the_ball(self):
         self.mock_event("start_act_select")
+        self.mock_event("ball_started")
         self.begin()
         self.hit_and_release_switch("s_start")
         self.advance_time_and_run(1)
         self.assertEventCalled("start_act_select")
+        self.assertModeRunning("act_select")
+        # The game select holds the ball until the act is chosen.
+        self.assertModeRunning("game_select")
+        self.assertEventNotCalled("ball_started")
+        self.hit_and_release_switch("s_start")
+        self.advance_time_and_run(1)
+        self.assertEventCalled("ball_started")
         self.assertModeRunning("act_one")
 
     def test_second_player_gets_the_same_game(self):

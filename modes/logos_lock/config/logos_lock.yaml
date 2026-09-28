@@ -1,0 +1,49 @@
+#config_version=6
+
+# Logos lock: Act II's re-skin of the Trinity lock (Niobe's ship). The left
+# lock (the post on the Trinity Ramp) takes three balls. The third requests
+# Logos Multiball, which the Act II controller starts now or queues behind a
+# running multiball. Runs whenever Act II's features are on, which is every
+# Act II ball except while the Architect runs.
+# See docs/14-rules-act-2.md, section 4.
+
+mode:
+  start_events: act_two_features_start
+  stop_events: act_two_features_stop, act_two_complete
+  priority: 250
+
+multiball_locks:
+  logos_lock:
+    lock_devices: bd_left_lock
+    balls_to_lock: 3
+    locked_ball_counting_strategy: virtual_only
+    enable_events: mode_logos_lock_started
+    reset_count_for_current_player_events: multiball_logos_started
+
+event_player:
+  multiball_lock_logos_lock_full: request_logos_mb
+
+variable_player:
+  mode_logos_lock_started:
+    # Drives the power station cells on the HUD. Act I's Trinity lock count
+    # does not carry over.
+    balls_locked:
+      action: set
+      int: device.multiball_locks.logos_lock.locked_balls
+  multiball_lock_logos_lock_locked_ball:
+    score: 10000
+    balls_locked:
+      action: set
+      int: total_balls_locked
+  multiball_logos_started:
+    balls_locked:
+      action: set
+      int: 0
+
+widget_player:
+  multiball_lock_logos_lock_locked_ball:
+    mode_banner:
+      tokens:
+        title: LOGOS LOCK
+        detail: BALL LOCKED
+      expire: 2s
