@@ -117,7 +117,7 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 |---|---|---|
 | Full flipper assembly, WPC 1992–98, left + right (coil FL-11629, stop A-12390, normally-open EOS SW-1A-194) | 2 | HAVE (Feb 2023) |
 | Right flipper mech (upper right flipper) + black bat + green rubber | 1 | HAVE (2nd) |
-| Left flipper mech (Real World mini flipper) + small yellow TSPP bat + blue mini rubber | 1 | HAVE (2nd) |
+| Left flipper mech (Real World mini flipper) + small yellow TSPP bat + blue mini rubber. Same flipper type as the main flippers (user, 2026-09-28): dual-wound, 2 drivers | 1 | HAVE (2nd) |
 | Flipper bat & shaft, black (no logo), + 1-1/2" green Super-Band rubbers | 2 | HAVE (Feb 2023) |
 | Upper playfield flipper links (Marco 515-7265-06, 04-10038, No Fear bushing) | — | Reference only |
 | Slingshot assembly (PBL-5849-01) | 2 | HAVE (Feb 2023) |

@@ -59,3 +59,29 @@ class MatrixTestCase(MpfGameTestCase):
     def enter_device(self, switch, settle=2):
         """Roll a ball from the playfield into a ball device via its switch."""
         self.hit_switch_and_run(switch, settle)
+
+    def knock_down_popup(self, number, settle=.1):
+        """Hit a raised pop-up: its hit switch releases the hold coil and it falls.
+
+        The fall is simulated here, because smart_virtual does not move a
+        switch when a hold coil is released. Asserting the hold dropped first
+        checks the hit-to-release wiring in the config.
+        """
+        self.hit_and_release_switch("s_popup_{}_hit".format(number))
+        self.advance_time_and_run(.01)
+        self.assertFalse(self.popup_held(number),
+                         "c_popup_{}_hold still enabled after a hit".format(number))
+        # The up switch is NC, so logically active means the pop-up is down.
+        self.hit_switch_and_run("s_popup_{}_up".format(number), settle)
+
+    def raise_popup_switch(self, number, settle=.1):
+        """Put a pop-up's up switch in the raised position."""
+        self.release_switch_and_run("s_popup_{}_up".format(number), settle)
+
+    def popup_held(self, number):
+        """True while the pop-up's hold coil is enabled."""
+        return self.machine.coils["c_popup_{}_hold".format(number)].hw_driver.state == "enabled"
+
+    def popup_down(self, number):
+        return self.machine.drop_targets["popup_{}".format(number)].complete
+

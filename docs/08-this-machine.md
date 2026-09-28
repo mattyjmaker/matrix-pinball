@@ -345,12 +345,20 @@ the boards have none (13-fast-boards.md, sections 3.4 and 3.5):
   landing on another header's TG pin.
 
 **Driver capacity.** The 3208's 8 drivers are all assigned (`bottom32-0` to
-`bottom32-7`), so every remaining playfield coil goes on the two 1616s: the
-15 coils in `config/playfield_pending.yaml`, plus 3 more because each Hobbit
-pop-up needs a power and a hold driver (see "Hobbit pop-up wiring"), plus
-the knocker, is 19 of their 32 drivers. Add 2 for the upper playfield's
-mini flipper if it is dual-wound. Each 1616 needs two 12-pin 0.156" driver housings (J3 and J4,
-keys at different positions).
+`bottom32-7`), so every remaining playfield coil goes on the two 1616s (32
+drivers):
+
+| Coils | Drivers |
+| --- | --- |
+| `config/playfield_pending.yaml`, including a power and a hold driver per Hobbit pop-up | 18 |
+| Knocker (backbox, back 1616) | 1 |
+| Upper playfield mini flipper: same type as the main flippers (user, 2026-09-28), so dual-wound, power and hold | 2 |
+| Upper right flipper: coil not recorded; 2 if dual-wound | 2 |
+| Kickback (left outlane) | 1 |
+| **Total** | **24 of 32** |
+
+Pop bumpers (3 owned, not placed) would add 3. Each 1616 needs two 12-pin
+0.156" driver housings (J3 and J4, keys at different positions).
 
 **Hobbit pop-up wiring** (Official, JJP The Hobbit operation manual rev.
 3.4, pop-up assembly parts list and Pop-Up Mechanisms Test; confirmed as
@@ -371,9 +379,13 @@ the Hobbit assemblies by the user, 2026-09-27). Each assembly has:
   three.
 - Check the diodes on each coil before wiring. FAST requires a flyback
   diode on every coil (13-fast-boards.md, section 4).
-- The config does not match this yet: `config/playfield_pending.yaml`
-  models each pop-up as a drop target with one pulsed coil and one switch.
-  It needs a power and a hold coil and an up switch per pop-up.
+- Config (`config/playfield_pending.yaml`, 2026-09-28): each pop-up is a
+  drop target on its up switch (`s_popup_N_up`, `type: NC`, so active means
+  down). The power winding (`c_popup_N_power`) is the reset coil and lifts
+  the head; the hold winding (`c_popup_N_hold`) is enabled on the same
+  events that raise it, and released by the hit switch (`s_popup_N_hit`) or
+  at game end, so the pop-up falls. Nothing is held in attract. Confirm the
+  up switch's sense in the switch test before trusting `type: NC`.
 
 **12 V on the playfield** is for devices, not I/O boards: the LED expansion
 boards take 12 V from interchange J2 to J4 (7 A each), and opto emitter

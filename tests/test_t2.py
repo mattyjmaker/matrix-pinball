@@ -242,10 +242,10 @@ class TestChapterFour(T2TestCase):
         for n in (1, 2, 3, 4):
             self.hit_and_release_switch("s_pop_target_{}".format(n))
         for n in (1, 2, 3):
-            self.hit_switch_and_run("s_popup_{}".format(n), .1)
+            self.knock_down_popup(n, .1)
         self.advance_time_and_run(1)
         for n in (1, 2, 3):
-            self.release_switch_and_run("s_popup_{}".format(n), .1)
+            self.raise_popup_switch(n, .1)
 
     def test_full_raid(self):
         self.start()
@@ -265,7 +265,7 @@ class TestChapterFour(T2TestCase):
         self.assertBallsInPlay(4)
 
         self.ramp("left_lock")
-        self.hit_switch_and_run("s_popup_1", .5)
+        self.knock_down_popup(1, .5)
         self.assertPlayerVarEqual("ESCAPE: CATCH THE BALL AT THE T-1000 MAGNET", "objective")
         self.assertBallsInPlay(5)
 
@@ -279,7 +279,7 @@ class TestChapterFour(T2TestCase):
         self.enter_device("s_middle_loop_vuk")
         self.lock_three()
         self.clear_breakin()
-        self.hit_switch_and_run("s_popup_1", .5)
+        self.knock_down_popup(1, .5)
         self.assertPlayerVarEqual("FIREFIGHT: FUTURE WAR RAMP, THEN HIT AN ENDOSKELETON", "objective")
 
     def test_lock_phase_drain_ends_chapter(self):
