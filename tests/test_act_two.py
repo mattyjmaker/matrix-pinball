@@ -232,9 +232,8 @@ class TestTheOracle(ActTwoTestCase):
         self.ramp("backboard")
         self.assertEventNotCalled("a2_brawl_super")
         for i in range(12):
-            switch = "s_popup_{}".format(i % 3 + 1)
-            self.hit_switch_and_run(switch, .2)
-            self.release_switch_and_run(switch, 1.2)
+            self.knock_down_popup(i % 3 + 1, .2)
+            self.raise_popup_switch(i % 3 + 1, 1.2)
             # The Smith is back up.
             self.assertFalse(self.machine.drop_targets["popup_{}".format(i % 3 + 1)].complete)
         self.assertPlayerVarEqual(1, "a2_brawl_fly")

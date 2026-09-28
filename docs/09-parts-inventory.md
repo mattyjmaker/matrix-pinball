@@ -117,7 +117,7 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 |---|---|---|
 | Full flipper assembly, WPC 1992–98, left + right (coil FL-11629, stop A-12390, normally-open EOS SW-1A-194) | 2 | HAVE (Feb 2023) |
 | Right flipper mech (upper right flipper) + black bat + green rubber | 1 | HAVE (2nd) |
-| Left flipper mech (Real World mini flipper) + small yellow TSPP bat + blue mini rubber | 1 | HAVE (2nd) |
+| Left flipper mech (Real World mini flipper) + small yellow TSPP bat + blue mini rubber. Same flipper type as the main flippers (user, 2026-09-28): dual-wound, 2 drivers | 1 | HAVE (2nd) |
 | Flipper bat & shaft, black (no logo), + 1-1/2" green Super-Band rubbers | 2 | HAVE (Feb 2023) |
 | Upper playfield flipper links (Marco 515-7265-06, 04-10038, No Fear bushing) | — | Reference only |
 | Slingshot assembly (PBL-5849-01) | 2 | HAVE (Feb 2023) |
@@ -160,7 +160,7 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 
 | Area / feature | Parts | Status |
 |---|---|---|
-| **Agents** (mid-field pop-ups) | Hobbit pop-up beast assemblies ×3: one Orc, one Warg, one Spider. The user confirmed this on 2026-09-19; the spreadsheet is wrong on both sheets. | HAVE |
+| **Agents** (mid-field pop-ups) | Hobbit pop-up beast assemblies ×3: one Orc, one Warg, one Spider. The user confirmed this on 2026-09-19; the spreadsheet is wrong on both sheets. Each has a dual-wound FL-11753 coil (power and hold drivers), an up microswitch and a hit leaf switch; wiring in 08-this-machine.md, "Hobbit pop-up wiring". | HAVE |
 | **Matrix Team** (5 pop-up targets) | Gottlieb 5-bank drop targets, second-hand (Solar City 1976–77) | HAVE |
 | **EMP pop bumper** area | Standup targets ×6, 3-bank drop target assembly (frosted) | HAVE (2nd) |
 | **Trinity Ramp** | Stern ball lock assembly, left spinner with switch, IR LED opto set | HAVE (2nd) |

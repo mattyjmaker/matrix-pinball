@@ -235,7 +235,7 @@ class TestChapterThree(ActOneTestCase):
         self.mock_event("ch3_woman_bonus")
         self.ramp("left_lock")
         self.assertPlayerVarEqual(1, "ch3_agent_armed")
-        self.hit_switch_and_run("s_popup_2", .5)
+        self.knock_down_popup(2, .5)
         self.assertEventCalled("ch3_woman_bonus")
 
     def test_woman_walks(self):
@@ -272,16 +272,16 @@ class TestChapterFour(ActOneTestCase):
         for n in (1, 2, 3, 4):
             self.hit_and_release_switch("s_pop_target_{}".format(n))
         for n in (1, 2, 3):
-            self.hit_switch_and_run("s_popup_{}".format(n), .1)
+            self.knock_down_popup(n, .1)
         self.advance_time_and_run(1)
         self.assertPlayerVarEqual("ROOFTOP: TRINITY RAMP, THEN HIT AN AGENT", "objective")
         self.assertBallsInPlay(4)
 
         # Agents are raised for the rooftop. Release their switches.
         for n in (1, 2, 3):
-            self.release_switch_and_run("s_popup_{}".format(n), .1)
+            self.raise_popup_switch(n, .1)
         self.ramp("left_lock")
-        self.hit_switch_and_run("s_popup_1", .5)
+        self.knock_down_popup(1, .5)
         self.assertPlayerVarEqual("HELICOPTER: CATCH MORPHEUS AT THE SENTINEL MAGNET", "objective")
         self.assertBallsInPlay(5)
 
@@ -297,11 +297,11 @@ class TestChapterFour(ActOneTestCase):
         for n in (1, 2, 3, 4):
             self.hit_and_release_switch("s_pop_target_{}".format(n))
         for n in (1, 2, 3):
-            self.hit_switch_and_run("s_popup_{}".format(n), .1)
+            self.knock_down_popup(n, .1)
         self.advance_time_and_run(1)
         for n in (1, 2, 3):
-            self.release_switch_and_run("s_popup_{}".format(n), .1)
-        self.hit_switch_and_run("s_popup_1", .5)
+            self.raise_popup_switch(n, .1)
+        self.knock_down_popup(1, .5)
         self.assertPlayerVarEqual("ROOFTOP: TRINITY RAMP, THEN HIT AN AGENT", "objective")
 
     def test_lock_phase_drain_ends_chapter(self):
@@ -453,10 +453,10 @@ class TestTheOne(ActOneTestCase):
         for _ in range(6):
             n = 1
             for n in (1, 2, 3):
-                if not self.machine.switch_controller.is_active(self.machine.switches["s_popup_{}".format(n)]):
+                if not self.popup_down(n):
                     break
-            self.hit_switch_and_run("s_popup_{}".format(n), .2)
-            self.release_switch_and_run("s_popup_{}".format(n), 1.2)
+            self.knock_down_popup(n, .2)
+            self.raise_popup_switch(n, 1.2)
 
     def reach_phones(self, count):
         for _ in range(count):

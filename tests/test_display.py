@@ -125,7 +125,7 @@ class TestDisplay(DisplayTestCase):
         self.mock_event("the_one_chase_tick")
         self.player()["the_one_stage"] = 1
         self.player()["the_one_progress"] = 5
-        self.hit_switch_and_run("s_popup_1", 1)
+        self.knock_down_popup(1, 1)
         played = self.widgets_played()
         clocks = [s["tokens"] for n, c, s in played if n == "countdown"]
         self.assertEqual("the_one_chase_tick", clocks[0]["event"])

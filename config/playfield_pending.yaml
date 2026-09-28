@@ -30,19 +30,45 @@
 # ---------------------------------------------------------------------------
 
 switches:
-  # Pop-ups: three Hobbit pop-up beast assemblies, driven as drop targets
-  # (the "Agents" in the Matrix design). Active means the pop-up is down.
+  # Pop-ups: three JJP Hobbit pop-up beast assemblies (the "Agents" in the
+  # Matrix design), driven as drop targets: down means knocked down. Each
+  # assembly has two switches (JJP Hobbit manual rev. 3.4):
+  # - `_up`, a microswitch that closes when the pop-up is raised. It is
+  #   `type: NC` so MPF reads it ACTIVE WHEN DOWN, which is what
+  #   `drop_targets:` expects. The drop target follows the real position.
+  # - `_hit`, the leaf switch behind the head. A hit releases the hold coil
+  #   (see c_popup_1_hold) and the pop-up falls.
+  # TODO(hardware): confirm in the switch test that the up switch closes when
+  # raised. If MPF shows it active while the pop-up is up, delete `type: NC`.
   # Drop target switches take no playfield_active tag; the device marks the
   # playfield active itself.
-  s_popup_1:                      # was s_agent_1
-    number: v-popup-1
+  s_popup_1_up:                   # was s_agent_1
+    number: v-popup-1-up
     platform: virtual
-  s_popup_2:
-    number: v-popup-2
+    type: NC
+  s_popup_1_hit:
+    number: v-popup-1-hit
     platform: virtual
-  s_popup_3:
-    number: v-popup-3
+    tags: playfield_active
+    events_when_activated: popup_1_hit
+  s_popup_2_up:
+    number: v-popup-2-up
     platform: virtual
+    type: NC
+  s_popup_2_hit:
+    number: v-popup-2-hit
+    platform: virtual
+    tags: playfield_active
+    events_when_activated: popup_2_hit
+  s_popup_3_up:
+    number: v-popup-3-up
+    platform: virtual
+    type: NC
+  s_popup_3_hit:
+    number: v-popup-3-hit
+    platform: virtual
+    tags: playfield_active
+    events_when_activated: popup_3_hit
 
   # Five-bank: Gottlieb 5-bank drop targets (the "Matrix Team" drops).
   s_five_bank_1:                  # was s_team_1
@@ -223,18 +249,46 @@ switches:
     platform: virtual
 
 coils:
-  c_popup_1_raise:                # was c_agent_1_raise
-    number: v-popup-1-raise
+  # Pop-ups: each Hobbit assembly has one dual-wound FL-11753 coil, which
+  # JJP drives as "Pop-up Power" and "Pop-up Hold" (two drivers). The power
+  # winding is the drop target's reset coil: it lifts the head. The hold
+  # winding keeps it up; releasing it lets the pop-up fall. The hold is
+  # enabled on the same events that reset the drop target and bank below,
+  # released by a hit, and released at game end so nothing is held in
+  # attract.
+  # TODO(hardware): JJP ran these at 70 V; here they get 48 V. Bench-test one
+  # assembly for pulse length and reliable lift, and check the hold winding's
+  # temperature after a long hold.
+  c_popup_1_power:                # was c_agent_1_raise
+    number: v-popup-1-power
     platform: virtual
     default_pulse_ms: 30
-  c_popup_2_raise:
-    number: v-popup-2-raise
+  c_popup_1_hold:
+    number: v-popup-1-hold
+    platform: virtual
+    allow_enable: true
+    enable_events: ball_starting, popups_raise, popup_1_raise
+    disable_events: popup_1_hit, game_ended, machine_reset_phase_3
+  c_popup_2_power:
+    number: v-popup-2-power
     platform: virtual
     default_pulse_ms: 30
-  c_popup_3_raise:
-    number: v-popup-3-raise
+  c_popup_2_hold:
+    number: v-popup-2-hold
+    platform: virtual
+    allow_enable: true
+    enable_events: ball_starting, popups_raise, popup_2_raise
+    disable_events: popup_2_hit, game_ended, machine_reset_phase_3
+  c_popup_3_power:
+    number: v-popup-3-power
     platform: virtual
     default_pulse_ms: 30
+  c_popup_3_hold:
+    number: v-popup-3-hold
+    platform: virtual
+    allow_enable: true
+    enable_events: ball_starting, popups_raise, popup_3_raise
+    disable_events: popup_3_hit, game_ended, machine_reset_phase_3
   c_five_bank_reset:              # was c_team_reset
     number: v-five-bank-reset
     platform: virtual
@@ -296,16 +350,16 @@ coils:
 
 drop_targets:
   popup_1:                        # was agent_1
-    switch: s_popup_1
-    reset_coil: c_popup_1_raise
+    switch: s_popup_1_up
+    reset_coil: c_popup_1_power
     reset_events: popup_1_raise
   popup_2:
-    switch: s_popup_2
-    reset_coil: c_popup_2_raise
+    switch: s_popup_2_up
+    reset_coil: c_popup_2_power
     reset_events: popup_2_raise
   popup_3:
-    switch: s_popup_3
-    reset_coil: c_popup_3_raise
+    switch: s_popup_3_up
+    reset_coil: c_popup_3_power
     reset_events: popup_3_raise
   five_bank_1:                    # was team_1
     switch: s_five_bank_1
@@ -331,7 +385,10 @@ drop_targets:
 drop_target_banks:
   popups:                         # was agents
     drop_targets: popup_1, popup_2, popup_3
-    reset_events: machine_reset_phase_3, ball_starting, popups_raise
+    # No machine_reset_phase_3: a raised pop-up is held by its coil, so they
+    # stay down in attract. Keep these events in step with the hold coils'
+    # enable_events.
+    reset_events: ball_starting, popups_raise
   five_bank:                      # was matrix_team
     drop_targets: five_bank_1, five_bank_2, five_bank_3, five_bank_4, five_bank_5
     reset_coil: c_five_bank_reset
@@ -395,5 +452,6 @@ magnets:
 # hardware rule and both halves must be on the same platform:
 # - the kickback coil (left outlane, relit by s_kickback_target),
 # - the upper right flipper (a third lower-playfield flipper), and
-# - the upper playfield's mini left flipper.
+# - the upper playfield's mini left flipper (the same type as the main
+#   flippers, user 2026-09-28: dual-wound, so a main and a hold coil).
 # Add each as `kickbacks:` / `flippers:` in config.yaml once its coil is wired.

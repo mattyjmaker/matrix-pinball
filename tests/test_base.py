@@ -14,13 +14,57 @@ class TestBase(MatrixTestCase):
         self.start()
         self.mock_event("popup_scoop_reset")
         for n in (1, 2, 3):
-            self.hit_switch_and_run("s_popup_{}".format(n), .1)
+            self.knock_down_popup(n, .1)
         self.assertTrue(self.machine.drop_target_banks["popups"].complete)
         self.assertPlayerVarEqual(3 * 10000 + 50000, "score")
         # A ball into the pop-up scoop raises them again.
         self.hit_switch_and_run("s_popup_scoop", 2)
         self.assertEventCalled("popup_scoop_reset")
         self.assertPlayerVarEqual(3 * 10000 + 50000 + 50000, "score")
+
+    def test_popups_down_and_unheld_in_attract(self):
+        self.advance_time_and_run(1)
+        for n in (1, 2, 3):
+            self.assertTrue(self.popup_down(n))
+            self.assertFalse(self.popup_held(n))
+
+    def test_popups_raised_and_held_at_ball_start(self):
+        self.start()
+        for n in (1, 2, 3):
+            self.assertFalse(self.popup_down(n))
+            self.assertTrue(self.popup_held(n))
+
+    def test_popup_hit_releases_only_its_hold(self):
+        self.start()
+        self.knock_down_popup(2)
+        self.assertTrue(self.popup_down(2))
+        self.assertTrue(self.popup_held(1))
+        self.assertTrue(self.popup_held(3))
+        self.assertPlayerVarEqual(10000, "score")
+
+    def test_popups_raise_holds_again(self):
+        self.start()
+        for n in (1, 2, 3):
+            self.knock_down_popup(n)
+        self.post_event("popups_raise", 1)
+        for n in (1, 2, 3):
+            self.assertFalse(self.popup_down(n))
+            self.assertTrue(self.popup_held(n))
+
+    def test_popup_holds_released_at_game_end(self):
+        self.start()
+        self.stop_game()
+        for n in (1, 2, 3):
+            self.assertFalse(self.popup_held(n))
+
+    def test_popup_hold_events_match_reset_events(self):
+        # A pop-up raised without its hold falls straight back down, so every
+        # event that resets a pop-up must also enable its hold.
+        bank = set(self.machine.drop_target_banks["popups"].config["reset_events"])
+        for n in (1, 2, 3):
+            target = set(self.machine.drop_targets["popup_{}".format(n)].config["reset_events"])
+            hold = set(self.machine.coils["c_popup_{}_hold".format(n)].config["enable_events"])
+            self.assertEqual(bank | target, hold)
 
     def test_popup_scoop_small_award_when_popups_up(self):
         self.start()

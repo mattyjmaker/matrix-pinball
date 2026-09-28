@@ -105,7 +105,7 @@ class TestClubHel(ActThreeTestCase):
 
     def agents_down(self):
         for n in (1, 2, 3):
-            self.drop("s_popup_{}".format(n))
+            self.knock_down_popup(n)
         self.advance_time_and_run(.5)
 
     def test_all_three_rounds(self):
@@ -314,9 +314,8 @@ class TestTheMachineCity(ActThreeTestCase):
 
     def rain(self, count):
         for i in range(count):
-            switch = "s_popup_{}".format(i % 3 + 1)
-            self.hit_switch_and_run(switch, .2)
-            self.release_switch_and_run(switch, 1.2)
+            self.knock_down_popup(i % 3 + 1, .2)
+            self.raise_popup_switch(i % 3 + 1, 1.2)
 
     def test_all_stages_to_the_end(self):
         self.start()
