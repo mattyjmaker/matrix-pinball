@@ -1,0 +1,129 @@
+#config_version=6
+
+# Act II, Chapter 2: The Oracle, first phase. Seraph's test, single ball,
+# 30 s. The two platform gate targets (the Sentinel entrance targets) are
+# Seraph's guard: hit them alternately, six times. Two hits on the same side
+# do not count. Win or lose, the Oracle's door opens and the Burly Brawl
+# multiball follows; beating Seraph lengthens its ball save.
+# This mode ends when the Brawl starts. If the ball drains first, the Act II
+# controller ends the chapter as played.
+# See docs/14-rules-act-2.md, section 3.
+
+mode:
+  start_events: start_a2_ch2
+  stop_events: mode_a2_ch2_brawl_mb_started
+  priority: 300
+
+timers:
+  a2_seraph:
+    start_value: 30
+    end_value: 0
+    direction: down
+    start_running: true
+    control_events:
+      - event: a2_seraph_over
+        action: stop
+
+state_machines:
+  a2_seraph_fight:
+    starting_state: fighting
+    states:
+      fighting:
+        label: Fighting
+      over:
+        label: The Oracle's door
+        events_when_started: a2_seraph_over
+    transitions:
+      - source: fighting
+        target: over
+        events: a2_seraph_beaten, timer_a2_seraph_complete
+  # Which side the last blow came from. A blow from the other side counts.
+  a2_seraph_side:
+    starting_state: none
+    states:
+      none:
+        label: No blow yet
+      left:
+        label: Left
+      right:
+        label: Right
+    transitions:
+      - source: none
+        target: left
+        events: a2_seraph_left
+        events_when_transitioning: a2_seraph_blow
+      - source: none
+        target: right
+        events: a2_seraph_right
+        events_when_transitioning: a2_seraph_blow
+      - source: left
+        target: right
+        events: a2_seraph_right
+        events_when_transitioning: a2_seraph_blow
+      - source: right
+        target: left
+        events: a2_seraph_left
+        events_when_transitioning: a2_seraph_blow
+
+counters:
+  a2_seraph_blows:
+    count_events: a2_seraph_blow
+    count_complete_value: 6
+    events_when_complete: a2_seraph_beaten
+    start_enabled: true
+
+event_player:
+  platform_gate_left_hit{device.state_machines.a2_seraph_fight.state=="fighting"}: a2_seraph_left
+  platform_gate_right_hit{device.state_machines.a2_seraph_fight.state=="fighting"}: a2_seraph_right
+  a2_seraph_over: request_brawl_mb
+
+variable_player:
+  mode_a2_ch2_seraph_started:
+    objective:
+      action: set
+      string: "SERAPH: ALTERNATE THE SENTINEL ENTRANCE TARGETS"
+    a2_seraph_won:
+      action: set
+      int: 0
+  a2_seraph_blow:
+    score: 50000
+  a2_seraph_beaten:
+    score: 250000
+    a2_seraph_won:
+      action: set
+      int: 1
+  a2_seraph_over:
+    objective:
+      action: set
+      string: "THE ORACLE: THE BURLY BRAWL IS NEXT"
+
+widget_player:
+  mode_a2_ch2_seraph_started:
+    video_clip:
+      tokens:
+        clip: seraph_test
+      expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT II  CHAPTER 2
+        title: THE ORACLE
+        goal: "SERAPH: ALTERNATE THE ENTRANCE TARGETS"
+      expire: 5s
+    countdown:
+      key: a2_seraph_clock
+      priority: 10
+      tokens:
+        label: SERAPH
+        event: timer_a2_seraph_tick
+        seconds: "30"
+  a2_seraph_over:
+    countdown:
+      key: a2_seraph_clock
+      action: remove
+  a2_seraph_beaten:
+    mode_banner:
+      tokens:
+        title: SERAPH STEPS ASIDE
+        detail: THE BRAWL'S BALL SAVE IS LONGER
+      expire: 3s

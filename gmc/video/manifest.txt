@@ -32,6 +32,41 @@ subway_smith
 neo_resurrects
 emp_fire
 
+# Act II clips. Referenced by the Act II mode configs (see
+# docs/14-rules-act-2.md, section 7) and not yet cut.
+trinity_dream
+zion_dock
+zion_temple
+seraph_test
+burly_brawl
+merovingian
+keymaker
+twins_garage
+freeway_trucks
+neo_flies
+logos_mb_intro
+sentinel_hunt
+power_plant
+backdoor_hallway
+architect_doors
+trinity_falls
+sentinels_stop
+
+# Act III clips. Referenced by the Act III mode configs (see
+# docs/15-rules-act-3.md, section 7) and not yet cut.
+mobil_avenue
+trainman
+club_hel
+siege_dock
+hammer_tunnels
+hammer_emp
+apu_corps
+sentinel_swarm
+above_the_clouds
+deus_ex_machina
+smith_rain
+peace_sunrise
+
 # Terminator 2 clips. Referenced by the T2 mode configs (see
 # docs/12-rules-terminator-2.md, section 12) and not yet cut.
 mall_pursuit

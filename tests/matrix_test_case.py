@@ -26,12 +26,23 @@ class MatrixTestCase(MpfGameTestCase):
     def get_platform(self):
         return "smart_virtual"
 
-    def start_matrix_game(self):
-        """Fill the trough, start a game as the Matrix and put the first ball on the playfield."""
+    def start_matrix_game(self, act="I"):
+        """Fill the trough, start a game as the Matrix in `act` and put the first ball on the playfield."""
         self.fill_troughs()
         self.start_game()
         self.choose_game(0)
+        self.choose_act(act)
         self.confirm_playfield()
+
+    def choose_act(self, act):
+        """Step the act select to `act` and confirm. Act I is offered first."""
+        if not self.machine.modes["act_select"].active:
+            return
+        while self.machine.game.player["act_choice"] != act:
+            self.hit_and_release_switch("s_right_flipper")
+            self.advance_time_and_run(.1)
+        self.hit_and_release_switch("s_start")
+        self.advance_time_and_run(1)
 
     def start_t2_game(self):
         """Fill the trough, start a game as Terminator 2 and put the first ball on the playfield."""

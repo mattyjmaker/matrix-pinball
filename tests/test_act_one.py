@@ -210,6 +210,15 @@ class TestChapterThree(ActOneTestCase):
         self.assertPlayerVarEqual(0, "freed_mouse")
         self.assertPlayerVarEqual(4, "chapter_next")
 
+    def test_jump_round_times_out_after_sparring_times_out(self):
+        self.start()
+        self.start_chapter(3)
+        self.advance_time_and_run(62)
+        self.assertPlayerVarEqual("JUMP PROGRAM: REAL WORLD RAMP, THEN A STANDUP", "objective")
+        self.advance_time_and_run(21)
+        self.assertModeNotRunning("ch3_construct")
+        self.assertPlayerVarEqual(4, "chapter_next")
+
     def test_same_side_is_not_a_combo(self):
         self.start()
         self.start_chapter(3)

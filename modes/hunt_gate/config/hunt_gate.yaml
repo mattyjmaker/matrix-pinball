@@ -1,0 +1,49 @@
+#config_version=6
+
+# Sentinel Hunt gate: Act II's re-skin of the Sentinel gate. Four hits across
+# the two platform gate targets (the Sentinel entrance targets) open the gate.
+# A ball into the platform VUK (the Sentinel VUK) while it is open requests
+# the Sentinel Hunt. The gate closes when that multiball ends.
+# See docs/14-rules-act-2.md, section 4.
+
+mode:
+  start_events: act_two_features_start
+  stop_events: act_two_features_stop, act_two_complete
+  priority: 250
+
+counters:
+  hunt_entrance:
+    count_events: platform_gate_hit
+    count_complete_value: 4
+    events_when_complete: hunt_opened
+    start_enabled: true
+    reset_events: mode_hunt_mb_stopped
+    enable_events: mode_hunt_mb_stopped
+
+event_player:
+  hunt_opened: platform_gate_open
+  balldevice_bd_platform_vuk_ball_entered{current_player.hunt_open==1}: request_hunt_mb, hunt_requested
+  mode_hunt_mb_stopped: platform_gate_close
+
+variable_player:
+  mode_hunt_gate_started:
+    hunt_open:
+      action: set
+      int: 0
+  hunt_opened:
+    score: 100000
+    hunt_open:
+      action: set
+      int: 1
+  hunt_requested:
+    hunt_open:
+      action: set
+      int: 0
+
+widget_player:
+  hunt_opened:
+    mode_banner:
+      tokens:
+        title: THE SENTINELS ARE SEARCHING
+        detail: SENTINEL VUK STARTS THE HUNT
+      expire: 3s

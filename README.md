@@ -135,6 +135,16 @@ after 15 s with no choice the Matrix starts.
   the VPX Trinity and Sentinel multiballs, the FREED roster and The One
   wizard. The rules, every timer and score, and the mode map are in
   `docs/11-rules-act-1.md`.
+- **The Matrix, Act II** (the second film, *Reloaded*): four chapter modes in
+  film order, the Logos and Sentinel Hunt multiballs (Act I's two, re-skinned),
+  the ALLIES roster and the Architect wizard with its two doors. It starts on
+  the ball The One's EMP is fired, or from the act select before the first
+  ball. The rules are in `docs/14-rules-act-2.md`.
+- **The Matrix, Act III** (the third film, *Revolutions*): Mobil Avenue, Club
+  Hel, the Siege of Zion and the Hammer in film order, the APU Corps and
+  Sentinel Swarm multiballs, the DEFENDERS roster and the Machine City
+  wizard. Beating it completes the Matrix; the player plays on in the base
+  mode. The rules are in `docs/15-rules-act-3.md`.
 - **Terminator 2**: four chapter modes in film order, the Future War and
   T-1000 multiballs, the SAVED roster and the Judgment Day wizard, on the same
   hardware under its own names. The rules and the game select are in
@@ -188,11 +198,12 @@ a device or a drop target stays down.
 | `y` | Backboard ramp (Sentinel Ramp) | | `6` | Platform magnet (Sentinel magnet) |
 | `2` `3` `4` | Pop-ups 1 to 3 up switches (Agents, toggle; on means down) | | `0` `9` `8` `7` | Outlanes and inlanes |
 
-The trough keys are `x c v b n m k`. The pop-up keys move the up switch,
-which is what the rules read; a real hit closes the hit switch, releases the
-hold coil and the pop-up falls, but the simulator does not model the fall. The five-bank and three-bank drops, upper
-playfield standups, platform targets and pop area standups have no key; use
-MPF Monitor (`pinball-monitor`) for those. The Godot editor's MPF tab rewrites
+The trough keys are `x c v b n m k`. `z`, `p` and `comma` toggle three-bank
+drops 1 to 3 (Act II). The pop-up keys move the up switch, which is what the
+rules read; a real hit closes the hit switch, releases the hold coil and the
+pop-up falls, but the simulator does not model the fall. The five-bank drops,
+upper playfield standups, platform targets and pop area standups have no key;
+use MPF Monitor (`pinball-monitor`) for those. The Godot editor's MPF tab rewrites
 `gmc/gmc.cfg` in full, so check this section survives an editor save.
 
 ## Slides and the Matrix look
@@ -227,7 +238,8 @@ by the attract slide. Swap it back in by replacing the `Rain` ColorRect with a
 takes over with `widget_player:`; nothing permanent is drawn there, so the score
 reads when nothing is happening and a mode owns the screen when it is. The
 persistent HUD sits around it: player and ball top left, act top centre, player
-scores top right, the FREED roster down the left, power station locks bottom
+scores top right, the roster down the left (FREED in Act I, ALLIES in Act
+II, DEFENDERS in Act III), power station locks bottom
 right, and the objective line above the score.
 
 While the stage is idle it runs ambient effects, which `slides/base/stage.gd`
@@ -249,16 +261,21 @@ follows; until then each element shows its authored placeholder.
 | `objective` | str | The objective line above the score |
 | `balls_locked` | int | How many lock cells are lit (both games) |
 | `freed_trinity`, `freed_tank`, … | bool | Lights that name in the FREED roster |
+| `allies_link`, `allies_seraph` and the rest | bool | Lights that name in the ALLIES roster, shown while `act` is `II` |
+| `defenders_sati`, `defenders_kid` and the rest | bool | Lights that name in the DEFENDERS roster, shown while `act` is `III` |
 | `saved_john`, `saved_sarah`, … | bool | Lights that name in the SAVED roster |
 
-The Act I modes set all of these (docs/11-rules-act-1.md, section 9); the
+The Act I modes set all of these (docs/11-rules-act-1.md, section 9), Act II
+sets its roster (docs/14-rules-act-2.md, section 5), and so does Act III
+(docs/15-rules-act-3.md, section 5); the
 Terminator 2 modes set theirs (docs/12-rules-terminator-2.md, section 11).
 
 #### Stage widgets
 
-The modes draw on the centre stage with five widgets in `gmc/widgets/`:
+The modes draw on the centre stage with six widgets in `gmc/widgets/`:
 `countdown` (a hurry-up clock that churns and locks like the trace readout),
-`chapter_card`, `mode_banner`, `pill_choice` and `act_select`. Terminator 2
+`chapter_card`, `mode_banner`, `pill_choice`, `doors_choice` (the Architect's
+two doors, Act II) and `act_select`. Terminator 2
 has the same layouts in its own palette: `t2_countdown`, `t2_card`,
 `t2_banner`, `dyson_choice`, plus `game_select`, which plays before the game
 is chosen. The zones they use, and the rules for adding more, are in

@@ -1,0 +1,88 @@
+#config_version=6
+
+# Sentinel Swarm: Act III's re-skin of Sentinel Multiball, the Sentinels
+# pouring into the dock. 3 balls. Jackpots on the backboard ramp (the
+# Sentinel ramp) and either platform target; three jackpots add the KID to
+# the DEFENDERS. Add-a-ball, once per multiball: hit both gate targets and a
+# platform target to light it, then shoot the platform VUK. Peaks at 4 balls.
+# See docs/15-rules-act-3.md, section 4.
+
+mode:
+  start_events: start_swarm_mb
+  stop_events: multiball_swarm_ended
+  priority: 320
+
+multiballs:
+  swarm:
+    ball_count: 3
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: mode_swarm_mb_started
+    add_a_ball_events: swarm_add_a_ball
+    add_a_ball_shoot_again: 10s
+
+accruals:
+  swarm_add_a_ball_targets:
+    events:
+      - platform_gate_left_hit
+      - platform_gate_right_hit
+      - platform_target_hit
+    events_when_complete: swarm_add_a_ball_lit
+    start_enabled: true
+
+counters:
+  swarm_jackpots:
+    count_events: swarm_jackpot
+    count_complete_value: 3
+    events_when_complete: swarm_mb_completed
+    start_enabled: true
+
+event_player:
+  backboard_ramp_hit: swarm_jackpot
+  platform_target_hit: swarm_jackpot
+  balldevice_bd_platform_vuk_ball_entered{current_player.swarm_aab_lit==1}: swarm_add_a_ball
+
+variable_player:
+  mode_swarm_mb_started:
+    objective:
+      action: set
+      string: "SENTINEL SWARM: SENTINEL RAMP AND BOSS FOR JACKPOTS"
+    swarm_aab_lit:
+      action: set
+      int: 0
+  swarm_jackpot:
+    score: 150000
+  swarm_add_a_ball_lit:
+    swarm_aab_lit:
+      action: set
+      int: 1
+  swarm_add_a_ball:
+    swarm_aab_lit:
+      action: set
+      int: 0
+
+widget_player:
+  mode_swarm_mb_started:
+    video_clip:
+      tokens:
+        clip: sentinel_swarm
+      expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: MULTIBALL
+        title: SENTINEL SWARM
+        goal: SENTINEL RAMP AND BOSS FOR JACKPOTS
+      expire: 4s
+  swarm_add_a_ball_lit:
+    mode_banner:
+      tokens:
+        title: ADD-A-BALL LIT
+        detail: SHOOT THE SENTINEL VUK
+      expire: 3s
+  swarm_jackpot:
+    mode_banner:
+      tokens:
+        title: JACKPOT
+        detail: ""
+      expire: 2s

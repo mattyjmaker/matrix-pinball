@@ -1,0 +1,166 @@
+#config_version=6
+
+# Act II, Chapter 3: The Merovingian. Single ball, three timed rounds, built
+# like Act I's Construct: a round lost on time still moves on.
+#   1. The chateau (30 s): the weapons on the wall, all three three-bank drops.
+#   2. Persephone (30 s): her way through the chateau, the pop-up scoop (the
+#      Agents Coming scoop).
+#   3. The Keymaker (20 s): the middle loop VUK (the Deja Vu VUK, his room),
+#      then any ramp (a backdoor out).
+# Winning round 3 allies PERSEPHONE. See docs/14-rules-act-2.md, section 3.
+
+mode:
+  start_events: start_a2_ch3
+  stop_events: a2_ch3_finish
+  events_when_stopped: a2_ch3_ended
+  priority: 300
+
+timers:
+  a2_ch3_round:
+    start_value: 30
+    end_value: 0
+    direction: down
+    start_running: true
+    control_events:
+      - event: a2_ch3_persephone_started
+        action: restart
+      - event: a2_ch3_keymaker_started
+        action: jump
+        value: 20
+      # The timer has stopped if the last round ran out; start it again.
+      - event: a2_ch3_keymaker_started
+        action: start
+      - event: a2_ch3_done
+        action: stop
+
+state_machines:
+  a2_ch3_round:
+    starting_state: chateau
+    states:
+      chateau:
+        label: The chateau
+      persephone:
+        label: Persephone
+        events_when_started: a2_ch3_persephone_started
+      keymaker:
+        label: The Keymaker
+        events_when_started: a2_ch3_keymaker_started
+      done:
+        label: Done
+        events_when_started: a2_ch3_done
+    transitions:
+      - source: chateau
+        target: persephone
+        events: drop_target_bank_three_bank_down
+        events_when_transitioning: a2_ch3_chateau_won
+      - source: chateau
+        target: persephone
+        events: timer_a2_ch3_round_complete
+      - source: persephone
+        target: keymaker
+        events: balldevice_bd_popup_scoop_ball_entered
+        events_when_transitioning: a2_ch3_persephone_won
+      - source: persephone
+        target: keymaker
+        events: timer_a2_ch3_round_complete
+      - source: keymaker
+        target: done
+        events: a2_ch3_keymaker_found
+      - source: keymaker
+        target: done
+        events: timer_a2_ch3_round_complete
+        events_when_transitioning: a2_ch3_keymaker_lost
+
+event_player:
+  mode_a2_ch3_merovingian_started: three_bank_reset
+  ramp_hit{device.state_machines.a2_ch3_round.state=="keymaker" and current_player.a2_ch3_door==1}: a2_ch3_keymaker_found
+  a2_ch3_keymaker_found: a2_ch3_completed
+  a2_ch3_done: a2_ch3_finish|500ms
+
+variable_player:
+  mode_a2_ch3_merovingian_started:
+    objective:
+      action: set
+      string: "THE CHATEAU: ALL 3 TARGETS OF THE THREE-BANK"
+    a2_ch3_door:
+      action: set
+      int: 0
+  a2_ch3_chateau_won:
+    score: 150000
+  a2_ch3_persephone_started:
+    objective:
+      action: set
+      string: "PERSEPHONE: SHOOT THE AGENTS COMING SCOOP"
+  a2_ch3_persephone_won:
+    score: 200000
+  a2_ch3_keymaker_started:
+    objective:
+      action: set
+      string: "THE KEYMAKER: DEJA VU VUK, THEN ANY RAMP"
+  balldevice_bd_middle_loop_vuk_ball_entered{device.state_machines.a2_ch3_round.state=="keymaker"}:
+    a2_ch3_door:
+      action: set
+      int: 1
+  a2_ch3_keymaker_found:
+    score: 300000
+
+# The lost-Keymaker callout is in act_two.yaml: this mode stops half a second
+# after the last round, which would clear it.
+widget_player:
+  mode_a2_ch3_merovingian_started:
+    video_clip:
+      tokens:
+        clip: merovingian
+      expire: 6s
+    chapter_card:
+      priority: 10
+      tokens:
+        kicker: ACT II  CHAPTER 3
+        title: THE MEROVINGIAN
+        goal: "THE CHATEAU: ALL 3 THREE-BANK TARGETS"
+      expire: 5s
+    countdown:
+      key: a2_ch3_clock
+      priority: 10
+      tokens:
+        label: ROUND 1  THE CHATEAU
+        event: timer_a2_ch3_round_tick
+        seconds: "30"
+  a2_ch3_chateau_won:
+    mode_banner:
+      tokens:
+        title: THE CHATEAU
+        detail: WEAPONS OFF THE WALL
+      expire: 2s
+  a2_ch3_persephone_started:
+    countdown:
+      key: a2_ch3_clock
+      action: update
+      tokens:
+        label: ROUND 2  PERSEPHONE
+        event: timer_a2_ch3_round_tick
+        seconds: "30"
+        total: "30"
+  a2_ch3_persephone_won:
+    mode_banner:
+      tokens:
+        title: PERSEPHONE
+        detail: SHE KNOWS THE WAY
+      expire: 2s
+  a2_ch3_keymaker_started:
+    video_clip:
+      tokens:
+        clip: keymaker
+      expire: 5s
+    countdown:
+      key: a2_ch3_clock
+      action: update
+      tokens:
+        label: ROUND 3  THE KEYMAKER
+        event: timer_a2_ch3_round_tick
+        seconds: "20"
+        total: "20"
+  a2_ch3_done:
+    countdown:
+      key: a2_ch3_clock
+      action: remove

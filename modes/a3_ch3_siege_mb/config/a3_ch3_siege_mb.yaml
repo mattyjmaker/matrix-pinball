@@ -1,0 +1,128 @@
+#config_version=6
+
+# Act III, Chapter 3: The Siege of Zion. The chapter is a multiball, started
+# straight from the Mission scoop, so it also counts as the one multiball
+# that may run. Three stages:
+#   The dock (3 balls): the APUs hold the dock. Ten hits across the Sentinel
+#     entrance and boss targets (the platform gate and targets).
+#   The gate (4 balls): the Kid opens the gate for the Hammer. All three
+#     three-bank drops.
+#   Mifune's last stand (5 balls): the Sentinel ramp (the backboard ramp).
+#     The super jackpot adds MIFUNE to the DEFENDERS.
+# The chapter ends when the multiball does.
+# See docs/15-rules-act-3.md, section 3.
+
+mode:
+  start_events: start_a3_ch3
+  stop_events: multiball_siege_ended
+  events_when_stopped: a3_ch3_ended
+  priority: 310
+
+multiballs:
+  siege:
+    ball_count: 3
+    ball_count_type: total
+    shoot_again: 20s
+    start_events: mode_a3_ch3_siege_mb_started
+    add_a_ball_events: a3_gate_started, a3_last_stand_started
+    add_a_ball_shoot_again: 10s
+
+state_machines:
+  a3_siege_stage:
+    starting_state: dock
+    states:
+      dock:
+        label: The dock
+      gate:
+        label: The gate
+        events_when_started: a3_gate_started
+      last_stand:
+        label: Mifune's last stand
+        events_when_started: a3_last_stand_started
+      done:
+        label: The dock held
+    transitions:
+      - source: dock
+        target: gate
+        events: a3_dock_held
+      - source: gate
+        target: last_stand
+        events: drop_target_bank_three_bank_down
+      - source: last_stand
+        target: done
+        events: a3_siege_super
+
+counters:
+  a3_siege_sentinels:
+    count_events: a3_siege_hit
+    count_complete_value: 10
+    events_when_complete: a3_dock_held
+    start_enabled: true
+
+event_player:
+  platform_gate_hit{device.state_machines.a3_siege_stage.state=="dock"}: a3_siege_hit
+  platform_target_hit{device.state_machines.a3_siege_stage.state=="dock"}: a3_siege_hit
+  a3_gate_started: three_bank_reset
+  backboard_ramp_hit{device.state_machines.a3_siege_stage.state=="last_stand"}: a3_siege_super
+  a3_siege_super: a3_ch3_completed
+
+variable_player:
+  mode_a3_ch3_siege_mb_started:
+    objective:
+      action: set
+      string: "THE DOCK: SENTINEL ENTRANCE AND BOSS TARGETS"
+  a3_siege_hit:
+    score: 75000
+  a3_gate_started:
+    objective:
+      action: set
+      string: "THE GATE: ALL THREE THREE-BANK TARGETS"
+  a3_last_stand_started:
+    score: 250000
+    objective:
+      action: set
+      string: "MIFUNE'S LAST STAND: SENTINEL RAMP"
+  a3_siege_super:
+    score: 1000000
+    objective:
+      action: set
+      string: "THE DOCK IS HELD"
+
+widget_player:
+  mode_a3_ch3_siege_mb_started:
+    video_clip:
+      tokens:
+        clip: siege_dock
+      expire: 8s
+    chapter_card:
+      key: a3_siege_card
+      priority: 10
+      tokens:
+        kicker: THE SIEGE OF ZION  STAGE 1
+        title: THE DOCK
+        goal: SENTINEL ENTRANCE AND BOSS TARGETS
+      expire: 4s
+  a3_gate_started:
+    chapter_card:
+      key: a3_siege_card
+      priority: 10
+      tokens:
+        kicker: THE SIEGE OF ZION  STAGE 2
+        title: THE GATE
+        goal: ALL THREE THREE-BANK TARGETS
+      expire: 4s
+  a3_last_stand_started:
+    chapter_card:
+      key: a3_siege_card
+      priority: 10
+      tokens:
+        kicker: THE SIEGE OF ZION  STAGE 3
+        title: THE LAST STAND
+        goal: SENTINEL RAMP
+      expire: 4s
+  a3_siege_super:
+    mode_banner:
+      tokens:
+        title: SUPER JACKPOT
+        detail: THE DOCK IS HELD
+      expire: 3s
