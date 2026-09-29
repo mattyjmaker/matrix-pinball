@@ -18,35 +18,32 @@ by clicking its position on the playfield image, with nothing to memorise.
 See `docs/01-install-running-tools.md` section 7 for the full reference this
 was drawn from.
 
-## What's needed: a playfield photo
+## The playfield image: a placeholder, not this machine's real layout
 
-Monitor requires `monitor/playfield.jpg` to exist before device positions
-mean anything (it drags devices onto that image and saves their positions as
-percentages in `monitor/monitor.yaml`). **This folder does not have one yet**,
-and none could be sourced automatically:
+`monitor/playfield.jpg` is a user-supplied stylised render of a generic
+Matrix-themed playfield (two flippers, two slings, a handful of standups, two
+ramps to a centre feature). **It is not a photo of this machine and does not
+match its actual switch/device layout** in `config/config.yaml` and
+`config/playfield_pending.yaml` — this machine has, among others, a trough,
+five-bank and three-bank drop targets, three pop-up "agent" assemblies, four
+ramps, an upper playfield with three standups, and a platform toy with a
+magnet, none of which appear on this image. Per `docs/08-this-machine.md`,
+the cabinet I/O board was still unwired as of 2026-09-20, so a real photo of
+the built playfield likely doesn't exist yet either.
 
-- No playfield photo exists anywhere in this repository.
-- The Dropbox design folder (`docs/10-dropbox-design-files.md`) has candidate
-  art (`Drawings/Playfield/Playfield v79.dxf`, `Matrix v1 6/v1 7
-  Blueprint.png`, the draft playfield art PSD/PNG) but this session has no
-  Dropbox link or credentials to fetch them.
-- Per `docs/08-this-machine.md`, the cabinet I/O board was still unwired as
-  of 2026-09-20, so a photo of the actual physical playfield as currently
-  built may not exist yet either.
-- `*.jpg`/`*.png` are Git LFS-tracked (`.gitattributes`), and `git-lfs` is not
-  installed in this container, so even a placeholder image couldn't be
-  committed correctly from here.
-
-**To finish setup:** add a JPG or PNG of the playfield (a phone photo of the
-bare playfield is fine — it doesn't need to be finished or wired) as
-`monitor/playfield.jpg`, or run `mpf monitor -i your_image.jpg` to point at a
-differently named file. A blueprint or the draft playfield art from Dropbox
-works too as a stand-in until a real photo exists.
+Treat device positions dragged onto this image as approximate placeholders
+for exercising switch logic now. **Replace `monitor/playfield.jpg` with a
+real photo once the playfield is built**, or sooner if a truer stand-in shows
+up (the Dropbox design folder in `docs/10-dropbox-design-files.md` has
+`Matrix v1 6/v1 7 Blueprint.png` and the draft playfield art PSD/PNG, but this
+session has no Dropbox link or credentials to fetch them). Swapping the file
+later won't invalidate `monitor/monitor.yaml`; positions are saved as
+percentages, so they'll just want re-dragging onto the new image.
 
 ## Setup
 
 1. Install Monitor (separate from MPF itself): `pip install mpf-monitor`.
-2. Add `monitor/playfield.jpg` (see above).
+2. `monitor/playfield.jpg` is already in place (see above).
 3. Run `mpf monitor` from the repo root (the machine folder).
 4. Start MPF in another terminal, e.g. `mpf -Xt` (smart_virtual platform,
    recommended with Monitor since it simulates ball devices; matches the
