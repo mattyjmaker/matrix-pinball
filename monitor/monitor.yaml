@@ -1,0 +1,23 @@
+device_size: 0.022
+device_alpha: 220
+device_outline: 3
+switch:
+  s_left_flipper: {x: 0.20, y: 0.76}
+  s_right_flipper: {x: 0.80, y: 0.76}
+  s_left_flipper_eos: {x: 0.20, y: 0.79}
+  s_right_flipper_eos: {x: 0.80, y: 0.79}
+  s_sling_left: {x: 0.30, y: 0.60}
+  s_sling_right: {x: 0.62, y: 0.60}
+  s_outlane_left: {x: 0.10, y: 0.83}
+  s_outlane_right: {x: 0.90, y: 0.83}
+  s_inlane_left_outer: {x: 0.17, y: 0.80}
+  s_inlane_left_inner: {x: 0.24, y: 0.77}
+  s_inlane_right_inner: {x: 0.76, y: 0.77}
+  s_inlane_right_outer: {x: 0.83, y: 0.80}
+  s_start: {x: 0.50, y: 0.94}
+  s_five_bank_1: {x: 0.37, y: 0.40}
+  s_five_bank_2: {x: 0.53, y: 0.45}
+  s_five_bank_3: {x: 0.62, y: 0.35}
+  s_mode_drop: {x: 0.79, y: 0.58}
+  s_mode_scoop: {x: 0.86, y: 0.68}
+  s_popup_scoop: {x: 0.86, y: 0.72}
