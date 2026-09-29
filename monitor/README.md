@@ -21,8 +21,9 @@ was drawn from.
 ## The playfield image: a placeholder, not this machine's real layout
 
 `monitor/playfield.jpg` is a user-supplied stylised render of a generic
-Matrix-themed playfield (two flippers, two slings, a handful of standups, two
-ramps to a centre feature). **It is not a photo of this machine and does not
+Matrix-themed playfield (two flippers, two slings, several standup targets,
+two ramps either side of a centre feature). **It is not a photo of this
+machine and does not
 match its actual switch/device layout** in `config/config.yaml` and
 `config/playfield_pending.yaml` — this machine has, among others, a trough,
 five-bank and three-bank drop targets, three pop-up "agent" assemblies, four
