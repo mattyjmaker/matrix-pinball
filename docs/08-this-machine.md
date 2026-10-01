@@ -211,6 +211,8 @@ switch: the pendulum touching the ring closes it. No polarity, 22 AWG.
   until FAST releases soft power. Its other switch lead goes to the pin
   labelled "19" on CABINET B (pin 4, `cab-19`, orange 22 AWG), so the
   purple on its first lead is now its switch return as well as the tilt's.
+  Wired as planned (user, 2026-10-01): switch lead on the pin labelled "19"
+  (`cab-19`); the tilt bob stays on the pin labelled "18" (`cab-18`).
   In the config as `s_cabinet_button`. When soft power arrives: take both
   switch leads off (join the two purples directly for the tilt), and move
   blue and yellow to the Neuron's J4 pins 2 and 3.
