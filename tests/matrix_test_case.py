@@ -26,6 +26,21 @@ class MatrixTestCase(MpfGameTestCase):
     def get_platform(self):
         return "smart_virtual"
 
+    def setUp(self):
+        super().setUp()
+        # Stand in for a player who plunges every ball as soon as it reaches
+        # the shooter lane. smart_virtual leaves a player-controlled ball in
+        # bd_plunger (mechanical_eject) until s_plunger goes inactive.
+        self.machine.events.add_handler("balldevice_bd_plunger_ball_entered", self._plunge_soon)
+
+    def _plunge_soon(self, **kwargs):
+        del kwargs
+        self.machine.clock.schedule_once(self._plunge, .5)
+
+    def _plunge(self):
+        if self.machine.switch_controller.is_active(self.machine.switches["s_plunger"]):
+            self.machine.switch_controller.process_switch("s_plunger", 0, logical=True)
+
     def start_matrix_game(self, act="I"):
         """Fill the trough, start a game as the Matrix in `act` and put the first ball on the playfield."""
         self.fill_troughs()

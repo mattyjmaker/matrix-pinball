@@ -198,8 +198,9 @@ a device or a drop target stays down.
 | `y` | Backboard ramp (Sentinel Ramp) | | `6` | Platform magnet (Sentinel magnet) |
 | `2` `3` `4` | Pop-ups 1 to 3 up switches (Agents, toggle; on means down) | | `0` `9` `8` `7` | Outlanes and inlanes |
 
-The trough keys are `x c v b n m k`. `z`, `p` and `comma` toggle three-bank
-drops 1 to 3 (Act II). The pop-up keys move the up switch, which is what the
+The trough keys are `x c v b n m k`, and `.` (full stop) toggles the plunger
+lane: turn it off to plunge a ball waiting there. `z`, `p` and `comma` toggle
+three-bank drops 1 to 3 (Act II). The pop-up keys move the up switch, which is what the
 rules read; a real hit closes the hit switch, releases the hold coil and the
 pop-up falls, but the simulator does not model the fall. The five-bank drops,
 upper playfield standups, platform targets and pop area standups have no key;
@@ -428,8 +429,9 @@ FAST numbers. They are commented out in `config/config.yaml` and marked
   8-ball PBL-100-0016-00; raise both to 8 once the trough 1 opto is fitted.
 - Playfield features not yet built or wired are on the virtual platform in
   `config/playfield_pending.yaml` (see "Game rules").
-- The plunger lane has no switch, so the trough ejects directly to the playfield
-  as described in the MPF docs for plunger lanes without a switch.
+- The plunger lane switch is `s_plunger` (`bottom32-0`). The trough ejects to
+  `bd_plunger`, which waits for a manual plunge at ball start and fires
+  `c_auto_plunge` for multiball balls.
 
 ### Cabinet I/O board (FP-I/O-0024)
 

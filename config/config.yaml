@@ -497,20 +497,23 @@ switches:
   # s_trough1: # Opto Switch (Not yet installed)
   #   number: TODO
   #   type: NC
+  # Corrected by the user 2026-10-02: the trough switch closest to the eject
+  # (kickout) is on input 1, then 2 and so on to 7. Input 0 is the shooter
+  # lane. TODO(hardware): confirm each in the switch test.
   s_trough2:
-    number: bottom32-0
-  s_trough3:
     number: bottom32-1
+  s_trough3:
+    number: bottom32-2
   s_trough4:
     number: bottom32-3
   s_trough5:
-    number: bottom32-2
-  s_trough6:
     number: bottom32-4
-  s_trough7:
+  s_trough6:
     number: bottom32-5
-  s_trough8:
+  s_trough7:
     number: bottom32-6
+  s_trough8:
+    number: bottom32-7
   # TODO(hardware): jam opto not yet installed. When fitted, restore it here and
   # uncomment the jam_switch / eject_coil_jam_pulse lines in bd_trough. It needs
   # no keyboard mapping, since a jam is not a state worth simulating by hand.
@@ -518,14 +521,11 @@ switches:
   #   number: TODO
   #   type: NC
 
-  # plunger lane
-  # TODO(hardware): plunger lane switch not yet installed. When fitted, restore
-  # it here and the bd_plunger device, set playfield default_source_device back
-  # to bd_plunger, set bd_trough eject_targets back to bd_plunger, and add this
-  # line to the [keyboard] section of gmc/gmc.cfg:
-  #     p=["switch", "s_plunger", "toggle"]
-  # s_plunger:
-  #   number: TODO
+  # Plunger (shooter) lane, wired by the user 2026-10-02 to input 0 on the
+  # front 3208. Not tagged playfield_active (see docs/04, ball search).
+  # TODO(hardware): confirm in the switch test.
+  s_plunger:
+    number: bottom32-0
 
   # Pop bumper area (the "EMP" area in the Matrix design). Every hardware
   # name in this file and in playfield_pending.yaml is generic: it says what
@@ -660,10 +660,7 @@ autofire_coils:
 playfields:
   playfield:
     tags: default
-    # TODO(hardware): set back to bd_plunger once s_plunger is installed.
-    # With no plunger switch the lane counts as playfield, so the trough is
-    # the source device (MPF docs: mechs/plungers/mechanical_no_switch).
-    default_source_device: bd_trough
+    default_source_device: bd_plunger
 
 # Seeds the trough on the virtual and smart_virtual platforms so `mpf -x/-X`
 # starts with balls already in it and the start button works straight away.
@@ -711,16 +708,16 @@ ball_devices:
     tags: trough, home, drain
     # jam_switch: s_trough_jam # Opto switch to detect a jam in the trough
     # eject_coil_jam_pulse: 15ms
-    # TODO(hardware): set back to bd_plunger once s_plunger is installed.
-    eject_targets: playfield
+    eject_targets: bd_plunger
     eject_timeouts: 3s
-  # TODO(hardware): restore with s_plunger.
-  # bd_plunger:
-  #   ball_switches: s_plunger
-  #   mechanical_eject: true
-  #   eject_timeouts: 15s
-  #   tags: plunger, shooter
-  #   eject_coil: c_auto_plunge
+  bd_plunger:
+    ball_switches: s_plunger
+    mechanical_eject: true
+    # Only coil (auto-plunge) ejects time out; a manual plunge waits forever.
+    # 3 to 5 s suits a plunger (docs/04-game-logic-and-mechs.md, ball devices).
+    eject_timeouts: 5s
+    tags: plunger, shooter
+    eject_coil: c_auto_plunge
 
 # One gameplay slide per game: the Matrix's `base` and Terminator 2's
 # `base_t2`. Both start on ball_starting; on player 1's first ball the choice

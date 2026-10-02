@@ -559,8 +559,9 @@ Open items:
       resistance, running current and fuse F5 (CAB12) value are known.
       Knocker deferred to a later date (user, 2026-09-26).
       Progress (user, 2026-09-26): harness wires crimped into the J12 and J2
-      housings. Still to do: buy the connector that mates with the shaker's
-      own plug, and fit the diode (band to the solid yellow).
+      housings. Diode fitted (user, 2026-10-02). Still to do: connect the
+      harness to SHAKER PWR (J12) on the Cabinet I/O, and the connector that
+      mates with the shaker's own plug if that is still unbought.
 - [ ] Check the JJP shaker's rated voltage, current and flyback diode before
       assigning it a driver. It is installed in the cabinet, not
       yet wired (user, 2026-09-25). Retailers list the replacement motor for
@@ -623,8 +624,8 @@ There are also desktop launchers: "Matrix Pinball (virtual)" and "Matrix Pinball
 Keyboard (virtual mode, from `gmc/gmc.cfg`):
 - `1` start
 - `a`/`d` flippers
-- `z x c v b n m k` toggle trough switches 1–8
-- `p` toggle the plunger lane
+- `x c v b n m k` toggle trough switches 2 to 8
+- `.` (full stop) toggles the plunger lane
 - `0`/`9` outlanes
 - `8`/`7` inlanes
 - The Act I playfield keys are listed in the README, section "Keyboard".
@@ -656,8 +657,16 @@ Logs go to `~/matrix-pinball/logs/`.
 - [ ] Install system packages. This needs sudo, so the user runs it:
   `sudo apt update && sudo apt install -y git git-lfs python3.14-venv && sudo usermod -aG dialout,tty pinball`, then log out and back in.
 - [ ] Turn `~/matrix-pinball` into a real git clone (with git-lfs) and commit the changes above.
-- [ ] Replace placeholder switch numbers for `s_trough1`, `s_trough_jam` and `s_plunger`.
+- [ ] Replace placeholder switch numbers for `s_trough1` and `s_trough_jam`.
       These are still commented out in `config/config.yaml`.
+- [x] Shooter lane switch wired to input 0 on the front 3208 (user,
+      2026-10-02). In the config as `s_plunger` (`bottom32-0`), with
+      `bd_plunger` restored as the playfield's source device. The trough
+      switches were renumbered at the same time: the user corrected them to
+      inputs 1 to 7, starting with the one closest to the trough eject
+      (`s_trough2` = `bottom32-1` to `s_trough8` = `bottom32-7`). The old
+      config had `s_trough2` on 0 and inputs 2 and 3 swapped. All eight are
+      still to be confirmed in the switch test.
 - [ ] Confirm the cabinet button numbers. `s_left_flipper` (`cab-8`), `s_start`
       (`cab-10`) and `s_right_flipper` (`cab-16`) are now in the config with the
       `flippers:` section enabled, but the numbers are FAST's recommended
@@ -722,7 +731,7 @@ Logs go to `~/matrix-pinball/logs/`.
       Godot 4.7.2 was verified against this project in a container: the import
       is clean, GMC 1.0.0 loads, and all four slides render unchanged.
 - [ ] No LED expansion boards are wired or configured yet (FP-EXP-0081 and FP-EXP-0071 are owned). Needed before any playfield RGB inserts or servos work.
-- [ ] Decide the plunger behaviour. `bd_plunger` has `eject_coil: c_auto_plunge` plus `mechanical_eject: true` but no `player_controlled_eject_event`, so a ball in the lane waits for a manual plunge. `eject_timeouts: 15s` is long; the docs suggest 3–5 s.
+- [ ] Decide the plunger behaviour. `bd_plunger` has `eject_coil: c_auto_plunge` plus `mechanical_eject: true` but no `player_controlled_eject_event`, so a ball in the lane waits for a manual plunge at ball start, and multiball balls fire the auto-plunge coil. `eject_timeouts` cut from 15 s to 5 s (2026-10-02); it only applies to coil ejects.
 - [ ] Modes `welcome`, `plunge_ready` and `skillshot` exist but aren't listed under `modes:` and have no start events. `skillshot.yaml` is empty.
 - [ ] `slide_player` for attract is defined in both `config.yaml` and `modes/attract`, so it is duplicated.
 - [ ] Later, for production: export the Godot project to a binary, build the MPF production bundle, and set up auto-start on boot.
