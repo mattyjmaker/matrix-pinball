@@ -343,8 +343,10 @@ Proposed wiring (not yet installed):
   emitter driver. It takes 12 V on a 3-pin 0.100" header and drives each IR
   LED at a regulated current, so no resistors are needed (Official, FAST
   product page, fetched 2026-10-03). Not in the parts inventory or the BOM,
-  so not known to be owned (asked 2026-10-03). Output pinout and
-  per-channel current not yet checked. Both boards take a crimped 4-pin housing (pitch to
+  so not known to be owned (asked 2026-10-03). FAST quotes 43 mA at 12 V
+  with 3 LEDs attached. If its channels are linear current regulators,
+  that is about 14 mA per LED (inference, not published), close to the
+  1k resistor plan's 10.5 mA. Output pinout not yet checked. Both boards take a crimped 4-pin housing (pitch to
   measure, 0.100" expected) so they can come off for trough service.
 - Both switches are `type: NC` (beam clear means no ball). Do not add them
   to the config until they are wired: an unconnected NC input reads as a
