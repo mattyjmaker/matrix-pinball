@@ -257,6 +257,8 @@ Per-board capacity: a **1616** gives 16 switch inputs + 16 drivers; a **3208** g
   - slings 2, pops 3, flipper EOS 4 (optional)
 
   **64 switch inputs available**, so this is short by roughly 6 — much closer than the earlier estimate, and it may well fit once the real layout is counted (flipper EOS is optional, and the pops aren't placed in the BOM layout). If it doesn't, one more 1616 closes the gap.
+- **Count from the config (2026-10-03):** 27 inputs used on the 3208 (`config/config.yaml`), 2 more for the trough position 1 and jam optos, and 38 switches still on the virtual platform in `config/playfield_pending.yaml`. That is **67 against 64 playfield inputs, short by 3**. Options: drop the 2 flipper EOS switches if not needed, put a few switches on the Cabinet I/O's spare inputs (19 free), or add a 1616.
+- **Opto power is not a constraint.** Receivers need no power. Emitters share the interchange's four low-current 12 V headers (2.5 A fuse): at about 10.5 mA per LED (1k from 12 V), even half the fuse rating covers over 100 LEDs.
 - **Cabinet switches** (coin door, flipper buttons, start, tilt, launch) go on the Cabinet I/O, so they don't consume playfield inputs.
 
 ## Known BOM data issues (not yet fixed in the spreadsheet)
