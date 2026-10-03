@@ -314,7 +314,7 @@ Anarchy PCB, each with a 4-pin header labelled `B1 GND`, `B1 +`,
 | Board | Silkscreen | Role |
 | --- | --- | --- |
 | Blue | "BALL TROUGH RECEIVER BOARD", 600-0208-00, REV A | Receiver: one dark-domed phototransistor each for BALL 1 and JAM, two leads each, traces straight to the header. No resistors or other parts on either side (both sides photographed 2026-10-03) |
-| Green | "BALL TROUGH", "100mA MAX EA" (partly hidden) | Transmitter: two clear-bodied IR LEDs (user, 2026-10-03), at most 100 mA each. Likely PBL-600-0209-00 (inference) |
+| Green | "BALL TROUGH TRANSMITTER BOARD", 600-0209-00, REV A, "100MA MAX EACH" | Transmitter: two clear-bodied IR LEDs, at most 100 mA each, traces straight to the header. No resistors on either side (both sides photographed 2026-10-03), so the current limit must be external |
 
 Proposed wiring (not yet installed):
 
@@ -330,15 +330,12 @@ Proposed wiring (not yet installed):
   emitter, which is FAST's opto wiring (collector to the switch input,
   emitter to the return). Inference from the labels; confirm with the
   switch test.
-- 220 ohm from 12 V gives about 48 mA per LED. Check the transmitter's
-  solder side first: if it has a resistor beside each LED, it limits its
-  own current and needs no external resistor. Never put 12 V straight
+- 220 ohm from 12 V gives about 48 mA per LED: (12 V - about 1.5 V) /
+  220 ohm, dissipating about 0.5 W, hence 1 W parts. The transmitter has no
+  resistors of its own (confirmed 2026-10-03), so never put 12 V straight
   across an LED pair.
-- User decision (2026-10-03): treat the transmitter as having no on-board
-  resistors. This is the safe direction: if it does have them, the extra
-  220 ohm only lowers the LED current. Fit the resistors inline in the
-  12 V wires near the interchange end, soldered and heatshrunk, not on the
-  board's header pins. Both boards take a crimped 4-pin housing (pitch to
+- Fit the resistors inline in the 12 V wires near the interchange end,
+  soldered and heatshrunk, not on the board's header pins. Both boards take a crimped 4-pin housing (pitch to
   measure, 0.100" expected) so they can come off for trough service.
 - Both switches are `type: NC` (beam clear means no ball). Do not add them
   to the config until they are wired: an unconnected NC input reads as a
