@@ -316,15 +316,38 @@ Anarchy PCB, each with a 4-pin header labelled `B1 GND`, `B1 +`,
 | Blue | "BALL TROUGH RECEIVER BOARD", 600-0208-00, REV A | Receiver: one dark-domed phototransistor each for BALL 1 and JAM, two leads each, traces straight to the header. No resistors or other parts on either side (both sides photographed 2026-10-03) |
 | Green | "BALL TROUGH TRANSMITTER BOARD", 600-0209-00, REV A, "100MA MAX EACH" | Transmitter: two clear-bodied IR LEDs, at most 100 mA each, traces straight to the header. No resistors on either side (both sides photographed 2026-10-03), so the current limit must be external |
 
-Proposed wiring (not yet installed):
+Wiring plan (decided 2026-10-03, not yet installed), all 22 AWG:
 
-| From | To | Wire |
+Receiver (blue), 4-pin 0.100" housing at the board:
+
+| Receiver pin | To | Wire |
 | --- | --- | --- |
-| Receiver `B1 +` | 3208 J6, S22 (`s_trough1`) | Orange |
-| Receiver `JAM +` | 3208 J6, S23 (`s_trough_jam`) | Orange |
-| Receiver `B1 GND`, `JAM GND` | 3208 J6, G | Purple |
-| Interchange low-current 12 V | 1k 1/4 W resistor (owned, Yageo CFR-25JT-52-1K) to transmitter `B1 +`; another to `JAM +` | Yellow |
-| Transmitter `B1 GND`, `JAM GND` | Same interchange header, ground | Black |
+| `B1 +` | 3208 J6 pin 8 (S22, `s_trough1`) | Orange |
+| `JAM +` | 3208 J6 pin 9 (S23, `s_trough_jam`) | Orange |
+| `B1 GND` | 3208 J6 pin 10 (G) | Purple |
+| `JAM GND` | 3208 J6 pin 11 (G) | Purple |
+
+J6 pin order (FAST table order): S16, S17, key, S18, S19, S20, S21, S22,
+S23, G, G. Pins 1 to 7 already carry `bottom32-16` to `-21`. If pins 10
+and 11 are already taken by other returns, join the two receiver purples
+into the existing purple return instead.
+
+Transmitter (green), 4-pin 0.100" housing at the board; interchange end,
+3-pin 0.100" housing on one low-current header:
+
+| From | Via | To | Wire |
+| --- | --- | --- | --- |
+| Interchange 12 V pin | One run, spliced near the trough into two tails | | Yellow |
+| Tail 1 | 1k 1/4 W inline | Transmitter `B1 +` | Yellow |
+| Tail 2 | 1k 1/4 W inline | Transmitter `JAM +` | Yellow |
+| Interchange ground pin | One run, spliced near the trough into two tails | Transmitter `B1 GND` and `JAM GND` | Black |
+
+- Which pin of the interchange low-current header is 12 V and which is
+  ground is not published (FAST interchange and opto wiring guides, fetched
+  2026-10-03). Meter it with the machine on before crimping.
+- Resistors and splices are soldered and heatshrunk, clear of the ball
+  path and the trough's metal. The resistors are owned Yageo
+  CFR-25JT-52-1K.
 
 - The receiver needs no power: `+` is read as the collector and `GND` as the
   emitter, which is FAST's opto wiring (collector to the switch input,
