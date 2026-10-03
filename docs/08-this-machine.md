@@ -352,9 +352,10 @@ housing at the transmitter; 2-pin housings at the power board; 3-pin
 | Power board channel 2 `+` | Transmitter `JAM +` | Yellow |
 | Power board channel 2 GND | Transmitter `JAM GND` | Black |
 
-- Which pin of the interchange low-current header is 12 V and which is
-  ground is not published (FAST interchange and opto wiring guides, fetched
-  2026-10-03). Meter it with the machine on before crimping.
+- The interchange low-current headers are silkscreened `+` and `-` on the
+  board (user, 2026-10-03); FAST's guides do not publish the pinout. Yellow
+  to `+`, black to `-`. Still confirm 12 V with a meter once before
+  plugging in the opto power board.
 - Emitter power distribution: a home-made 6-channel opto power board on
   stripboard (decided 2026-10-03), replacing lever connectors and inline
   resistors. One 12 V (yellow) and one ground (black) input from an
