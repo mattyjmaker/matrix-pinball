@@ -345,6 +345,11 @@ Transmitter (green), 4-pin 0.100" housing at the board; interchange end,
 - Which pin of the interchange low-current header is 12 V and which is
   ground is not published (FAST interchange and opto wiring guides, fetched
   2026-10-03). Meter it with the machine on before crimping.
+- Emitter power distribution (for more optos later): one 12 V run and one
+  ground run from the interchange header to a pair of lever connectors
+  (e.g. WAGO 221 series) under the playfield, then a tail per LED, each
+  with its own 1k. Adding an LED adds a tail; existing resistors do not
+  change. Check each new emitter board for its own resistor first.
 - Resistors and splices are soldered and heatshrunk, clear of the ball
   path and the trough's metal. The resistors are owned Yageo
   CFR-25JT-52-1K.
