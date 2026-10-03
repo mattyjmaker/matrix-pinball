@@ -323,17 +323,20 @@ Proposed wiring (not yet installed):
 | Receiver `B1 +` | 3208 J6, S22 (`s_trough1`) | Orange |
 | Receiver `JAM +` | 3208 J6, S23 (`s_trough_jam`) | Orange |
 | Receiver `B1 GND`, `JAM GND` | 3208 J6, G | Purple |
-| Interchange low-current 12 V | 220 ohm 1 W resistor to transmitter `B1 +`; another to `JAM +` | Yellow |
+| Interchange low-current 12 V | 1k 1/4 W resistor (owned, Yageo CFR-25JT-52-1K) to transmitter `B1 +`; another to `JAM +` | Yellow |
 | Transmitter `B1 GND`, `JAM GND` | Same interchange header, ground | Black |
 
 - The receiver needs no power: `+` is read as the collector and `GND` as the
   emitter, which is FAST's opto wiring (collector to the switch input,
   emitter to the return). Inference from the labels; confirm with the
   switch test.
-- 220 ohm from 12 V gives about 48 mA per LED: (12 V - about 1.5 V) /
-  220 ohm, dissipating about 0.5 W, hence 1 W parts. The transmitter has no
-  resistors of its own (confirmed 2026-10-03), so never put 12 V straight
-  across an LED pair.
+- 1k from 12 V gives about 10.5 mA per LED: (12 V - about 1.5 V) / 1k,
+  dissipating about 0.11 W (44% of a 1/4 W part). Chosen from parts on
+  hand (2026-10-03); the owned 220 and 120 ohm parts are 1/8 W and would
+  overheat at 12 V. If the switch test shows an unreliable beam, add a
+  second 1k in parallel with each (500 ohm, about 21 mA, each resistor
+  still about 0.11 W). The transmitter has no resistors of its own
+  (confirmed 2026-10-03), so never put 12 V straight across an LED pair.
 - Fit the resistors inline in the 12 V wires near the interchange end,
   soldered and heatshrunk, not on the board's header pins. Both boards take a crimped 4-pin housing (pitch to
   measure, 0.100" expected) so they can come off for trough service.
