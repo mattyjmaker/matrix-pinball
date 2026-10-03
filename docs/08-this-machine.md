@@ -737,6 +737,11 @@ Logs go to `~/matrix-pinball/logs/`.
 - [ ] Install system packages. This needs sudo, so the user runs it:
   `sudo apt update && sudo apt install -y git git-lfs python3.14-venv && sudo usermod -aG dialout,tty pinball`, then log out and back in.
 - [ ] Turn `~/matrix-pinball` into a real git clone (with git-lfs) and commit the changes above.
+- [ ] Fit the playfield opto sets (owned, none fitted yet; only the trough
+      optos are on the machine, user 2026-10-03): left lock ramp and
+      backboard ramp, plus the set listed with the right outlane lock
+      parts, which the lock itself may not use. Power them from the
+      emitter lever connectors (see "Trough optos").
 - [ ] Wire the trough position 1 and jam optos and add `s_trough1` and
       `s_trough_jam` (see "Trough optos" above). They are still commented
       out in `config/config.yaml`.

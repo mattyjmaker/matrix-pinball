@@ -166,7 +166,7 @@ Reference: [Playfield Interchange Board](https://fastpinball.com/products/power/
 | **Trinity Ramp** | Stern ball lock assembly, left spinner with switch, IR LED opto set | HAVE (2nd) |
 | **Dejavu VUK** | Scoop weldment, closed back | HAVE (2nd) |
 | **Agents coming** | Scoop weldment with open back, standup target ×1 | HAVE (2nd) |
-| **Ammo Lock** | Stern ball lock assembly, IR LED opto set | HAVE (2nd). The user believes the lock (now the right outlane lock) uses a standard switch, not an opto (2026-10-03); whether this opto set is fitted or spare is unknown. |
+| **Ammo Lock** | Stern ball lock assembly, IR LED opto set | HAVE (2nd). The user believes the lock (now the right outlane lock) uses a standard switch, not an opto (2026-10-03); no opto sets are fitted yet, only the trough optos (user, 2026-10-03), so this one is unassigned. |
 | **Real World playfield** | Standup targets ×3, plus the mini left flipper above | HAVE (2nd) |
 | **Dejavu Ramp** | Left spinner with switch | HAVE (2nd) |
 | **Sentinel Boss** | Stern eject VUK 500-1050-00 ×2, 1"×5/8" rectangular standup ×1, square standups ×2, under-playfield magnet assembly ×1 | HAVE (2nd) |
