@@ -381,6 +381,13 @@ housing at the transmitter; 2-pin housings at the power board; 3-pin
   so channels 1 to 4 are populated first; the board is laid out and cut
   for all 6. To do: buy 2 more 1k 1/4 W (e.g. Yageo CFR-25JT-52-1K) and
   populate channels 5 and 6.
+- As built (user photo, 2026-10-03): pad-per-hole perfboard (holes labelled
+  01 to 06 by A to B), not stripboard. A white 3-pin input header and four
+  2-pin channel headers, each with a 1k beside it; bare tinned links on
+  the component side in column 06, a black link wire in column 01. The
+  headers look like JST XH (2.5 mm pitch, mating XHP housings with SXH
+  crimps; identification from the photo only). Back side not yet checked
+  against the circuit.
 - Board test before connecting LEDs: each `+` pin reads 12 V with nothing
   plugged in. With an LED plugged in, the `+` pin drops to about 1.2 to
   1.5 V, and the voltage across its resistor in volts equals the LED
