@@ -334,6 +334,12 @@ Proposed wiring (not yet installed):
   solder side first: if it has a resistor beside each LED, it limits its
   own current and needs no external resistor. Never put 12 V straight
   across an LED pair.
+- User decision (2026-10-03): treat the transmitter as having no on-board
+  resistors. This is the safe direction: if it does have them, the extra
+  220 ohm only lowers the LED current. Fit the resistors inline in the
+  12 V wires near the interchange end, soldered and heatshrunk, not on the
+  board's header pins. Both boards take a crimped 4-pin housing (pitch to
+  measure, 0.100" expected) so they can come off for trough service.
 - Both switches are `type: NC` (beam clear means no ball). Do not add them
   to the config until they are wired: an unconnected NC input reads as a
   ball, so MPF would count a phantom ball and a jam.
