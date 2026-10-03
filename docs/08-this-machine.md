@@ -338,7 +338,13 @@ Proposed wiring (not yet installed):
   still about 0.11 W). The transmitter has no resistors of its own
   (confirmed 2026-10-03), so never put 12 V straight across an LED pair.
 - Fit the resistors inline in the 12 V wires near the interchange end,
-  soldered and heatshrunk, not on the board's header pins. Both boards take a crimped 4-pin housing (pitch to
+  soldered and heatshrunk, not on the board's header pins.
+- Alternative: FAST's FP-AUX-040, a 4-channel 12 V constant-current opto
+  emitter driver. It takes 12 V on a 3-pin 0.100" header and drives each IR
+  LED at a regulated current, so no resistors are needed (Official, FAST
+  product page, fetched 2026-10-03). Not in the parts inventory or the BOM,
+  so not known to be owned (asked 2026-10-03). Output pinout and
+  per-channel current not yet checked. Both boards take a crimped 4-pin housing (pitch to
   measure, 0.100" expected) so they can come off for trough service.
 - Both switches are `type: NC` (beam clear means no ball). Do not add them
   to the config until they are wired: an unconnected NC input reads as a
