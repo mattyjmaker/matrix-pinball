@@ -345,11 +345,35 @@ Transmitter (green), 4-pin 0.100" housing at the board; interchange end,
 - Which pin of the interchange low-current header is 12 V and which is
   ground is not published (FAST interchange and opto wiring guides, fetched
   2026-10-03). Meter it with the machine on before crimping.
-- Emitter power distribution (for more optos later): one 12 V run and one
-  ground run from the interchange header to a pair of lever connectors
-  (e.g. WAGO 221 series) under the playfield, then a tail per LED, each
-  with its own 1k. Adding an LED adds a tail; existing resistors do not
-  change. Check each new emitter board for its own resistor first.
+- Emitter power distribution: a home-made 6-channel opto power board on
+  stripboard (decided 2026-10-03), replacing lever connectors and inline
+  resistors. One 12 V (yellow) and one ground (black) input from an
+  interchange low-current header; each channel is a 1k from the 12 V rail
+  to a 2-pin 0.100" header (`+` and GND). Layout, strips running left to
+  right, holes numbered by column:
+
+  ```
+  Row 1   12 V rail     yellow in at col 1; R1..R6 top leads at cols 3,6,9,12,15,18
+  Row 2-4 unused        resistor bodies lie across these rows
+  Row 5   channel strip R bottom leads at cols 3,6,9,12,15,18;
+                        header + pins at cols 4,7,10,13,16,19;
+                        CUT the track at cols 5,8,11,14,17
+  Row 6   ground rail   black in at col 1; header GND pins at cols 4,7,...,19
+  ```
+
+  Each resistor stands flat, spanning rows 1 to 5 (0.4" lead spacing).
+  Check every cut with a meter. Use keyed housings at the emitter end: a
+  reversed IR LED sees about 12 V in reverse, beyond the usual 5 V
+  rating. Mount on nylon standoffs with nylon screws. Channels 1 and 2
+  feed the trough transmitter (`B1`, `JAM`); 3 to 6 are spare. Total draw
+  about 63 mA with all six in use.
+- Board test before connecting LEDs: each `+` pin reads 12 V with nothing
+  plugged in. With an LED plugged in, the `+` pin drops to about 1.2 to
+  1.5 V, and the voltage across its resistor in volts equals the LED
+  current in mA (about 10.5 V means 10.5 mA).
+- Adding an LED later uses a spare channel; existing resistors do not
+  change. Check each new emitter board for its own resistor first; if it
+  has one, it needs a channel without the 1k.
 - Resistors and splices are soldered and heatshrunk, clear of the ball
   path and the trough's metal. The resistors are owned Yageo
   CFR-25JT-52-1K.
@@ -741,7 +765,7 @@ Logs go to `~/matrix-pinball/logs/`.
       optos are on the machine, user 2026-10-03): left lock ramp and
       backboard ramp, plus the set listed with the right outlane lock
       parts, which the lock itself may not use. Power them from the
-      emitter lever connectors (see "Trough optos").
+      6-channel opto power board (see "Trough optos").
 - [ ] Wire the trough position 1 and jam optos and add `s_trough1` and
       `s_trough_jam` (see "Trough optos" above). They are still commented
       out in `config/config.yaml`.
