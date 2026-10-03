@@ -313,7 +313,7 @@ Anarchy PCB, each with a 4-pin header labelled `B1 GND`, `B1 +`,
 
 | Board | Silkscreen | Role |
 | --- | --- | --- |
-| Blue | "BALL TROUGH RECEIVER BOARD", 600-0208-00, REV A | Receiver: one phototransistor each for BALL 1 and JAM, two leads each, no other parts on the solder side |
+| Blue | "BALL TROUGH RECEIVER BOARD", 600-0208-00, REV A | Receiver: one dark-domed phototransistor each for BALL 1 and JAM, two leads each, traces straight to the header. No resistors or other parts on either side (both sides photographed 2026-10-03) |
 | Green | "BALL TROUGH", "100mA MAX EA" (partly hidden) | Transmitter (inferred: the pair's other half is PBL-600-0209-00). Two IR LEDs, at most 100 mA each |
 
 Proposed wiring (not yet installed):
