@@ -67,9 +67,16 @@ Compared with FAST's standard (Official, fastpinball.com/wiring/standards):
 - FAST's other colours: yellow for 12 V, red for 5 V, white for LED data,
   and black for all DC ground returns.
 
+Opto wiring (decided 2026-10-03, FAST's colours):
+- Emitter power: yellow for 12 V, black for its 12 V ground (logic ground,
+  never the 48 V toxic ground). Label these blacks "12V GND" where they run
+  near coil driver blacks.
+- Receiver signal: same as any switch, orange to the input and purple
+  back to G.
+
 Not yet recorded, and worth adding here as they are decided: LED and lamp
-wiring, opto power and signal, ground and earth bonding, and whether any
-sub-loom uses a different scheme.
+wiring, ground and earth bonding, and whether any sub-loom uses a different
+scheme.
 
 ### Cabinet flipper opto boards (user, 2026-09-25; silkscreen read 2026-09-25)
 
