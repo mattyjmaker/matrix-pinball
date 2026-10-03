@@ -332,15 +332,18 @@ S23, G, G. Pins 1 to 7 already carry `bottom32-16` to `-21`. If pins 10
 and 11 are already taken by other returns, join the two receiver purples
 into the existing purple return instead.
 
-Transmitter (green), 4-pin 0.100" housing at the board; interchange end,
-3-pin 0.100" housing on one low-current header:
+Transmitter (green), via the opto power board below. 4-pin 0.100"
+housing at the transmitter; 2-pin housings at the power board; 3-pin
+0.100" housing on one interchange low-current header:
 
-| From | Via | To | Wire |
-| --- | --- | --- | --- |
-| Interchange 12 V pin | One run, spliced near the trough into two tails | | Yellow |
-| Tail 1 | 1k 1/4 W inline | Transmitter `B1 +` | Yellow |
-| Tail 2 | 1k 1/4 W inline | Transmitter `JAM +` | Yellow |
-| Interchange ground pin | One run, spliced near the trough into two tails | Transmitter `B1 GND` and `JAM GND` | Black |
+| From | To | Wire |
+| --- | --- | --- |
+| Interchange 12 V pin | Power board row 1 (12 V rail) | Yellow |
+| Interchange ground pin | Power board row 6 (ground rail) | Black |
+| Power board channel 1 `+` | Transmitter `B1 +` | Yellow |
+| Power board channel 1 GND | Transmitter `B1 GND` | Black |
+| Power board channel 2 `+` | Transmitter `JAM +` | Yellow |
+| Power board channel 2 GND | Transmitter `JAM GND` | Black |
 
 - Which pin of the interchange low-current header is 12 V and which is
   ground is not published (FAST interchange and opto wiring guides, fetched
