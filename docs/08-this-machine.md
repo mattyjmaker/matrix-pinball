@@ -387,8 +387,8 @@ housing at the transmitter; 2-pin housings at the power board; 3-pin
   2-pin channel headers, each with a 1k beside it; bare tinned links on
   the component side in column 06, a black link wire in column 01. The
   headers look like JST XH (2.5 mm pitch, mating XHP housings with SXH
-  crimps; identification from the photo only). Back side not yet checked
-  against the circuit.
+  crimps; identification from the photo only). Checked and working on the
+  bench (user, 2026-10-03); next, connecting it to the interchange.
 - Board test before connecting LEDs: each `+` pin reads 12 V with nothing
   plugged in. With an LED plugged in, the `+` pin drops to about 1.2 to
   1.5 V, and the voltage across its resistor in volts equals the LED
