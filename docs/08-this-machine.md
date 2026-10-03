@@ -302,6 +302,44 @@ Plan (2026-09-26):
 
 Open items are in the to-do list below ("Cabinet power button").
 
+### Trough optos, position 1 and jam (user photos, 2026-10-03)
+
+The 8-ball PBL-100-0016-00 trough uses mechanical switches for positions 2
+to 8 (`s_trough2` to `s_trough8`, inputs 1 to 7) and an opto pair at the
+eject end for position 1 and the jam (stacked ball) position (Official,
+Pinball Life listing). One board sits on each side wall, both made by
+Anarchy PCB, each with a 4-pin header labelled `B1 GND`, `B1 +`,
+`JAM GND`, `JAM +`:
+
+| Board | Silkscreen | Role |
+| --- | --- | --- |
+| Blue | "BALL TROUGH RECEIVER BOARD", 600-0208-00, REV A | Receiver: one phototransistor each for BALL 1 and JAM, two leads each, no other parts on the solder side |
+| Green | "BALL TROUGH", "100mA MAX EA" (partly hidden) | Transmitter (inferred: the pair's other half is PBL-600-0209-00). Two IR LEDs, at most 100 mA each |
+
+Proposed wiring (not yet installed):
+
+| From | To | Wire |
+| --- | --- | --- |
+| Receiver `B1 +` | 3208 J6, S22 (`s_trough1`) | Orange |
+| Receiver `JAM +` | 3208 J6, S23 (`s_trough_jam`) | Orange |
+| Receiver `B1 GND`, `JAM GND` | 3208 J6, G | Purple |
+| Interchange low-current 12 V | 220 ohm 1 W resistor to transmitter `B1 +`; another to `JAM +` | Yellow |
+| Transmitter `B1 GND`, `JAM GND` | Same interchange header, ground | Black |
+
+- The receiver needs no power: `+` is read as the collector and `GND` as the
+  emitter, which is FAST's opto wiring (collector to the switch input,
+  emitter to the return). Inference from the labels; confirm with the
+  switch test.
+- 220 ohm from 12 V gives about 48 mA per LED. Check the transmitter's
+  solder side first: if it has a resistor beside each LED, it limits its
+  own current and needs no external resistor. Never put 12 V straight
+  across an LED pair.
+- Both switches are `type: NC` (beam clear means no ball). Do not add them
+  to the config until they are wired: an unconnected NC input reads as a
+  ball, so MPF would count a phantom ball and a jam.
+- After they are in, raise `balls_installed` to 8 and add `s_trough1` to
+  `virtual_platform_start_active_switches` (see the config comments).
+
 ### Playfield power distribution (planned 2026-09-27)
 
 **The playfield I/O boards take no power cable.** Each board's logic runs on
@@ -657,8 +695,9 @@ Logs go to `~/matrix-pinball/logs/`.
 - [ ] Install system packages. This needs sudo, so the user runs it:
   `sudo apt update && sudo apt install -y git git-lfs python3.14-venv && sudo usermod -aG dialout,tty pinball`, then log out and back in.
 - [ ] Turn `~/matrix-pinball` into a real git clone (with git-lfs) and commit the changes above.
-- [ ] Replace placeholder switch numbers for `s_trough1` and `s_trough_jam`.
-      These are still commented out in `config/config.yaml`.
+- [ ] Wire the trough position 1 and jam optos and add `s_trough1` and
+      `s_trough_jam` (see "Trough optos" above). They are still commented
+      out in `config/config.yaml`.
 - [x] Shooter lane switch wired to input 0 on the front 3208 (user,
       2026-10-02). In the config as `s_plunger` (`bottom32-0`), with
       `bd_plunger` restored as the playfield's source device. The trough
